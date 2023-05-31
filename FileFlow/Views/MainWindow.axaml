@@ -1,0 +1,82 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:FileFlow.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="FileFlow.Views.MainWindow"
+        xmlns:local="clr-namespace:FileFlow.Views"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="FileFlow">
+
+
+  <Window.Styles>
+    <Style Selector="Border.red">
+      <Setter Property="Background" Value="#222"/>
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.1"/>
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="Border.red:pointerover">
+      <Setter Property="Background" Value="#333"/>
+    </Style>
+  </Window.Styles>
+  
+  <Grid RowDefinitions="32, *, 32">
+    <TextBox Grid.Row="0" Text="1"/>
+    <Grid ColumnDefinitions="100, 2, *" Grid.Row="1" Background="#111">
+      <Rectangle Grid.Column="0" Fill="Black"/>
+      <GridSplitter Grid.Column="1" Background="White" ResizeDirection="Columns"/>
+      <ListBox 
+        Name="listBox"
+        Grid.Column="2" 
+        Items="{Binding StorageElements}" 
+        SelectionMode="Multiple"
+        Background="Transparent"
+        Margin="12">
+        
+          <ListBox.Styles>
+            <Style Selector="ListBoxItem">
+              <Setter Property="Padding" Value="0"/>
+              <Setter Property="CornerRadius" Value="6"/>
+              <Setter Property="Margin" Value="0, 1"/>
+              <Setter Property="Background" Value="#222"/>
+            </Style>
+            <Style Selector="ListBoxItem > Border > StackPanel > Border">
+              <Setter Property="Background" Value="Transparent"/>
+            </Style>
+            <Style Selector="ListBoxItem:selected > Border > StackPanel > Border">
+              <Setter Property="Background" Value="#ccc"/>
+            </Style>
+          </ListBox.Styles>
+
+          <ListBox.Resources>
+            <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="#333" />
+            <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="#333" />
+            <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="#333" />
+          </ListBox.Resources>
+        
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <Border Padding="0, 8" Background="Transparent">
+                <StackPanel Orientation="Horizontal">
+                  <Border Width="4" Height="13" Margin="8, 0" CornerRadius="100"/>
+                  <TextBlock Text="{Binding Name}" FontSize="12" Width="500" Margin="0"/>
+                  <TextBlock Text="{Binding Size}" FontSize="12" Width="200"/>
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        
+        
+      </ListBox>
+
+
+    </Grid>
+    <TextBox Grid.Row="2" Text="444" Name="statusText"/>
+  </Grid>
+
+
+</Window>
