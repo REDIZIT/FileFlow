@@ -35,8 +35,15 @@ namespace FileFlow.Services
                 if (File.Exists(filePath) == false)
                 {
                     var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-                    string iconPath = Directory.EnumerateFileSystemEntries(filePath).Count() > 0 ? "folder.png" : "folder_empty.png";
-                    return new Bitmap(assets.Open(new Uri("avares://FileFlow/Assets/Icons/" + iconPath)));
+                    try
+                    {
+                        string iconPath = Directory.EnumerateFileSystemEntries(filePath).Count() > 0 ? "folder.png" : "folder_empty.png";
+                        return new Bitmap(assets.Open(new Uri("avares://FileFlow/Assets/Icons/" + iconPath)));
+                    }
+                    catch (UnauthorizedAccessException err)
+                    {
+                        return null;
+                    }
                 }
                 else
                 {

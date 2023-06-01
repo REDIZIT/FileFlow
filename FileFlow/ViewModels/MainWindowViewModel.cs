@@ -8,21 +8,15 @@ using System.IO;
 
 namespace FileFlow.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
+    public class MainWindowViewModel : ViewModelBase
     {
-        public ObservableCollection<StorageElement> StorageElements { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        public IFileSystemService fileSystem;
 
         public MainWindowViewModel(IFileSystemService fileSystem)
         {
+            this.fileSystem = fileSystem;
             //StorageElements = new();
-            StorageElements = new(fileSystem.GetStorageElements("C:\\Users\\REDIZIT\\Downloads"));
+
             //StorageElements = new(fileSystem.GetStorageElements("C:\\Windows\\SysWOW64"));
             //StorageElements = new(fileSystem.GetStorageElements("C:\\Users\\REDIZIT\\Desktop"));
         }

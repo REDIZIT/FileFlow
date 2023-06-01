@@ -52,8 +52,16 @@ namespace FileFlow.Services
                 }
                 else
                 {
-                    int foldersCount = Directory.GetFileSystemEntries(path).Length;
-                    return foldersCount > 0 ? foldersCount + " элементов" : "Нет элементов";
+                    try
+                    {
+                        int foldersCount = Directory.GetFileSystemEntries(path).Length;
+                        return foldersCount > 0 ? foldersCount + " элементов" : "Нет элементов";
+                    }
+                    catch(System.UnauthorizedAccessException err)
+                    {
+                        return "Нет доступа";
+                    }
+                   
                 }
             });
         }

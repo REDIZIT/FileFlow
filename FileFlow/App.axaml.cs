@@ -22,10 +22,7 @@ namespace FileFlow
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow
-                {
-                    DataContext = kernel.Get<MainWindowViewModel>()
-                };
+                desktop.MainWindow = new MainWindow(kernel.Get<MainWindowViewModel>());
             }
 
             base.OnFrameworkInitializationCompleted();

@@ -14,11 +14,20 @@ namespace FileFlow.Views
 {
     public partial class MainWindow : Window
     {
-        private MainWindowViewModel model => (MainWindowViewModel)DataContext;
-
         public MainWindow()
         {
+            
+        }
+        public MainWindow(MainWindowViewModel model)
+        {
+            DataContext = model;
+
             InitializeComponent();
+
+            ExplorerControl control = new(model.fileSystem, "C:/Users/REDIZIT/Downloads");
+            ExplorerControl control2 = new(model.fileSystem, "C:/Users/REDIZIT");
+            explorerPlaceholder.Content = control;
+            explorerPlaceholder2.Content = control2;
         }
 
         public void Click(object sender, PointerPressedEventArgs el)
