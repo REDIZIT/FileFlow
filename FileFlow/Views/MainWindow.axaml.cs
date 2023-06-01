@@ -23,8 +23,9 @@ namespace FileFlow.Views
 
         public void Click(object sender, PointerPressedEventArgs el)
         {
-            //statusText.Text = ((Control)el.Source).Tag.GetType().Name;
+            statusText.Text = ((Control)el.Source).Tag.GetType().Name;
             StorageElement storageElement = (StorageElement)((Control)el.Source).Tag;
+            //model.StorageElements.RemoveAt(model.StorageElements.Count - 1);
         }
 
         

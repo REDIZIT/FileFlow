@@ -60,10 +60,11 @@
         
           <ListBox.ItemTemplate>
             <DataTemplate>
-              <Border Padding="0, 8" Background="Transparent">
+              <Border Padding="0, 8" Background="Transparent" PointerPressed="Click" Tag="{Binding}">
                 <StackPanel Orientation="Horizontal">
                   <Border Width="4" Height="13" Margin="8, 0" CornerRadius="100"/>
-                  <TextBlock Text="{Binding Name}" FontSize="12" Width="500" Margin="0"/>
+                  <Image Width="16" Height="16" Source="{Binding Icon}"/>
+                  <TextBlock Text="{Binding Name}" FontSize="12" Width="500" Margin="8, 0, 0, 0"/>
                   <TextBlock Text="{Binding Size}" FontSize="12" Width="200"/>
                 </StackPanel>
               </Border>

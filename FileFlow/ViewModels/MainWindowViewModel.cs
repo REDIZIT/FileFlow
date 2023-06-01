@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
+using FileFlow.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -9,7 +10,7 @@ namespace FileFlow.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     {
-        public ObservableCollection<StorageElement> StorageElements { get; set; } = new();
+        public ObservableCollection<StorageElement> StorageElements { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -18,17 +19,9 @@ namespace FileFlow.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(IFileSystemService fileSystem)
         {
-            string folderPath = "C:\\Users\\REDIZIT\\Documents\\GitHub\\IndianShitCode";
-            foreach (string entryPath in Directory.EnumerateFileSystemEntries(folderPath))
-            {
-                StorageElements.Add(new StorageElement() 
-                {
-                    Name = Path.GetFileName(entryPath),
-                    Size = "1"
-                });
-            }
+            StorageElements = new(fileSystem.GetStorageElements("C:\\Users\\REDIZIT\\Downloads"));
         }
     }
 }
