@@ -21,7 +21,10 @@ namespace FileFlow.ViewModels
 
         public MainWindowViewModel(IFileSystemService fileSystem)
         {
+            //StorageElements = new();
             StorageElements = new(fileSystem.GetStorageElements("C:\\Users\\REDIZIT\\Downloads"));
+            //StorageElements = new(fileSystem.GetStorageElements("C:\\Windows\\SysWOW64"));
+            //StorageElements = new(fileSystem.GetStorageElements("C:\\Users\\REDIZIT\\Desktop"));
         }
     }
 }

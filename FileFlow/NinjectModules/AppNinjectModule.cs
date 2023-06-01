@@ -7,8 +7,8 @@ namespace FileFlow.NinjectModules
     {
         public override void Load()
         {
-            Bind<IIconExtractorService>().To<IconExtractorService>();
-            Bind<IFileSystemService>().To<FileSystemService>();
+            Bind<IIconExtractorService>().To<IconExtractorService>().InSingletonScope();
+            Bind<IFileSystemService>().To<FileSystemService>().InSingletonScope();
         }
     }
 }

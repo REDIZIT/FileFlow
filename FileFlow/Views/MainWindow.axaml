@@ -10,19 +10,13 @@
         Title="FileFlow">
 
 
-  <Window.Styles>
-    <Style Selector="Border.red">
-      <Setter Property="Background" Value="#222"/>
-      <Setter Property="Transitions">
-        <Transitions>
-          <BrushTransition Property="Background" Duration="0:0:0.1"/>
-        </Transitions>
-      </Setter>
-    </Style>
-    <Style Selector="Border.red:pointerover">
-      <Setter Property="Background" Value="#333"/>
-    </Style>
-  </Window.Styles>
+  <Window.Background>
+    <ImageBrush 
+      Source="/Assets/wallpaper.jpg" 
+      Stretch="UniformToFill"
+      Opacity="0.25"
+      BitmapInterpolationMode="HighQuality"/>
+  </Window.Background>
   
   <Grid RowDefinitions="32, *, 32">
     <TextBox Grid.Row="0" Text="1"/>
@@ -64,8 +58,9 @@
                 <StackPanel Orientation="Horizontal">
                   <Border Width="4" Height="13" Margin="8, 0" CornerRadius="100"/>
                   <Image Width="16" Height="16" Source="{Binding Icon}"/>
-                  <TextBlock Text="{Binding Name}" FontSize="12" Width="500" Margin="8, 0, 0, 0"/>
-                  <TextBlock Text="{Binding Size}" FontSize="12" Width="200"/>
+                  <TextBlock Text="{Binding Name}" FontSize="12" Width="700" Margin="8, 0, 0, 0"/>
+                  <TextBlock Text="{Binding LastModifyTime}" FontSize="12" Width="150"/>
+                  <TextBlock Text="{Binding Size}" FontSize="12" Width="150"/>
                 </StackPanel>
               </Border>
             </DataTemplate>
