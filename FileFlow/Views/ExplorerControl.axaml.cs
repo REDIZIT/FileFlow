@@ -2,8 +2,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using FileFlow.Services;
 using FileFlow.ViewModels;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace FileFlow.Views
 {
@@ -15,48 +13,35 @@ namespace FileFlow.Views
         {
             InitializeComponent();
         }
-        public ExplorerControl(IFileSystemService fileSystem, string path)
+        public ExplorerControl(IFileSystemService fileSystem, StorageElement folder)
         {
             model = new(fileSystem);
             DataContext = model;
-            model.SetPath(path);
+            model.Open(folder);
 
             InitializeComponent();
         }
 
-        public void Click(object sender, PointerPressedEventArgs el)
+        public void Click(object sender, PointerPressedEventArgs e)
         {
-            if (el.ClickCount == 2 && el.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            if (e.ClickCount >= 2 && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                StorageElement storageElement = (StorageElement)((Control)el.Source).Tag;
-                model.SetPath(storageElement.Path);
+                StorageElement storageElement = (StorageElement)((Control)e.Source).Tag;
+                model.Open(storageElement);
             }
         }
-    }
-    public class ExplorerViewModel : ViewModelBase, INotifyPropertyChanged
-    {
-        public string Path { get; private set; }
-        public ObservableCollection<StorageElement> StorageElements { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private IFileSystemService fileSystem;
-
-        public ExplorerViewModel(IFileSystemService fileSystem)
+        public void ListBoxClick(object sender, PointerPressedEventArgs e)
         {
-            this.fileSystem = fileSystem;
+            var props = e.GetCurrentPoint(this).Properties;
+            if (props.IsXButton1Pressed)
+            {
+                model.Back();
+            }
+            else if (props.IsXButton2Pressed)
+            {
+                model.Next();
+            }
         }
 
-        public void SetPath(string path)
-        {
-            Path = path;
-            StorageElements = new(fileSystem.GetStorageElements(path));
-            OnPropertyChanged(nameof(Path));
-            OnPropertyChanged(nameof(StorageElements));
-        }
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }

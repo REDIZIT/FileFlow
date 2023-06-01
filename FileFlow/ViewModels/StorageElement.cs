@@ -2,6 +2,7 @@
 using FileFlow.Services;
 using System;
 using System.ComponentModel;
+using System.IO;
 
 namespace FileFlow.ViewModels
 {
@@ -12,6 +13,8 @@ namespace FileFlow.ViewModels
         public string LastModifyTime { get; set; }
         public string Size { get; set; }
         public Bitmap Icon { get; set; }
+
+        public bool IsFolder => Directory.Exists(Path);
 
         public StorageElement(string path, IFileSystemService fileSystem)
         {

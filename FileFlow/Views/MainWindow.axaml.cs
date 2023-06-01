@@ -24,8 +24,8 @@ namespace FileFlow.Views
 
             InitializeComponent();
 
-            ExplorerControl control = new(model.fileSystem, "C:/Users/REDIZIT/Downloads");
-            ExplorerControl control2 = new(model.fileSystem, "C:/Users/REDIZIT");
+            ExplorerControl control = new(model.fileSystem, new("C:/Users/REDIZIT/Downloads", model.fileSystem));
+            ExplorerControl control2 = new(model.fileSystem, new("C:/", model.fileSystem));
             explorerPlaceholder.Content = control;
             explorerPlaceholder2.Content = control2;
         }

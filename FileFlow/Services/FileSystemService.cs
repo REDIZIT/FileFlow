@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media.Imaging;
 using FileFlow.ViewModels;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace FileFlow.Services
         IEnumerable<StorageElement> GetStorageElements(string folderPath);
         Task<string> GetElementWeight(string path);
         Task<string> GetModifyTime(string path);
+        void Run(string filePath);
     }
     public class FileSystemService : IFileSystemService
     {
@@ -22,6 +24,15 @@ namespace FileFlow.Services
             this.iconExtractor = iconExtractor;
         }
 
+        public void Run(string filePath)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(filePath)
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+        }
         public IEnumerable<StorageElement> GetStorageElements(string folderPath)
         {
             foreach (string entryPath in Directory.EnumerateDirectories(folderPath))
@@ -29,7 +40,7 @@ namespace FileFlow.Services
                 yield return new StorageElement(entryPath, this)
                 {
                     Name = Path.GetFileName(entryPath),
-                    Icon = iconExtractor.GetIcon(entryPath).ConvertToAvaloniaBitmap(),
+                    Icon = iconExtractor.GetFolderIcon(entryPath).ConvertToAvaloniaBitmap(),
                 };
             }
             foreach (string entryPath in Directory.EnumerateFiles(folderPath))
@@ -37,7 +48,7 @@ namespace FileFlow.Services
                 yield return new StorageElement(entryPath, this)
                 {
                     Name = Path.GetFileName(entryPath),
-                    Icon = iconExtractor.GetIcon(entryPath).ConvertToAvaloniaBitmap()
+                    Icon = iconExtractor.GetFileIcon(entryPath).ConvertToAvaloniaBitmap()
                 };
             }
         }

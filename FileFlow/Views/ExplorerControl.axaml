@@ -6,11 +6,11 @@
              x:Class="FileFlow.Views.ExplorerControl">
   <ListBox
         Name="listBox"
-        Grid.Column="2"
         Items="{Binding StorageElements}"
         SelectionMode="Multiple"
         Background="Transparent"
-        Margin="12">
+        Margin="12"
+        PointerPressed="ListBoxClick">
 
     <ListBox.Styles>
       <Style Selector="ListBoxItem">

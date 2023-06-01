@@ -1,27 +1,52 @@
-﻿using Avalonia.Platform;
-using Avalonia;
+﻿using Avalonia;
+using Avalonia.Platform;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace FileFlow.Services
 {
     public interface IIconExtractorService
     {
-        Bitmap GetIcon(string filePath);
+        Bitmap GetFolderIcon(string folderPath);
+        Bitmap GetFileIcon(string filePath);
     }
     public class IconExtractorService : IIconExtractorService
     {
+        private Bitmap folder, emptyFolder;
+
         private Dictionary<string, Bitmap> cachedIcons = new();
         private HashSet<string> ignoredExtensions = new()
         {
             ".exe", ".lnk", ".url"
         };
 
-        public Bitmap GetIcon(string filePath)
+        public IconExtractorService()
+        {
+            var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
+            folder = new Bitmap(assets.Open(new Uri("avares://FileFlow/Assets/Icons/folder.png")));
+            emptyFolder = new Bitmap(assets.Open(new Uri("avares://FileFlow/Assets/Icons/folder_empty.png")));
+        }
+
+        public Bitmap GetFolderIcon(string folderPath)
+        {
+            try
+            {
+                if (Directory.EnumerateFileSystemEntries(folderPath).Count() > 0)
+                {
+                    return folder;
+                }
+            }
+            catch (UnauthorizedAccessException err)
+            {
+            }
+            return emptyFolder;
+        }
+        public Bitmap GetFileIcon(string filePath)
         {
             string ext = Path.GetExtension(filePath);
             bool isIgnored = ignoredExtensions.Contains(ext);
@@ -32,30 +57,14 @@ namespace FileFlow.Services
             }
             else
             {
-                if (File.Exists(filePath) == false)
-                {
-                    var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-                    try
-                    {
-                        string iconPath = Directory.EnumerateFileSystemEntries(filePath).Count() > 0 ? "folder.png" : "folder_empty.png";
-                        return new Bitmap(assets.Open(new Uri("avares://FileFlow/Assets/Icons/" + iconPath)));
-                    }
-                    catch (UnauthorizedAccessException err)
-                    {
-                        return null;
-                    }
-                }
-                else
-                {
-                    Bitmap icon = IconReader.GetFileIcon(filePath, IconReader.IconSize.Small, false).ToBitmap();
+                Bitmap icon = IconReader.GetFileIcon(filePath, IconReader.IconSize.Small, false).ToBitmap();
 
-                    if (isIgnored == false)
-                    {
-                        cachedIcons.Add(ext, icon);
-                    }
-                    
-                    return icon;
+                if (isIgnored == false)
+                {
+                    cachedIcons.Add(ext, icon);
                 }
+
+                return icon;
             }
         }
 
