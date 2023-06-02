@@ -10,12 +10,14 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Reflection.Emit;
 using Avalonia;
+using System.ComponentModel;
 
 namespace FileFlow.Views
 {
     public partial class ExplorerControl : UserControl
     {
         private MainWindow mainWindow;
+        private IFileSystemService fileSystem;
         private ExplorerViewModel model;
 
         public ExplorerControl()
@@ -25,14 +27,16 @@ namespace FileFlow.Views
         public ExplorerControl(MainWindow mainWindow, IFileSystemService fileSystem, StorageElement folder)
         {
             this.mainWindow = mainWindow;
+            this.fileSystem = fileSystem;
 
             model = new(fileSystem);
             DataContext = model;
             model.Open(folder);
+            
+            InitializeComponent();
 
             AddHandler(PointerPressedEvent, OnExplorerPressed, Avalonia.Interactivity.RoutingStrategies.Tunnel);
-
-            InitializeComponent();
+            UpdatePathBar();
         }
 
         public void Click(object sender, PointerPressedEventArgs e)
@@ -68,6 +72,26 @@ namespace FileFlow.Views
         private void UpdatePathBar()
         {
             pathText.Text = model.Path;
+        }
+        private void OnPathBarKeyDown(object sender, KeyEventArgs e)
+        {
+            bool isAnyKeyPressed = false;
+
+            if (e.Key == Key.Enter)
+            {
+                model.Open(new(pathText.Text, fileSystem));
+                isAnyKeyPressed = true;
+            }
+            else if (e.Key == Key.Escape)
+            {
+                UpdatePathBar();
+                isAnyKeyPressed = true;
+            }
+
+            if (isAnyKeyPressed)
+            {
+                KeyboardDevice.Instance.SetFocusedElement(null, NavigationMethod.Unspecified, KeyModifiers.None);
+            }
         }
     }
 }

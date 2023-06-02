@@ -12,7 +12,8 @@
         CornerRadius="8" 
         Padding="12, 6, 12, 6"
         MinHeight="0"
-        FontSize="12">
+        FontSize="12"
+        KeyDown="OnPathBarKeyDown">
       </TextBox>
     </Border>
     <ListBox
@@ -52,13 +53,25 @@
       <ListBox.ItemTemplate>
         <DataTemplate>
           <Border Padding="0, 8" Background="Transparent" PointerPressed="Click" Tag="{Binding}">
-            <StackPanel Orientation="Horizontal" IsHitTestVisible="False">
-              <Border Width="4" Height="13" Margin="8, 0" CornerRadius="100"/>
-              <Image Width="16" Height="16" Source="{Binding Icon}"/>
-              <TextBlock Text="{Binding Name}" FontSize="12" Width="700" Margin="8, 0, 0, 0"/>
-              <TextBlock Text="{Binding LastModifyTime}" FontSize="12" Width="150"/>
-              <TextBlock Text="{Binding Size}" FontSize="12" Width="150"/>
-            </StackPanel>
+            <Grid
+              IsHitTestVisible="False">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="4"/> 
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="400*" MinWidth="200"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="150*" MaxWidth="140"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="150*" MaxWidth="140"/>
+              </Grid.ColumnDefinitions>
+              <Border Grid.Column="1" Height="13" CornerRadius="100"/>
+              <Image Grid.Column="2" Height="16" Source="{Binding Icon}"/>
+              <TextBlock Grid.Column="4" Text="{Binding Name}" FontSize="12"/>
+              <TextBlock Grid.Column="6" Text="{Binding LastModifyTime}" FontSize="12"/>
+              <TextBlock Grid.Column="8" Text="{Binding Size}" FontSize="12"/>
+            </Grid>
           </Border>
         </DataTemplate>
       </ListBox.ItemTemplate>
