@@ -14,6 +14,8 @@ namespace FileFlow.Views
 {
     public partial class MainWindow : Window
     {
+        private List<ExplorerControl> explorers = new();
+
         public MainWindow()
         {
             
@@ -24,8 +26,12 @@ namespace FileFlow.Views
 
             InitializeComponent();
 
-            ExplorerControl control = new(model.fileSystem, new("C:/Users/REDIZIT/Downloads", model.fileSystem));
-            ExplorerControl control2 = new(model.fileSystem, new("C:/", model.fileSystem));
+            ExplorerControl control = new(this, model.fileSystem, new("C:/Users/REDIZIT/Downloads", model.fileSystem));
+            ExplorerControl control2 = new(this, model.fileSystem, new("C:/", model.fileSystem));
+
+            explorers.Add(control);
+            explorers.Add(control2);
+
             explorerPlaceholder.Content = control;
             explorerPlaceholder2.Content = control2;
         }
@@ -36,6 +42,13 @@ namespace FileFlow.Views
             //StorageElement storageElement = (StorageElement)((Control)el.Source).Tag;
         }
 
-        
+        public void OnExplorerClicked(ExplorerControl explorer)
+        {
+            foreach (var item in explorers)
+            {
+                item.Opacity = 0.7f;
+            }
+            explorer.Opacity = 1;
+        }
     }
 }

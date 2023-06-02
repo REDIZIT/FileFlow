@@ -23,12 +23,6 @@
       <Setter Property="Background" Value="#aa262626"/>
       <Setter Property="BorderBrush" Value="#000"/>
     </Style>
-    <Style Selector="ContentControl">
-      <Setter Property="Opacity" Value="0.8"/>
-    </Style>
-    <Style Selector="ContentControl:focus-within">
-      <Setter Property="Opacity" Value="1"/>
-    </Style>
   </Window.Styles>
   
   <Grid RowDefinitions="Auto, *, 32">

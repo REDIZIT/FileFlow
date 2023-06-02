@@ -18,7 +18,7 @@ namespace FileFlow.ViewModels
 
         public StorageElement(string path, IFileSystemService fileSystem)
         {
-            Path = path;
+            Path = path.Replace('\\', '/');
             UpdateSize(fileSystem);
         }
 
