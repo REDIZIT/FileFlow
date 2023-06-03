@@ -13,6 +13,7 @@ namespace FileFlow.Views
     {
         public string Path { get; private set; }
         public ObservableCollection<StorageElement> StorageElements { get; set; }
+        public ObservableCollection<PathBarHintViewModel> PathBarHints { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -23,6 +24,13 @@ namespace FileFlow.Views
         public ExplorerViewModel(IFileSystemService fileSystem)
         {
             this.fileSystem = fileSystem;
+
+            PathBarHints = new()
+            {
+                new() { DisplayText = "123", TypeText = "System" },
+                new() { DisplayText = "234", TypeText = "App" },
+                new() { DisplayText = "345", TypeText = "System" }
+            };
         }
         
         public void Open(StorageElement storageElement)

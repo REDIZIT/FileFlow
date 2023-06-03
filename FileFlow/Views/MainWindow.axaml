@@ -14,9 +14,11 @@
     <ImageBrush 
       Source="/Assets/wallpaper.jpg" 
       Stretch="UniformToFill"
-      Opacity="0.15"
+      Opacity="1"
       BitmapInterpolationMode="HighQuality"/>
   </Window.Background>
+
+  
 
   <Window.Styles>
     <Style Selector="TextBox.path">
@@ -24,23 +26,23 @@
       <Setter Property="BorderBrush" Value="#000"/>
     </Style>
   </Window.Styles>
-  
-  <Grid RowDefinitions="Auto, *, 32">
+
+  <Grid RowDefinitions="Auto, *, 32" Background="#E4101010">
     <Border Height="42" Background="#cc262626">
-      <TextBox 
-        Grid.Row="0" 
+      <TextBox
+        Grid.Row="0"
         Classes="path"
-        Text="1" 
+        Text="1"
         FontSize="12"
         Height="28"
         CornerRadius="6"
         MinHeight="0"
-        Padding="12, 1, 12, 0" 
+        Padding="12, 1, 12, 0"
         VerticalContentAlignment="Center"
         Margin="12, 0"/>
     </Border>
     <Grid Name="explorerGrid" ColumnDefinitions="100, 2, *, 2, *" Grid.Row="1" Background="#0000">
-      <Rectangle Grid.Column="0" Fill="Black"/>
+      <Rectangle Grid.Column="0" />
       <GridSplitter Grid.Column="1" Background="White" ResizeDirection="Columns"/>
       <ContentControl Grid.Column="2" Name="explorerPlaceholder"/>
       <GridSplitter Grid.Column="3" Background="White" ResizeDirection="Columns"/>
@@ -48,6 +50,7 @@
     </Grid>
     <TextBox Grid.Row="2" Text="444" Name="statusText"/>
   </Grid>
+
 
 
 </Window>

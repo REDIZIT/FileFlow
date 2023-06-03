@@ -11,11 +11,16 @@ using System.Threading;
 using System.Reflection.Emit;
 using Avalonia;
 using System.ComponentModel;
+using Avalonia.Controls.Generators;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace FileFlow.Views
 {
     public partial class ExplorerControl : UserControl
     {
+        
+
         private MainWindow mainWindow;
         private IFileSystemService fileSystem;
         private ExplorerViewModel model;
@@ -32,11 +37,13 @@ namespace FileFlow.Views
             model = new(fileSystem);
             DataContext = model;
             model.Open(folder);
-            
+
             InitializeComponent();
 
             AddHandler(PointerPressedEvent, OnExplorerPressed, Avalonia.Interactivity.RoutingStrategies.Tunnel);
-            UpdatePathBar();
+            OnPathChanged();
+
+            //pathPopup.Width = 1000;
         }
 
         public void Click(object sender, PointerPressedEventArgs e)
@@ -50,7 +57,7 @@ namespace FileFlow.Views
             {
                 StorageElement storageElement = (StorageElement)((Control)e.Source).Tag;
                 model.Open(storageElement);
-                UpdatePathBar();
+                OnPathChanged();
             }
         }
         private void OnExplorerPressed(object sender, PointerPressedEventArgs e)
@@ -61,20 +68,23 @@ namespace FileFlow.Views
             if (props.IsXButton1Pressed)
             {
                 model.Back();
-                UpdatePathBar();
+                OnPathChanged();
             }
             else if (props.IsXButton2Pressed)
             {
                 model.Next();
-                UpdatePathBar();
+                OnPathChanged();
             }
         }
-        private void UpdatePathBar()
+        private void OnPathChanged()
         {
             pathText.Text = model.Path;
         }
         private void OnPathBarKeyDown(object sender, KeyEventArgs e)
         {
+            pathPopup.Width = pathText.Bounds.Width;
+            pathPopup.Open();
+
             bool isAnyKeyPressed = false;
 
             if (e.Key == Key.Enter)
@@ -84,13 +94,37 @@ namespace FileFlow.Views
             }
             else if (e.Key == Key.Escape)
             {
-                UpdatePathBar();
+                OnPathChanged();
                 isAnyKeyPressed = true;
+            }
+
+            if (e.Key == Key.Down)
+            {
+                var listBoxItem = (ListBoxItem)pathList
+                    .ItemContainerGenerator
+                    .Containers.First().ContainerControl;
+
+                pathList.SelectedIndex = 0;
+                listBoxItem.Focus();
             }
 
             if (isAnyKeyPressed)
             {
                 KeyboardDevice.Instance.SetFocusedElement(null, NavigationMethod.Unspecified, KeyModifiers.None);
+            }
+        }
+        private void OnPathBarClicked(object sender, PointerPressedEventArgs e)
+        {
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            {
+                pathPopup.Close();
+            }
+        }
+        private void OnPathBarKeyPressed(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                pathPopup.Close();
             }
         }
     }
