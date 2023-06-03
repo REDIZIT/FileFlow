@@ -7,9 +7,10 @@ using System.Linq;
 
 namespace FileFlow.Views
 {
-
     public partial class ExplorerControl : UserControl
     {
+        private FileCreationView FileCreationView => (FileCreationView)fileCreationView.Content;
+
         private MainWindow mainWindow;
         private IFileSystemService fileSystem;
         private ExplorerViewModel model;
@@ -18,7 +19,7 @@ namespace FileFlow.Views
         {
             InitializeComponent();
         }
-        public ExplorerControl(MainWindow mainWindow, IFileSystemService fileSystem, StorageElement folder)
+        public ExplorerControl(MainWindow mainWindow, IFileSystemService fileSystem, StorageElement folder, IIconExtractorService iconExtractor)
         {
             this.mainWindow = mainWindow;
             this.fileSystem = fileSystem;
@@ -26,8 +27,11 @@ namespace FileFlow.Views
             model = new(fileSystem);
             model.onFolderLoaded += OnFolderLoaded;
             DataContext = model;
+
             
             InitializeComponent();
+            fileCreationView.Content = new FileCreationView(fileSystem, iconExtractor);
+            newFileButton.Click += ShowFileCreationView;
 
             AddHandler(PointerPressedEvent, OnExplorerPressed, Avalonia.Interactivity.RoutingStrategies.Tunnel);
 
@@ -131,6 +135,11 @@ namespace FileFlow.Views
             {
                 pathPopup.Close();
             }
+        }
+        private void ShowFileCreationView(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            FileCreationView.Show(model.Path);
+            contextMenu.Close();
         }
     }
 }

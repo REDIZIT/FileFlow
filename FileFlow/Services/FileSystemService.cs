@@ -19,6 +19,7 @@ namespace FileFlow.Services
         Task<string> GetElementWeight(string path);
         Task<string> GetModifyTime(string path);
         void Run(string filePath);
+        void CreateFile(string filePath);
     }
     public class FileSystemService : IFileSystemService
     {
@@ -99,6 +100,10 @@ namespace FileFlow.Services
             {
                 return FileSizeUtil.PrettyModifyDate(new FileInfo(path).LastWriteTime);
             });
+        }
+        public void CreateFile(string filePath)
+        {
+            File.Create(filePath);
         }
     }
 }

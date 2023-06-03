@@ -11,3 +11,9 @@ dotnet_diagnostic.CS8600.severity = none
 
 # CS8604: Возможно, аргумент-ссылка, допускающий значение NULL.
 dotnet_diagnostic.CS8604.severity = none
+
+# CS8601: Возможно, назначение-ссылка, допускающее значение NULL.
+dotnet_diagnostic.CS8601.severity = none
+
+# CS8625: Литерал, равный NULL, не может быть преобразован в ссылочный тип, не допускающий значение NULL.
+dotnet_diagnostic.CS8625.severity = none

@@ -1,0 +1,96 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="450"
+             x:Class="FileFlow.Views.FileCreationView">
+
+  <UserControl.Styles>
+    <Style Selector="Border#window">
+      <Setter Property="Opacity" Value="0"/>
+      <Setter Property="RenderTransform" Value="translateY(10px)"/>
+    </Style>
+    <Style Selector="Border#window.showed">
+      <Setter Property="Opacity" Value="1"/>
+      <Setter Property="RenderTransform" Value="translateY(0px)"/>
+    </Style>
+    
+    <Style Selector="TextBox">
+      <Setter Property="BorderBrush" Value="#555"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Background" Value="#222"/>
+    </Style>
+    <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+      <Setter Property="BorderBrush" Value="#767676"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Background" Value="#252525"/>
+    </Style>
+    <Style Selector="TextBox:focus-within /template/ Border#PART_BorderElement">
+      <Setter Property="BorderBrush" Value="#888"/>
+      <Setter Property="BorderThickness" Value="2"/>
+      <Setter Property="Background" Value="#222"/>
+    </Style>
+
+    <Style Selector="TextBox.invalid">
+      <Setter Property="BorderBrush" Value="#cf24"/>
+    </Style>
+    <Style Selector="TextBox.invalid:pointerover /template/ Border#PART_BorderElement">
+      <Setter Property="BorderBrush" Value="#f35"/>
+    </Style>
+    <Style Selector="TextBox.invalid:focus-within /template/ Border#PART_BorderElement">
+      <Setter Property="BorderBrush" Value="#cf35"/>
+    </Style>
+  </UserControl.Styles>
+
+  
+  
+  <Border
+        Name="window" Classes.showed="{Binding IsShowed}"
+        Background="#2c2c2c" VerticalAlignment="Top" Margin="60"
+        Width="360" BorderBrush="#444" BorderThickness="1"
+        CornerRadius="8" BoxShadow="0 4 30 1 #c000"
+        KeyDown="OnKeyDown">
+
+    <Border.Transitions>
+      <Transitions>
+        <DoubleTransition Property="Opacity" Duration="0:0:0.1"/>
+        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+      </Transitions>
+    </Border.Transitions>
+
+    <Grid RowDefinitions="32, Auto, 42">
+      
+      <TextBlock Grid.Row="0"
+                 Text="Создать новый файл" FontSize="11" Foreground="#999"
+                 HorizontalAlignment="Center" VerticalAlignment="Center"/>
+      
+      <Panel Grid.Row="1" Margin="0, 0, 0, 2">
+        <Image Source="{Binding FileIcon}" Height="16" Width="16" HorizontalAlignment="Left" Margin="20, 1, 0, 0"/>
+        <TextBox
+          Name="newFileBox" Text="123" FontSize="11" Classes.invalid="{Binding IsInvalid}"
+          Padding="12, 6, 12, 5" MinHeight="0" CornerRadius="6" Margin="48, 0, 12, 0">
+        </TextBox>
+        <TextBlock
+          Name="invalidText" Text="Имя занято" IsVisible="False"
+          HorizontalAlignment="Right" FontSize="11" Padding="0, 1" IsHitTestVisible="False"
+          VerticalAlignment="Center" Margin="24, 0" Foreground="#F35" FontWeight="SemiBold"/>
+      </Panel>
+      
+      <Grid Grid.Row="2" ColumnDefinitions="*, *" Margin="12, 6">
+        <Button Name="cancelButton" Grid.Column="0" Height="24"
+                HorizontalAlignment="Stretch" Padding="0"
+                FontSize="11" VerticalAlignment="Stretch"
+                CornerRadius="4" Margin="0, 0, 2, 0">
+          <TextBlock Text="Отменить" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Button>
+        <Button Name="createButton" Grid.Column="1" Height="24"
+                 HorizontalAlignment="Stretch" Padding="0"
+                 FontSize="11" VerticalAlignment="Stretch"
+                 CornerRadius="4" Margin="2, 0, 0, 0" 
+                IsEnabled="{Binding IsValid}">
+          <TextBlock Text="Создать" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Button>
+      </Grid>
+    </Grid>
+  </Border>
+</UserControl>

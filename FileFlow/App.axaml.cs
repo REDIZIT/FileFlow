@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using FileFlow.NinjectModules;
+using FileFlow.Services;
 using FileFlow.ViewModels;
 using FileFlow.Views;
 using Ninject;
@@ -22,7 +23,7 @@ namespace FileFlow
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow(kernel.Get<MainWindowViewModel>());
+                desktop.MainWindow = new MainWindow(kernel.Get<MainWindowViewModel>(), kernel.Get<IIconExtractorService>());
             }
 
             base.OnFrameworkInitializationCompleted();

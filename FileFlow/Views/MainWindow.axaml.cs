@@ -3,6 +3,7 @@ using Avalonia.Data.Converters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using FileFlow.Services;
 using FileFlow.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -20,14 +21,14 @@ namespace FileFlow.Views
         {
             
         }
-        public MainWindow(MainWindowViewModel model)
+        public MainWindow(MainWindowViewModel model, IIconExtractorService iconExtractor)
         {
             DataContext = model;
 
             InitializeComponent();
 
-            ExplorerControl control = new(this, model.fileSystem, new("C:/Users/REDIZIT/Downloads", model.fileSystem));
-            ExplorerControl control2 = new(this, model.fileSystem, new("C:/", model.fileSystem));
+            ExplorerControl control = new(this, model.fileSystem, new("C:/Users/REDIZIT/Downloads", model.fileSystem), iconExtractor);
+            ExplorerControl control2 = new(this, model.fileSystem, new("C:/", model.fileSystem), iconExtractor);
 
             explorers.Add(control);
             explorers.Add(control2);
