@@ -25,7 +25,9 @@
       <Setter Property="Background" Value="#aa262626"/>
       <Setter Property="BorderBrush" Value="#000"/>
     </Style>
+    
   </Window.Styles>
+
 
   <Grid RowDefinitions="Auto, *, 32" Background="#EE141414">
     <Border Height="42" Background="#cc262626">

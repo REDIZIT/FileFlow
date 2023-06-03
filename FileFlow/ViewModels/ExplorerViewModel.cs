@@ -7,14 +7,22 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Input;
 
 namespace FileFlow.Views
 {
+    public class MenuItemViewModel
+    {
+        public string Header { get; set; }
+        public ICommand Command { get; set; }
+        public ObservableCollection<MenuItemViewModel> SubMenuItems { get; set; }
+    }
     public class ExplorerViewModel : ViewModelBase, INotifyPropertyChanged
     {
         public string Path { get; private set; }
         public ObservableCollection<StorageElement> StorageElements { get; set; }
         public ObservableCollection<PathBarHintViewModel> PathBarHints { get; set; }
+        public ObservableCollection<MenuItemViewModel> ContextMenuItems { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -28,11 +36,37 @@ namespace FileFlow.Views
         {
             this.fileSystem = fileSystem;
 
+
             PathBarHints = new()
             {
                 new() { DisplayText = "123", TypeText = "System" },
                 new() { DisplayText = "234", TypeText = "App" },
                 new() { DisplayText = "345", TypeText = "System" }
+            };
+
+            //ContextMenuItems = new()
+            //{
+            //    new() { Header = "1", Items = new List<MenuItem>()
+            //    {
+            //        new() { Header = "a" },
+            //        new() { Header = "b" },
+            //        new() { Header = "c" },
+            //    } },
+            //    new() { Header = "2" },
+            //    new() { Header = "3" },
+            //    new() { Header = "4" },
+            //    new() { Header = "5" },
+            //};
+
+            //ContextMenuItems = new()
+            //{
+            //    "a", "b", "c"
+            //};
+            ContextMenuItems = new()
+            {
+                new() { Header = "1" },
+                new() { Header = "2" },
+                new() { Header = "3" },
             };
         }
         

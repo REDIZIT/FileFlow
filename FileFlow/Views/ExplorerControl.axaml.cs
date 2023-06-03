@@ -7,6 +7,7 @@ using System.Linq;
 
 namespace FileFlow.Views
 {
+
     public partial class ExplorerControl : UserControl
     {
         private MainWindow mainWindow;
@@ -49,9 +50,16 @@ namespace FileFlow.Views
             // e.ClickCount does not resetting on listbox refresh (path change)
             // If it would, then we easily use >= 2 or even == 2
             // But due to reset missing, use % 2 == 0
-            if (e.ClickCount % 2 == 0 && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            StorageElement storageElement = (StorageElement)((Control)e.Source).Tag;
+            var props = e.GetCurrentPoint(this).Properties;
+
+            if (props.IsRightButtonPressed)
             {
-                StorageElement storageElement = (StorageElement)((Control)e.Source).Tag;
+                contextMenu.PlacementMode = PlacementMode.Pointer;
+                contextMenu.Open();
+            }
+            else if (e.ClickCount % 2 == 0 && props.IsLeftButtonPressed)
+            {
                 model.Open(storageElement);
             }
         }
