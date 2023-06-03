@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using FileFlow.Services;
 using FileFlow.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -16,6 +17,8 @@ namespace FileFlow.Views
         public ObservableCollection<PathBarHintViewModel> PathBarHints { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public Action<LoadStatus> onFolderLoaded;
 
         private History<StorageElement> history = new(HistoryPointerType.TargetFrame);
         private IFileSystemService fileSystem;
@@ -63,9 +66,10 @@ namespace FileFlow.Views
         private void SetPath(string path)
         {
             Path = path;
-            StorageElements = new(fileSystem.GetStorageElements(path));
+            StorageElements = new(fileSystem.GetStorageElements(path, out LoadStatus status));
             OnPropertyChanged(nameof(Path));
             OnPropertyChanged(nameof(StorageElements));
+            onFolderLoaded?.Invoke(status);
         }
 
         protected virtual void OnPropertyChanged(string propertyName)

@@ -1,16 +1,21 @@
-﻿using Avalonia.Media.Imaging;
-using FileFlow.ViewModels;
+﻿using FileFlow.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace FileFlow.Services
 {
+    public enum LoadStatus
+    {
+        Ok,
+        Empty,
+        NoAuth,
+    }
     public interface IFileSystemService
     {
-        IEnumerable<StorageElement> GetStorageElements(string folderPath);
+        List<StorageElement> GetStorageElements(string folderPath, out LoadStatus status);
         Task<string> GetElementWeight(string path);
         Task<string> GetModifyTime(string path);
         void Run(string filePath);
@@ -33,23 +38,35 @@ namespace FileFlow.Services
             };
             p.Start();
         }
-        public IEnumerable<StorageElement> GetStorageElements(string folderPath)
+        public List<StorageElement> GetStorageElements(string folderPath, out LoadStatus status)
         {
-            foreach (string entryPath in Directory.EnumerateDirectories(folderPath))
+            List<StorageElement> ls = new();
+            try
             {
-                yield return new StorageElement(entryPath, this)
+                foreach (string entryPath in Directory.EnumerateDirectories(folderPath))
                 {
-                    Name = Path.GetFileName(entryPath),
-                    Icon = iconExtractor.GetFolderIcon(entryPath).ConvertToAvaloniaBitmap(),
-                };
+                    ls.Add(new StorageElement(entryPath, this)
+                    {
+                        Name = Path.GetFileName(entryPath),
+                        Icon = iconExtractor.GetFolderIcon(entryPath).ConvertToAvaloniaBitmap(),
+                    });
+                }
+                foreach (string entryPath in Directory.EnumerateFiles(folderPath))
+                {
+                    ls.Add(new StorageElement(entryPath, this)
+                    {
+                        Name = Path.GetFileName(entryPath),
+                        Icon = iconExtractor.GetFileIcon(entryPath).ConvertToAvaloniaBitmap()
+                    });
+                }
+
+                status = ls.Count > 0 ? LoadStatus.Ok : LoadStatus.Empty;
+                return ls;
             }
-            foreach (string entryPath in Directory.EnumerateFiles(folderPath))
+            catch(UnauthorizedAccessException)
             {
-                yield return new StorageElement(entryPath, this)
-                {
-                    Name = Path.GetFileName(entryPath),
-                    Icon = iconExtractor.GetFileIcon(entryPath).ConvertToAvaloniaBitmap()
-                };
+                status = LoadStatus.NoAuth;
+                return ls;
             }
         }
 

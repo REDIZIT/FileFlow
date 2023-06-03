@@ -1,6 +1,4 @@
-﻿using FileFlow.ViewModels;
-
-namespace FileFlow.Views
+﻿namespace FileFlow.ViewModels
 {
     public class PathBarHintViewModel : ViewModelBase
     {

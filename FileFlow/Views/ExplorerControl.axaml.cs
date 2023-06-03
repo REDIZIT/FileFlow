@@ -1,29 +1,14 @@
-using Avalonia.Animation.Easings;
-using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Input;
+using FileFlow.Extensions;
 using FileFlow.Services;
 using FileFlow.ViewModels;
-using System;
-using Avalonia.Animation.Animators;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Reflection.Emit;
-using Avalonia;
-using System.ComponentModel;
-using Avalonia.Controls.Generators;
-using System.Collections.ObjectModel;
 using System.Linq;
-using Avalonia.Controls.Primitives;
-using Avalonia.Media;
-using System.Diagnostics;
 
 namespace FileFlow.Views
 {
     public partial class ExplorerControl : UserControl
     {
-        
-
         private MainWindow mainWindow;
         private IFileSystemService fileSystem;
         private ExplorerViewModel model;
@@ -38,31 +23,27 @@ namespace FileFlow.Views
             this.fileSystem = fileSystem;
 
             model = new(fileSystem);
+            model.onFolderLoaded += OnFolderLoaded;
             DataContext = model;
-            model.Open(folder);
-
+            
             InitializeComponent();
 
             AddHandler(PointerPressedEvent, OnExplorerPressed, Avalonia.Interactivity.RoutingStrategies.Tunnel);
-            OnPathChanged();
 
-            //pathPopup.Width = 1000;
+            model.Open(folder);
         }
 
         public void Moved(object sender, PointerEventArgs e)
         {
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                Trace.WriteLine("Move");
                 DataObject data = new();
                 data.Set(DataFormats.FileNames, new string[] { "C:/testfile.txt" });
                 DragDrop.DoDragDrop(e, data, DragDropEffects.Move);
-                Trace.WriteLine("Done");
             }
         }
         public void Click(object sender, PointerPressedEventArgs e)
         {
-            Trace.WriteLine("Click");
             mainWindow.OnExplorerClicked(this);
 
             // e.ClickCount does not resetting on listbox refresh (path change)
@@ -72,7 +53,6 @@ namespace FileFlow.Views
             {
                 StorageElement storageElement = (StorageElement)((Control)e.Source).Tag;
                 model.Open(storageElement);
-                OnPathChanged();
             }
         }
         private void OnExplorerPressed(object sender, PointerPressedEventArgs e)
@@ -83,17 +63,20 @@ namespace FileFlow.Views
             if (props.IsXButton1Pressed)
             {
                 model.Back();
-                OnPathChanged();
             }
             else if (props.IsXButton2Pressed)
             {
                 model.Next();
-                OnPathChanged();
             }
         }
-        private void OnPathChanged()
+        private void OnFolderLoaded(LoadStatus status)
         {
             pathText.Text = model.Path;
+            bool hasElements = model.StorageElements.Any();
+            listBox.IsVisible = hasElements;
+            messageText.IsVisible = hasElements == false;
+
+            messageText.Text = status.ToMessageString();
         }
         private void OnPathBarKeyDown(object sender, KeyEventArgs e)
         {
@@ -109,7 +92,6 @@ namespace FileFlow.Views
             }
             else if (e.Key == Key.Escape)
             {
-                OnPathChanged();
                 isAnyKeyPressed = true;
             }
 

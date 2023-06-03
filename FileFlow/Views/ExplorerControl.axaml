@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="FileFlow.Views.ExplorerControl"
+             xmlns:local="clr-namespace:FileFlow.ViewModels"
              Background="Transparent"
              DragDrop.AllowDrop="True">
   <Grid RowDefinitions="Auto, *">
@@ -66,74 +67,84 @@
         </Popup>
       </Grid>
     </Border>
-    <ListBox
+
+    <Panel Grid.Row="1" Margin="12, 6, 12, 0">
+      <TextBlock 
+        Name="messageText"
+        IsVisible="False"
+        Padding="32"
+        Foreground="#999" 
+        Text="This folder is empty" 
+        HorizontalAlignment="Center"
+        FontSize="12"/>
+      <ListBox
         Name="listBox"
-        Grid.Row="1"
+        IsVisible="True"
         Items="{Binding StorageElements}"
         SelectionMode="Multiple"
-        Background="Transparent"
-        Margin="12, 6, 12, 0">
+        Background="Transparent">
 
-      <ListBox.Styles>
-        <Style Selector="ListBoxItem">
-          <Setter Property="Padding" Value="0"/>
-          <Setter Property="CornerRadius" Value="6"/>
-          <Setter Property="Margin" Value="0, 1"/>
-          <!--<Setter Property="Background" Value="#9333"/>-->
-          <Setter Property="Background" Value="#2f656565"/>
-        </Style>
-        <Style Selector="ListBoxItem > Border > Grid > Border">
-          <Setter Property="Background" Value="Transparent"/>
-        </Style>
-        <Style Selector="ListBoxItem:selected > Border > Grid > Border">
-          <Setter Property="Background" Value="#ccc"/>
-        </Style>
-      </ListBox.Styles>
+        <ListBox.Styles>
+          <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Margin" Value="0, 1"/>
+            <!--<Setter Property="Background" Value="#9333"/>-->
+            <Setter Property="Background" Value="#2f656565"/>
+          </Style>
+          <Style Selector="ListBoxItem > Border > Grid > Border">
+            <Setter Property="Background" Value="Transparent"/>
+          </Style>
+          <Style Selector="ListBoxItem:selected > Border > Grid > Border">
+            <Setter Property="Background" Value="#ccc"/>
+          </Style>
+        </ListBox.Styles>
 
-      <ListBox.Resources>
-        <!--Only selected-->
-        <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="#a555" />
-        <!--Selected and hovered-->
-        <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="#a666" />
-        <!--Pressed (may be not selected)-->
-        <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="#a555" />
+        <ListBox.Resources>
+          <!--Only selected-->
+          <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="#a555" />
+          <!--Selected and hovered-->
+          <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="#a666" />
+          <!--Pressed (may be not selected)-->
+          <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="#a555" />
 
-        <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="#a444"/>
-      </ListBox.Resources>
+          <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="#a444"/>
+        </ListBox.Resources>
 
-      <ListBox.ItemTemplate>
-        <DataTemplate>
-          <Border 
-            Padding="0, 8" 
-            Background="Transparent"
-            PointerPressed="Click"
-            PointerMoved="Moved"
-            Tag="{Binding}">
-            <Grid
-              IsHitTestVisible="False">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="8"/>
-                <ColumnDefinition Width="4"/>
-                <ColumnDefinition Width="6"/>
-                <ColumnDefinition Width="16"/>
-                <ColumnDefinition Width="8"/>
-                <ColumnDefinition Width="400*" MinWidth="200"/>
-                <ColumnDefinition Width="8"/>
-                <ColumnDefinition Width="150*" MaxWidth="140"/>
-                <ColumnDefinition Width="8"/>
-                <ColumnDefinition Width="150*" MaxWidth="140"/>
-              </Grid.ColumnDefinitions>
-              <Border Grid.Column="1" Height="13" CornerRadius="100"/>
-              <Image Grid.Column="3" Height="16" Source="{Binding Icon}"/>
-              <TextBlock Grid.Column="5" Text="{Binding Name}" FontSize="11"/>
-              <TextBlock Grid.Column="7" Text="{Binding LastModifyTime}" FontSize="11"/>
-              <TextBlock Grid.Column="9" Text="{Binding Size}" FontSize="11"/>
-            </Grid>
-          </Border>
-        </DataTemplate>
-      </ListBox.ItemTemplate>
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Border
+              Padding="0, 8"
+              Background="Transparent"
+              PointerPressed="Click"
+              PointerMoved="Moved"
+              Tag="{Binding}">
+              <Grid
+                IsHitTestVisible="False">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="8"/>
+                  <ColumnDefinition Width="4"/>
+                  <ColumnDefinition Width="6"/>
+                  <ColumnDefinition Width="16"/>
+                  <ColumnDefinition Width="8"/>
+                  <ColumnDefinition Width="400*" MinWidth="200"/>
+                  <ColumnDefinition Width="8"/>
+                  <ColumnDefinition Width="150*" MaxWidth="140"/>
+                  <ColumnDefinition Width="8"/>
+                  <ColumnDefinition Width="150*" MaxWidth="140"/>
+                </Grid.ColumnDefinitions>
+                <Border Grid.Column="1" Height="13" CornerRadius="100"/>
+                <Image Grid.Column="3" Height="16" Source="{Binding Icon}"/>
+                <TextBlock Grid.Column="5" Text="{Binding Name}" FontSize="11"/>
+                <TextBlock Grid.Column="7" Text="{Binding LastModifyTime}" FontSize="11"/>
+                <TextBlock Grid.Column="9" Text="{Binding Size}" FontSize="11"/>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
 
 
-    </ListBox>
+      </ListBox>
+    </Panel>
   </Grid>
 </UserControl>
