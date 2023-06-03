@@ -14,6 +14,9 @@ using System.ComponentModel;
 using Avalonia.Controls.Generators;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Avalonia.Controls.Primitives;
+using Avalonia.Media;
+using System.Diagnostics;
 
 namespace FileFlow.Views
 {
@@ -46,8 +49,20 @@ namespace FileFlow.Views
             //pathPopup.Width = 1000;
         }
 
+        public void Moved(object sender, PointerEventArgs e)
+        {
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            {
+                Trace.WriteLine("Move");
+                DataObject data = new();
+                data.Set(DataFormats.FileNames, new string[] { "C:/testfile.txt" });
+                DragDrop.DoDragDrop(e, data, DragDropEffects.Move);
+                Trace.WriteLine("Done");
+            }
+        }
         public void Click(object sender, PointerPressedEventArgs e)
         {
+            Trace.WriteLine("Click");
             mainWindow.OnExplorerClicked(this);
 
             // e.ClickCount does not resetting on listbox refresh (path change)

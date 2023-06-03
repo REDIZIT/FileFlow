@@ -27,7 +27,7 @@
     </Style>
   </Window.Styles>
 
-  <Grid RowDefinitions="Auto, *, 32" Background="#E4101010">
+  <Grid RowDefinitions="Auto, *, 32" Background="#EE141414">
     <Border Height="42" Background="#cc262626">
       <TextBox
         Grid.Row="0"
