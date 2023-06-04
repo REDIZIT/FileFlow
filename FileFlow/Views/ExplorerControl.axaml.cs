@@ -36,7 +36,8 @@ namespace FileFlow.Views
             newFolderButton.Click += (_, _) => ShowFileCreationView(false, FileCreationView.Action.Create);
             renameButton.Click += (_, _) => ShowFileCreationView(!contextedElement.IsFolder, FileCreationView.Action.Rename);
 
-            AddHandler(PointerPressedEvent, OnExplorerPressed, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+            AddHandler(PointerPressedEvent, OnExplorerPointerPressed, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+            AddHandler(KeyDownEvent, OnExplorerKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
 
             model.Open(folder);
         }
@@ -65,7 +66,7 @@ namespace FileFlow.Views
                 model.Open(storageElement);
             }
         }
-        private void OnExplorerPressed(object sender, PointerPressedEventArgs e)
+        private void OnExplorerPointerPressed(object sender, PointerPressedEventArgs e)
         {
             mainWindow.OnExplorerClicked(this);
 
@@ -84,6 +85,16 @@ namespace FileFlow.Views
                 contextedElement = (StorageElement)((Control)e.Source).Tag;
                 contextMenu.PlacementMode = PlacementMode.Pointer;
                 contextMenu.Open();
+            }
+        }
+        private void OnExplorerKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                foreach (StorageElement item in listBox.SelectedItems)
+                {
+                    fileSystem.Delete(item.Path);
+                }
             }
         }
         private void OnFolderLoaded(LoadStatus status)

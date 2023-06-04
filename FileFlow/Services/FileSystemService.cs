@@ -23,6 +23,7 @@ namespace FileFlow.Services
         void CreateFile(string filePath);
         void CreateFolder(string folderPath);
         void Move(string oldPath, string newPath);
+        void Delete(string filePath);
     }
     public class FileSystemService : IFileSystemService
     {
@@ -128,6 +129,17 @@ namespace FileFlow.Services
             else
             {
                 File.Move(oldPath, newPath);
+            }
+        }
+        public void Delete(string path)
+        {
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path);
+            }
+            else
+            {
+                File.Delete(path);
             }
         }
     }
