@@ -1,28 +1,20 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia.Controls.Shapes;
+using Avalonia.Threading;
+using DynamicData.Experimental;
 using FileFlow.Services;
 using FileFlow.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Windows.Input;
+using System.IO;
 
 namespace FileFlow.Views
 {
-    public class MenuItemViewModel
-    {
-        public string Header { get; set; }
-        public ICommand Command { get; set; }
-        public ObservableCollection<MenuItemViewModel> SubMenuItems { get; set; }
-    }
     public class ExplorerViewModel : ViewModelBase, INotifyPropertyChanged
     {
         public string Path { get; private set; }
         public ObservableCollection<StorageElement> StorageElements { get; set; }
         public ObservableCollection<PathBarHintViewModel> PathBarHints { get; set; }
-        public ObservableCollection<MenuItemViewModel> ContextMenuItems { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -31,42 +23,18 @@ namespace FileFlow.Views
         private History<StorageElement> history = new(HistoryPointerType.TargetFrame);
         private IFileSystemService fileSystem;
 
+        private FileSystemWatcher watcher;
+
 
         public ExplorerViewModel(IFileSystemService fileSystem)
         {
             this.fileSystem = fileSystem;
-
 
             PathBarHints = new()
             {
                 new() { DisplayText = "123", TypeText = "System" },
                 new() { DisplayText = "234", TypeText = "App" },
                 new() { DisplayText = "345", TypeText = "System" }
-            };
-
-            //ContextMenuItems = new()
-            //{
-            //    new() { Header = "1", Items = new List<MenuItem>()
-            //    {
-            //        new() { Header = "a" },
-            //        new() { Header = "b" },
-            //        new() { Header = "c" },
-            //    } },
-            //    new() { Header = "2" },
-            //    new() { Header = "3" },
-            //    new() { Header = "4" },
-            //    new() { Header = "5" },
-            //};
-
-            //ContextMenuItems = new()
-            //{
-            //    "a", "b", "c"
-            //};
-            ContextMenuItems = new()
-            {
-                new() { Header = "1" },
-                new() { Header = "2" },
-                new() { Header = "3" },
             };
         }
         
@@ -104,6 +72,31 @@ namespace FileFlow.Views
             OnPropertyChanged(nameof(Path));
             OnPropertyChanged(nameof(StorageElements));
             onFolderLoaded?.Invoke(status);
+
+            if (watcher == null)
+            {
+                watcher = new FileSystemWatcher(path);
+                watcher.Filter = "*.*";
+                watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
+                watcher.Created += FilesChanged;
+                watcher.Deleted += FilesChanged;
+                watcher.Renamed += FilesChanged;
+                watcher.EnableRaisingEvents = true;
+            }
+            else
+            {
+                watcher.Path = path;
+            }
+        }
+        private void FilesChanged(object sender, FileSystemEventArgs e)
+        {
+            StorageElements = new(fileSystem.GetStorageElements(Path, out LoadStatus status));
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                OnPropertyChanged(nameof(StorageElements));
+                onFolderLoaded?.Invoke(status);
+            });            
         }
 
         protected virtual void OnPropertyChanged(string propertyName)

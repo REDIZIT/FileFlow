@@ -14,6 +14,7 @@ namespace FileFlow.Views
         private MainWindow mainWindow;
         private IFileSystemService fileSystem;
         private ExplorerViewModel model;
+        private StorageElement contextedElement;
 
         public ExplorerControl()
         {
@@ -31,7 +32,9 @@ namespace FileFlow.Views
             
             InitializeComponent();
             fileCreationView.Content = new FileCreationView(fileSystem, iconExtractor);
-            newFileButton.Click += ShowFileCreationView;
+            newFileButton.Click += (_, _) => ShowFileCreationView(true, FileCreationView.Action.Create);
+            newFolderButton.Click += (_, _) => ShowFileCreationView(false, FileCreationView.Action.Create);
+            renameButton.Click += (_, _) => ShowFileCreationView(!contextedElement.IsFolder, FileCreationView.Action.Rename);
 
             AddHandler(PointerPressedEvent, OnExplorerPressed, Avalonia.Interactivity.RoutingStrategies.Tunnel);
 
@@ -57,12 +60,7 @@ namespace FileFlow.Views
             StorageElement storageElement = (StorageElement)((Control)e.Source).Tag;
             var props = e.GetCurrentPoint(this).Properties;
 
-            if (props.IsRightButtonPressed)
-            {
-                contextMenu.PlacementMode = PlacementMode.Pointer;
-                contextMenu.Open();
-            }
-            else if (e.ClickCount % 2 == 0 && props.IsLeftButtonPressed)
+            if (e.ClickCount % 2 == 0 && props.IsLeftButtonPressed)
             {
                 model.Open(storageElement);
             }
@@ -79,6 +77,13 @@ namespace FileFlow.Views
             else if (props.IsXButton2Pressed)
             {
                 model.Next();
+            }
+
+            if (props.IsRightButtonPressed)
+            {
+                contextedElement = (StorageElement)((Control)e.Source).Tag;
+                contextMenu.PlacementMode = PlacementMode.Pointer;
+                contextMenu.Open();
             }
         }
         private void OnFolderLoaded(LoadStatus status)
@@ -136,9 +141,9 @@ namespace FileFlow.Views
                 pathPopup.Close();
             }
         }
-        private void ShowFileCreationView(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void ShowFileCreationView(bool isFile, FileCreationView.Action action)
         {
-            FileCreationView.Show(model.Path);
+            FileCreationView.Show(new FileCreationView.Args(model.Path, isFile, action, contextedElement));
             contextMenu.Close();
         }
     }

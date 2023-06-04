@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using FileFlow.Services;
+using FileFlow.ViewModels;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -11,6 +12,8 @@ namespace FileFlow.Views
 {
     public partial class FileCreationView : UserControl, INotifyPropertyChanged
     {
+        public string Title { get; set; }
+        public string ButtonTitle { get; set; }
         public bool IsInvalid { get; set; }
         public bool IsValid => !IsInvalid;
         public Bitmap FileIcon { get; set; }
@@ -18,9 +21,17 @@ namespace FileFlow.Views
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private string folder;
         private IIconExtractorService iconExtractor;
         private IFileSystemService fileSystem;
+        private Args args;
+
+        public record Args(string ParentFolder, bool IsFile, Action Action, StorageElement SelectedElement);
+
+        public enum Action
+        {
+            Create,
+            Rename
+        }
 
         public FileCreationView()
         {
@@ -43,39 +54,92 @@ namespace FileFlow.Views
             newFileBox.GetObservable(TextBox.TextProperty).Subscribe(OnTextChanged);
         }
 
-        public void Show(string folder)
+        public void Show(Args args)
         {
-            this.folder = folder;
+            this.args = args;
             newFileBox.Text = string.Empty;
-            //IsVisible = true;
+
             IsHitTestVisible = true;
             IsShowed = true;
 
-            OnPropertyChanged(nameof(IsShowed));
+            
+            if (args.Action == Action.Rename)
+            {
+                Title = "Переименовать " + (args.IsFile ? "файл" : "папку");
+                ButtonTitle = "Переименовать";
 
+                newFileBox.Text = args.SelectedElement.Name;
+                newFileBox.SelectionStart = newFileBox.Text.Length;
+            }
+            else
+            {
+                Title = "Создать " + (args.IsFile ? "новый файл" : "новую папку");
+                ButtonTitle = "Создать";
+            }
             newFileBox.Focus();
+
+            OnPropertyChanged(nameof(IsShowed));
+            OnPropertyChanged(nameof(Title));
+            OnPropertyChanged(nameof(ButtonTitle));
         }
         public void Hide()
         {
             IsHitTestVisible = false;
             IsShowed = false;
-            //IsVisible = false;
 
             OnPropertyChanged(nameof(IsShowed));
         }
         public void OnTextChanged(string text)
         {
-            if (IsVisible == false) return;
+            if (args == null) return;
 
-            SetValid(File.Exists(folder + "/" + text) == false);
-            FileIcon = iconExtractor.GetFileIcon(text).ConvertToAvaloniaBitmap();
+            SetValid(CheckAndMessageValidity(text));
+
+            if (args.IsFile)
+            {
+                FileIcon = iconExtractor.GetFileIcon(text).ConvertToAvaloniaBitmap();
+            }
+            else
+            {
+                if (args.Action == Action.Create)
+                {
+                    FileIcon = iconExtractor.EmptyFolder.ConvertToAvaloniaBitmap();
+                }
+                else
+                {
+                    FileIcon = iconExtractor.GetFolderIcon(args.SelectedElement.Path).ConvertToAvaloniaBitmap();
+                }
+            }
 
             OnPropertyChanged(nameof(FileIcon));
+        }
+        private bool CheckAndMessageValidity(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                invalidText.Text = "Недопустимое имя";
+                return false;
+            }
+            else
+            {
+                if (args.IsFile && File.Exists(args.ParentFolder + "/" + text))
+                {
+                    invalidText.Text = "Имя уже занято";
+                    return false;
+                }
+                else if (args.IsFile == false && Directory.Exists(args.ParentFolder + "/" + text))
+                {
+                    invalidText.Text = "Имя уже занято";
+                    return false;
+                }
+            }
+            return true;
         }
         private void SetValid(bool isValid)
         {
             IsInvalid = isValid == false;
             OnPropertyChanged(nameof(IsInvalid));
+            OnPropertyChanged(nameof(IsValid));
 
             invalidText.IsVisible = IsInvalid;
         }
@@ -85,7 +149,17 @@ namespace FileFlow.Views
         }
         private void CreateButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            fileSystem.CreateFile(folder + "/" + newFileBox.Text);
+            string path = args.ParentFolder + "/" + newFileBox.Text;
+
+            if (args.Action == Action.Create)
+            {
+                if (args.IsFile) fileSystem.CreateFile(path);
+                else fileSystem.CreateFolder(path);
+            }
+            else
+            {
+                fileSystem.Move(args.SelectedElement.Path, path);
+            }
             Hide();
         }
         private void OnKeyDown(object sender, KeyEventArgs e)

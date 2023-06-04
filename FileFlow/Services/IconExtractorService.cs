@@ -12,11 +12,14 @@ namespace FileFlow.Services
 {
     public interface IIconExtractorService
     {
+        Bitmap EmptyFolder { get; }
         Bitmap GetFolderIcon(string folderPath);
         Bitmap GetFileIcon(string filePath);
     }
     public class IconExtractorService : IIconExtractorService
     {
+        public Bitmap EmptyFolder => emptyFolder;
+
         private Bitmap folder, emptyFolder;
 
         private Dictionary<string, Bitmap> cachedIcons = new();

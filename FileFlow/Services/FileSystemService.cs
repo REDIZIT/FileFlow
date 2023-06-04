@@ -12,6 +12,7 @@ namespace FileFlow.Services
         Ok,
         Empty,
         NoAuth,
+        NotFound
     }
     public interface IFileSystemService
     {
@@ -20,6 +21,8 @@ namespace FileFlow.Services
         Task<string> GetModifyTime(string path);
         void Run(string filePath);
         void CreateFile(string filePath);
+        void CreateFolder(string folderPath);
+        void Move(string oldPath, string newPath);
     }
     public class FileSystemService : IFileSystemService
     {
@@ -42,6 +45,13 @@ namespace FileFlow.Services
         public List<StorageElement> GetStorageElements(string folderPath, out LoadStatus status)
         {
             List<StorageElement> ls = new();
+
+            if (Directory.Exists(folderPath) == false)
+            {
+                status = LoadStatus.NotFound;
+                return ls;
+            }
+
             try
             {
                 foreach (string entryPath in Directory.EnumerateDirectories(folderPath))
@@ -104,6 +114,21 @@ namespace FileFlow.Services
         public void CreateFile(string filePath)
         {
             File.Create(filePath);
+        }
+        public void CreateFolder(string folderPath)
+        {
+            Directory.CreateDirectory(folderPath);
+        }
+        public void Move(string oldPath, string newPath)
+        {
+            if (Directory.Exists(oldPath))
+            {
+                Directory.Move(oldPath, newPath);
+            }
+            else
+            {
+                File.Move(oldPath, newPath);
+            }
         }
     }
 }

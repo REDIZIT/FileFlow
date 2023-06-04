@@ -14,7 +14,7 @@ namespace FileFlow.ViewModels
         public string Size { get; set; }
         public Bitmap Icon { get; set; }
 
-        public bool IsFolder => Directory.Exists(Path);
+        public bool IsFolder => File.Exists(Path) == false;
 
         public StorageElement(string path, IFileSystemService fileSystem)
         {
@@ -26,6 +26,8 @@ namespace FileFlow.ViewModels
 
         private async void UpdateSize(IFileSystemService fileSystem)
         {
+            if (Directory.Exists(Path) == false && File.Exists(Path) == false) return;
+
             Size = await fileSystem.GetElementWeight(Path);
             LastModifyTime = await fileSystem.GetModifyTime(Path);
 
