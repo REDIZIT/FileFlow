@@ -17,10 +17,11 @@
     <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
       <Setter Property="Background" Value="#666" />
     </Style>
+    <StyleInclude Source="/Styles/FileFlowStyle.axaml"/>
   </UserControl.Styles>
 
   <Grid RowDefinitions="Auto, *">
-    <Border Grid.Row="0" Padding="12, 8, 12, 6" Background="#a222" BorderThickness="0, 0, 0, 1" BorderBrush="#888">
+    <Border Grid.Row="0" Height="42" Background="#a222" BorderThickness="0, 0, 0, 1" BorderBrush="#444">
       <Grid RowDefinitions="Auto, Auto">
         <TextBox
         Name="pathText"
@@ -29,7 +30,8 @@
         MinHeight="0"
         FontSize="12"
         KeyDown="OnPathBarKeyDown"
-        Height="28">
+        Height="28"
+        Margin="12, 7">
         </TextBox>
         <Popup 
           Name="pathPopup"
@@ -101,7 +103,6 @@
             <Setter Property="Padding" Value="0"/>
             <Setter Property="CornerRadius" Value="6"/>
             <Setter Property="Margin" Value="0, 1"/>
-            <!--<Setter Property="Background" Value="#9333"/>-->
             <Setter Property="Background" Value="#2f656565"/>
           </Style>
           <Style Selector="ListBoxItem > Border > Grid > Border">

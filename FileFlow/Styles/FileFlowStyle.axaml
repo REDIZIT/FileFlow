@@ -1,0 +1,36 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+
+    <!-- Add Styles Here -->
+  <Style Selector="TextBox">
+    <Setter Property="BorderBrush" Value="#555"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="Background" Value="#222"/>
+  </Style>
+  <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+    <Setter Property="BorderBrush" Value="#767676"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="Background" Value="#252525"/>
+  </Style>
+  <Style Selector="TextBox:focus-within /template/ Border#PART_BorderElement">
+    <Setter Property="BorderBrush" Value="#888"/>
+    <Setter Property="BorderThickness" Value="2"/>
+    <Setter Property="Background" Value="#222"/>
+  </Style>
+
+  <Style Selector="TextBox.invalid">
+    <Setter Property="BorderBrush" Value="#cf24"/>
+  </Style>
+  <Style Selector="TextBox.invalid:pointerover /template/ Border#PART_BorderElement">
+    <Setter Property="BorderBrush" Value="#f35"/>
+  </Style>
+  <Style Selector="TextBox.invalid:focus-within /template/ Border#PART_BorderElement">
+    <Setter Property="BorderBrush" Value="#cf35"/>
+  </Style>
+
+</Styles>

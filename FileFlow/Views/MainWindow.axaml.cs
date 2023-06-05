@@ -19,7 +19,7 @@ namespace FileFlow.Views
 
         public MainWindow()
         {
-            
+            InitializeComponent();
         }
         public MainWindow(MainWindowViewModel model, IIconExtractorService iconExtractor)
         {
