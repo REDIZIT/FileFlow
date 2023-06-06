@@ -1,0 +1,117 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="450"
+             x:Class="FileFlow.Views.Sidebar">
+
+  <UserControl.Styles>
+    <StyleInclude Source="/Styles/FileFlowStyle.axaml"/>
+  </UserControl.Styles>
+  
+  <StackPanel>
+    <!--<Border Height="42" Background="#a222" BorderBrush="#444" BorderThickness="0, 0, 0, 1">
+          <Panel>
+            <Button HorizontalAlignment="Right" Margin="6, 0">
+              <Image Source="/Assets/avalonia-logo.ico"/>
+            </Button>
+          </Panel>
+        </Border>-->
+    <ItemsControl Grid.Column="0" Margin="4,6,4,0">
+
+
+      <StackPanel Margin="0, 0, 0, 12">
+        <Grid ColumnDefinitions="16, Auto, *" Margin="2, 4">
+          <Border Grid.Column="0" Background="#a888" Height="1" Margin="0, 1, 0, 0"/>
+          <TextBlock Grid.Column="1" Text="Проекты" FontSize="11" Margin="6, 0"/>
+          <Border Grid.Column="2" Background="#a888" Height="1" Margin="0, 1, 0, 0"/>
+        </Grid>
+        <Button Height="32" Classes="Item" HorizontalAlignment="Stretch">
+          <Panel>
+            <Image VerticalAlignment="Center" Source="/Assets/avalonia-logo.ico" Height="16" Width="16" HorizontalAlignment="Left" Margin="12, 0"/>
+            <TextBlock VerticalAlignment="Center" Text="Make It Yours" FontSize="11" Margin="34, 0, 0, 1"/>
+          </Panel>
+        </Button>
+        <Button Height="32" Classes="Item" HorizontalAlignment="Stretch">
+          <Panel>
+            <Image VerticalAlignment="Center" Source="/Assets/avalonia-logo.ico" Height="16" Width="16" HorizontalAlignment="Left" Margin="12, 0"/>
+            <TextBlock VerticalAlignment="Center" Text="UFiles" FontSize="11" Margin="34, 0, 0, 1"/>
+          </Panel>
+        </Button>
+        <Button Height="32" Classes="Item" HorizontalAlignment="Stretch">
+          <Panel>
+            <Image VerticalAlignment="Center" Source="/Assets/avalonia-logo.ico" Height="16" Width="16" HorizontalAlignment="Left" Margin="12, 0"/>
+            <TextBlock VerticalAlignment="Center" Text="FileFlow" FontSize="11" Margin="34, 0, 0, 1"/>
+          </Panel>
+        </Button>
+      </StackPanel>
+      
+      
+      <StackPanel Margin="0, 0, 0, 12">
+        <Grid ColumnDefinitions="16, Auto, *" Margin="2, 4">
+          <Border Grid.Column="0" Background="#a888" Height="1" Margin="0, 1, 0, 0"/>
+          <TextBlock Grid.Column="1" Text="Диски" FontSize="11" Margin="6, 0"/>
+          <Border Grid.Column="2" Background="#a888" Height="1" Margin="0, 1, 0, 0"/>
+        </Grid>
+        <Button Height="32" Classes="Item" HorizontalAlignment="Stretch">
+          <Panel>
+            <Panel VerticalAlignment="Top" Height="30">
+              <Image VerticalAlignment="Top" Source="/Assets/Icons/disk.png" Height="16" Width="16" HorizontalAlignment="Left" Margin="12, 5"/>
+              <TextBlock VerticalAlignment="Top" Text="Локальный диск (C:/)" FontSize="11" Margin="34, 5"/>
+              <TextBlock VerticalAlignment="Top" HorizontalAlignment="Right" Text="54%" FontSize="9" Margin="12, 7" Foreground="#a999"/>
+            </Panel>
+            <ProgressBar MinWidth="0" Value="50" Margin="12, 4" VerticalAlignment="Bottom" Background="#6111" Foreground="#c5c5c5" Height="2" MinHeight="0"/>
+          </Panel>
+        </Button>
+        <Button Height="32" Classes="Item" HorizontalAlignment="Stretch">
+          <Panel>
+            <Panel VerticalAlignment="Top" Height="30">
+              <Image VerticalAlignment="Top" Source="/Assets/Icons/disk.png" Height="16" Width="16" HorizontalAlignment="Left" Margin="12, 5"/>
+              <TextBlock VerticalAlignment="Top" Text="Локальный диск (C:/)" FontSize="11" Margin="34, 5"/>
+              <TextBlock VerticalAlignment="Top" HorizontalAlignment="Right" Text="54%" FontSize="9" Margin="12, 7" Foreground="#a999"/>
+            </Panel>
+            <ProgressBar MinWidth="0" Value="50" Margin="12, 4" VerticalAlignment="Bottom" Background="#6111" Foreground="#c5c5c5" Height="2" MinHeight="0"/>
+          </Panel>
+        </Button>
+        <Button Height="32" Classes="Item" HorizontalAlignment="Stretch">
+          <Panel>
+            <Panel VerticalAlignment="Top" Height="30">
+              <Image VerticalAlignment="Top" Source="/Assets/Icons/disk.png" Height="16" Width="16" HorizontalAlignment="Left" Margin="12, 5"/>
+              <TextBlock VerticalAlignment="Top" Text="Локальный диск (C:/)" FontSize="11" Margin="34, 5"/>
+              <TextBlock VerticalAlignment="Top" HorizontalAlignment="Right" Text="54%" FontSize="9" Margin="12, 7" Foreground="#a999"/>
+            </Panel>
+            <ProgressBar MinWidth="0" Value="50" Margin="12, 4" VerticalAlignment="Bottom" Background="#6111" Foreground="#c5c5c5" Height="2" MinHeight="0"/>
+          </Panel>
+        </Button>
+      </StackPanel>
+
+      
+      <StackPanel Margin="0, 0, 0, 12">
+        <Grid ColumnDefinitions="16, Auto, *" Margin="2, 4">
+          <Border Grid.Column="0" Background="#a888" Height="1" Margin="0, 1, 0, 0"/>
+          <TextBlock Grid.Column="1" Text="Закладки" FontSize="11" Margin="6, 0"/>
+          <Border Grid.Column="2" Background="#a888" Height="1" Margin="0, 1, 0, 0"/>
+        </Grid>
+        <Button Height="32" Classes="Item" HorizontalAlignment="Stretch">
+          <Panel>
+            <Image VerticalAlignment="Center" Source="/Assets/Icons/folder.png" Height="16" Width="16" HorizontalAlignment="Left" Margin="12, 0"/>
+            <TextBlock VerticalAlignment="Center" Text="Загрузки" FontSize="11" Margin="34, 0, 0, 1"/>
+          </Panel>
+        </Button>
+        <Button Height="32" Classes="Item" HorizontalAlignment="Stretch">
+          <Panel>
+            <Image VerticalAlignment="Center" Source="/Assets/Icons/folder.png" Height="16" Width="16" HorizontalAlignment="Left" Margin="12, 0"/>
+            <TextBlock VerticalAlignment="Center" Text="Загрузки" FontSize="11" Margin="34, 0, 0, 1"/>
+          </Panel>
+        </Button>
+        <Button Height="32" Classes="Item" HorizontalAlignment="Stretch">
+          <Panel>
+            <Image VerticalAlignment="Center" Source="/Assets/Icons/folder.png" Height="16" Width="16" HorizontalAlignment="Left" Margin="12, 0"/>
+            <TextBlock VerticalAlignment="Center" Text="Загрузки" FontSize="11" Margin="34, 0, 0, 1"/>
+          </Panel>
+        </Button>
+      </StackPanel>
+
+    </ItemsControl>
+  </StackPanel>
+</UserControl>

@@ -1,15 +1,8 @@
 using Avalonia.Controls;
-using Avalonia.Data.Converters;
 using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Media;
 using FileFlow.Services;
 using FileFlow.ViewModels;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Globalization;
 
 namespace FileFlow.Views
 {
