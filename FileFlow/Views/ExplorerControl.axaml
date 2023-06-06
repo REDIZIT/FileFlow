@@ -12,6 +12,13 @@
   <UserControl.Styles>
     <StyleInclude Source="/Styles/FileFlowStyle.axaml"/>
     
+    <Style Selector="Button.ActiveTab">
+      <Setter Property="BorderBrush" Value="#888"/>
+      <Setter Property="Background" Value="#444"/>
+    </Style>
+    <Style Selector="Button.ActiveTab:pointerover /template/ ContentPresenter">
+      <Setter Property="BorderBrush" Value="#aaa"/>
+    </Style>
   </UserControl.Styles>
 
   <Grid RowDefinitions="Auto, *">
@@ -37,9 +44,7 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
               <DataTemplate>
-                <Button Command="{Binding OnClick}" Height="28" Padding="16, 0" CornerRadius="6" Classes="Item" Margin="0, 2, 2, 0">
-                  <TextBlock Text="{Binding Title}" FontSize="11" VerticalAlignment="Center"/>
-                </Button>
+                <views:CustomTabControl BorderThickness="1"/>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
@@ -105,7 +110,7 @@
       <ListBox
         Name="listBox"
         IsVisible="True"
-        Items="{Binding StorageElements}"
+        Items="{Binding ActiveTab.StorageElements}"
         SelectionMode="Multiple"
         Background="Transparent">
 

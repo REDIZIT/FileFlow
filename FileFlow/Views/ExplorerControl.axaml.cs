@@ -20,7 +20,7 @@ namespace FileFlow.Views
         {
             InitializeComponent();
         }
-        public ExplorerControl(MainWindow mainWindow, IFileSystemService fileSystem, StorageElement folder, IIconExtractorService iconExtractor)
+        public ExplorerControl(MainWindow mainWindow, IFileSystemService fileSystem, IIconExtractorService iconExtractor)
         {
             this.mainWindow = mainWindow;
             this.fileSystem = fileSystem;
@@ -38,10 +38,7 @@ namespace FileFlow.Views
 
             AddHandler(PointerPressedEvent, OnExplorerPointerPressed, Avalonia.Interactivity.RoutingStrategies.Tunnel);
             AddHandler(KeyDownEvent, OnExplorerKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
-
-            model.Open(folder);
         }
-
         public void Moved(object sender, PointerEventArgs e)
         {
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
@@ -101,8 +98,8 @@ namespace FileFlow.Views
         }
         private void OnFolderLoaded(LoadStatus status)
         {
-            pathText.Text = model.Path;
-            bool hasElements = model.StorageElements.Any();
+            pathText.Text = model.ActiveTab.FolderPath;
+            bool hasElements = model.ActiveTab.StorageElements.Any();
             listBox.IsVisible = hasElements;
             messageText.IsVisible = hasElements == false;
 
@@ -156,7 +153,7 @@ namespace FileFlow.Views
         }
         private void ShowFileCreationView(bool isFile, FileCreationView.Action action)
         {
-            FileCreationView.Show(new FileCreationView.Args(model.Path, isFile, action, contextedElement));
+            FileCreationView.Show(new FileCreationView.Args(model.ActiveTab.FolderPath, isFile, action, contextedElement));
             contextMenu.Close();
         }
     }

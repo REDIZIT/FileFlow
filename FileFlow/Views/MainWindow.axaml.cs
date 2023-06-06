@@ -27,8 +27,8 @@ namespace FileFlow.Views
 
             InitializeComponent();
 
-            ExplorerControl control = new(this, model.fileSystem, new("C:/Users/REDIZIT/Downloads", model.fileSystem), iconExtractor);
-            ExplorerControl control2 = new(this, model.fileSystem, new("C:/", model.fileSystem), iconExtractor);
+            ExplorerControl control = new(this, model.fileSystem, iconExtractor);
+            ExplorerControl control2 = new(this, model.fileSystem, iconExtractor);
 
             explorers.Add(control);
             explorers.Add(control2);

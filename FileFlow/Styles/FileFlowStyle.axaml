@@ -65,6 +65,5 @@
   </Style>
   <Style Selector="Button.Item:pressed /template/ ContentPresenter">
     <Setter Property="Background" Value="#a555"/>
-  </Style>
-  
+  </Style>  
 </Styles>

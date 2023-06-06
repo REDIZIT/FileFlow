@@ -1,7 +1,4 @@
-﻿using Avalonia.Controls.Shapes;
-using Avalonia.Threading;
-using DynamicData.Experimental;
-using FileFlow.Services;
+﻿using FileFlow.Services;
 using FileFlow.ViewModels;
 using System;
 using System.Collections.ObjectModel;
@@ -12,26 +9,24 @@ namespace FileFlow.Views
 {
     public class ExplorerViewModel : ViewModelBase, INotifyPropertyChanged
     {
-        public string Path { get; private set; }
-        public ObservableCollection<StorageElement> StorageElements { get; set; }
+        public TabViewModel ActiveTab { get; private set; }
         public ObservableCollection<PathBarHintViewModel> PathBarHints { get; set; }
         public ObservableCollection<TabViewModel> Tabs { get; set; } = new();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Action<LoadStatus> onFolderLoaded;
-
-        private History<StorageElement> history = new(HistoryPointerType.TargetFrame);
-        private IFileSystemService fileSystem;
-
         private FileSystemWatcher watcher;
 
 
         public ExplorerViewModel(IFileSystemService fileSystem)
         {
-            this.fileSystem = fileSystem;
-
-            Tabs.Add(new TabViewModel(this, "C:/123/345"));
+            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Users\\REDIZIT\\Documents\\GitHub\\FileFlow"));
+            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Users\\REDIZIT"));
+            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Users\\REDIZIT"));
+            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Users\\REDIZIT"));
+            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Users\\REDIZIT"));
+            OnTabClicked(Tabs[0]);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Tabs)));
 
             PathBarHints = new()
@@ -44,43 +39,50 @@ namespace FileFlow.Views
         
         public void Open(StorageElement storageElement)
         {
-            if (storageElement.IsFolder)
-            {
-                history.Add(storageElement);
-                SetPath(storageElement.Path);
-            }
-            else
-            {
-                fileSystem.Run(storageElement.Path);
-            }
+            ActiveTab.Open(storageElement);
+            UpdateFileWatcher();
         }
         public void Back()
         {
-            if (history.TryUndo(out StorageElement storageElement))
-            {
-                SetPath(storageElement.Path);
-            }
+            ActiveTab.Back();
+            UpdateFileWatcher();
         }
         public void Next()
         {
-            if (history.TryRedo(out StorageElement storageElement))
+            ActiveTab.Next();
+            UpdateFileWatcher();
+        }
+        public void OnTabClicked(TabViewModel tab)
+        {
+            ActiveTab = tab;
+            this.RaisePropertyChanged(nameof(ActiveTab));
+            UpdateFileWatcher();
+
+            foreach (TabViewModel item in Tabs)
             {
-                SetPath(storageElement.Path);
+                item.SetActive(item == ActiveTab);
             }
         }
-        public void OnTabClicked(TabViewModel model)
+        public void OnTabClose(TabViewModel tab)
         {
-            model.FolderPath = "C:/1/2/3/4/5/6";
+            if (Tabs.Count <= 1) return;
+
+            if (tab == ActiveTab)
+            {
+                int index = Tabs.IndexOf(ActiveTab);
+                Tabs.RemoveAt(index);
+                int indexToOpen = Math.Min(index, Tabs.Count - 1);
+                OnTabClicked(Tabs[indexToOpen]);
+            }
+            else
+            {
+                Tabs.Remove(tab);
+            }
+            this.RaisePropertyChanged(nameof(Tabs));
         }
-
-        private void SetPath(string path)
+        private void UpdateFileWatcher()
         {
-            Path = path;
-            StorageElements = new(fileSystem.GetStorageElements(path, out LoadStatus status));
-            OnPropertyChanged(nameof(Path));
-            OnPropertyChanged(nameof(StorageElements));
-            onFolderLoaded?.Invoke(status);
-
+            string path = ActiveTab.FolderPath;
             if (watcher == null)
             {
                 watcher = new FileSystemWatcher(path);
@@ -98,13 +100,7 @@ namespace FileFlow.Views
         }
         private void FilesChanged(object sender, FileSystemEventArgs e)
         {
-            StorageElements = new(fileSystem.GetStorageElements(Path, out LoadStatus status));
-
-            Dispatcher.UIThread.Post(() =>
-            {
-                OnPropertyChanged(nameof(StorageElements));
-                onFolderLoaded?.Invoke(status);
-            });            
+            ActiveTab.OnFilesChanged();          
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
