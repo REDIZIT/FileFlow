@@ -1,13 +1,9 @@
-﻿using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Threading;
+﻿using Avalonia.Threading;
 using FileFlow.Services;
 using FileFlow.Views;
-using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Windows.Input;
 
 namespace FileFlow.ViewModels
 {
@@ -34,6 +30,7 @@ namespace FileFlow.ViewModels
 
         private ExplorerViewModel explorer;
         private IFileSystemService fileSystem;
+        private LoadStatus status;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -57,10 +54,14 @@ namespace FileFlow.ViewModels
             IsActiveTab = active;
             this.RaisePropertyChanged(nameof(IsActiveTab));
 
-            if (active && isLoaded == false)
+            if (active)
             {
-                isLoaded = true;
-                Open(new StorageElement(folderPath, fileSystem));
+                if (isLoaded == false)
+                {
+                    isLoaded = true;
+                    Open(new StorageElement(folderPath, fileSystem));
+                }
+                explorer.onFolderLoaded?.Invoke(status);
             }
         }
 
@@ -103,7 +104,7 @@ namespace FileFlow.ViewModels
         private void SetPath(string path)
         {
             FolderPath = path;
-            StorageElements = new(fileSystem.GetStorageElements(path, out LoadStatus status));
+            StorageElements = new(fileSystem.GetStorageElements(path, out status));
 
             this.RaisePropertyChanged(nameof(FolderPath));
             this.RaisePropertyChanged(nameof(StorageElements));

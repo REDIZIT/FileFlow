@@ -79,11 +79,19 @@ namespace FileFlow.Views
                 model.Next();
             }
 
-            if (props.IsRightButtonPressed)
+            StorageElement element = ((Control)e.Source).Tag as StorageElement;
+            if (element != null)
             {
-                contextedElement = (StorageElement)((Control)e.Source).Tag;
-                contextMenu.PlacementMode = PlacementMode.Pointer;
-                contextMenu.Open();
+                if (props.IsRightButtonPressed)
+                {
+                    contextedElement = element;
+                    contextMenu.PlacementMode = PlacementMode.Pointer;
+                    contextMenu.Open();
+                }
+                else if (props.IsMiddleButtonPressed && element.IsFolder)
+                {
+                    model.CreateTab(element);
+                }
             }
         }
         private void OnExplorerKeyDown(object sender, KeyEventArgs e)

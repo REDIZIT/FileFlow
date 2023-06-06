@@ -22,7 +22,7 @@
   
   <Border
         Name="window" Classes.showed="{Binding IsShowed}"
-        Background="#2c2c2c" VerticalAlignment="Top" Margin="60"
+        Background="#2c2c2c" VerticalAlignment="Top" Margin="60, 160"
         Width="360" BorderBrush="#444" BorderThickness="1"
         CornerRadius="8" BoxShadow="0 4 30 1 #c000"
         KeyDown="OnKeyDown">

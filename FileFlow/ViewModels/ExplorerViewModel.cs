@@ -4,6 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 
 namespace FileFlow.Views
 {
@@ -16,11 +17,14 @@ namespace FileFlow.Views
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Action<LoadStatus> onFolderLoaded;
-        private FileSystemWatcher watcher;
 
+        private FileSystemWatcher watcher;
+        private IFileSystemService fileSystem;
 
         public ExplorerViewModel(IFileSystemService fileSystem)
         {
+            this.fileSystem = fileSystem;
+
             Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Users\\REDIZIT\\Documents\\GitHub\\FileFlow"));
             Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Users\\REDIZIT"));
             Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Users\\REDIZIT"));
@@ -51,6 +55,11 @@ namespace FileFlow.Views
         {
             ActiveTab.Next();
             UpdateFileWatcher();
+        }
+        public void CreateTab(StorageElement storageElement)
+        {
+            Tabs.Add(new TabViewModel(this, fileSystem, storageElement.Path));
+            OnTabClicked(Tabs.Last());
         }
         public void OnTabClicked(TabViewModel tab)
         {
