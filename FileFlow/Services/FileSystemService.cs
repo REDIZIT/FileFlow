@@ -58,21 +58,13 @@ namespace FileFlow.Services
             {
                 foreach (string entryPath in Directory.EnumerateDirectories(folderPath))
                 {
-                    ls.Add(new StorageElement(entryPath, this)
-                    {
-                        Name = Path.GetFileName(entryPath),
-                        Icon = iconExtractor.GetFolderIcon(entryPath),
-                    });
+                    ls.Add(new StorageElement(entryPath, this, iconExtractor));
                 }
                 foreach (string entryPath in Directory.EnumerateFiles(folderPath))
                 {
                     if (Path.GetExtension(entryPath) == ".meta") continue;
 
-                    ls.Add(new StorageElement(entryPath, this)
-                    {
-                        Name = Path.GetFileName(entryPath),
-                        Icon = iconExtractor.GetFileIcon(entryPath)
-                    });
+                    ls.Add(new StorageElement(entryPath, this, iconExtractor));
                 }
 
                 status = ls.Count > 0 ? LoadStatus.Ok : LoadStatus.Empty;

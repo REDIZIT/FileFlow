@@ -16,6 +16,7 @@ namespace FileFlow.Views
 
         private MainWindow mainWindow;
         private IFileSystemService fileSystem;
+        private IIconExtractorService iconExtractor;
         private ExplorerViewModel model;
         private StorageElement contextedElement;
 
@@ -29,8 +30,9 @@ namespace FileFlow.Views
         {
             this.mainWindow = mainWindow;
             this.fileSystem = fileSystem;
+            this.iconExtractor = iconExtractor;
 
-            model = new(fileSystem);
+            model = new(fileSystem, iconExtractor);
             model.onFolderLoaded += OnFolderLoaded;
             DataContext = model;
 
@@ -45,6 +47,7 @@ namespace FileFlow.Views
             renameButton.Click += (_, _) => ShowFileCreationView(!contextedElement.IsFolder, FileCreationView.Action.Rename);
 
             AddHandler(PointerPressedEvent, OnExplorerPointerPressed, RoutingStrategies.Tunnel);
+            contextablePanel.AddHandler(PointerPressedEvent, OnContextablePanelPressed, RoutingStrategies.Tunnel);
             AddHandler(KeyDownEvent, OnExplorerKeyDown, RoutingStrategies.Tunnel);
 
             AddHandler(DragDrop.DragEnterEvent, DragEnter);
@@ -97,20 +100,20 @@ namespace FileFlow.Views
             {
                 model.Next();
             }
-
+        }
+        private void OnContextablePanelPressed(object sender, PointerPressedEventArgs e)
+        {
+            var props = e.GetCurrentPoint(this).Properties;
             StorageElement element = ((Control)e.Source).Tag as StorageElement;
-            if (element != null)
+            if (props.IsRightButtonPressed)
             {
-                if (props.IsRightButtonPressed)
-                {
-                    contextedElement = element;
-                    contextMenu.PlacementMode = PlacementMode.Pointer;
-                    contextMenu.Open();
-                }
-                else if (props.IsMiddleButtonPressed && element.IsFolder)
-                {
-                    model.CreateTab(element);
-                }
+                contextedElement = element;
+                contextMenu.PlacementMode = PlacementMode.Pointer;
+                contextMenu.Open();
+            }
+            else if (element != null && props.IsMiddleButtonPressed && element.IsFolder)
+            {
+                model.CreateTab(element);
             }
         }
         private void OnExplorerKeyDown(object sender, KeyEventArgs e)
@@ -141,7 +144,7 @@ namespace FileFlow.Views
 
             if (e.Key == Key.Enter)
             {
-                model.Open(new(pathText.Text, fileSystem));
+                model.Open(new(pathText.Text, fileSystem, iconExtractor));
                 isAnyKeyPressed = true;
             }
             else if (e.Key == Key.Escape)

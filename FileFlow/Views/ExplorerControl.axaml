@@ -99,7 +99,7 @@
         </Panel>
       </Border>
 
-      <Panel Grid.Row="1" >
+      <Panel Grid.Row="1" Name="contextablePanel" Background="Transparent">
         <Panel Margin="12, 6, 12, 0">
           <TextBlock
           Name="messageText"
@@ -112,7 +112,7 @@
           <ListBox
             Name="listBox"
             IsVisible="True"
-            Items="{Binding ActiveTab.StorageElements}"
+            Items="{Binding ActiveTab.StorageElementsValues}"
             SelectionMode="Multiple"
             Background="Transparent">
 
@@ -123,11 +123,21 @@
                 <Setter Property="Margin" Value="0, 1"/>
                 <Setter Property="Background" Value="#2f656565"/>
               </Style>
-              <Style Selector="ListBoxItem > Border > Grid > Border">
-                <Setter Property="Background" Value="Transparent"/>
+              
+              <Style Selector="ListBoxItem > Border > Grid > Panel > Border">
+                <Setter Property="Opacity" Value="1"/>
               </Style>
-              <Style Selector="ListBoxItem:selected > Border > Grid > Border">
+              <Style Selector="ListBoxItem > Border > Grid > Panel > Border#SelectIndicator">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Opacity" Value="1"/>
+              </Style>
+              
+              <Style Selector="ListBoxItem:selected > Border > Grid > Panel > Border">
+                <Setter Property="Opacity" Value="0"/>
+              </Style>
+              <Style Selector="ListBoxItem:selected > Border > Grid > Panel > Border#SelectIndicator">
                 <Setter Property="Background" Value="#ccc"/>
+                <Setter Property="Opacity" Value="1"/>
               </Style>
             </ListBox.Styles>
 
@@ -164,7 +174,11 @@
                       <ColumnDefinition Width="8"/>
                       <ColumnDefinition Width="150*" MaxWidth="140"/>
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="1" Height="13" CornerRadius="100"/>
+                    <Panel Grid.Column="1">
+                      <Border Name="SelectIndicator" Height="13" CornerRadius="100"/>
+                      <Border IsVisible="{Binding IsAdded}" Height="5" Width="5" CornerRadius="100" Background="#0091FF"/>
+                      <Border IsVisible="{Binding IsModified}" Height="5" Width="5" CornerRadius="100" Background="#FF9100"/>
+                    </Panel>
                     <Image Grid.Column="3" Height="16" Source="{Binding Icon}"/>
                     <TextBlock Grid.Column="5" Text="{Binding Name}" FontSize="11"/>
                     <TextBlock Grid.Column="7" Text="{Binding LastModifyTime}" FontSize="11"/>

@@ -18,19 +18,20 @@ namespace FileFlow.Views
 
         public Action<LoadStatus> onFolderLoaded;
 
-        private FileSystemWatcher watcher;
         private IFileSystemService fileSystem;
+        private IIconExtractorService iconExtractor;
 
-        public ExplorerViewModel(IFileSystemService fileSystem)
+        public ExplorerViewModel(IFileSystemService fileSystem, IIconExtractorService iconExtractor)
         {
-            this.fileSystem = fileSystem; 
+            this.fileSystem = fileSystem;
+            this.iconExtractor = iconExtractor;
         }
         public void Initialize()
         {
-            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Tests"));
-            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Tests"));
-            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Tests"));
-            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Tests"));
+            Tabs.Add(new TabViewModel(this, fileSystem, iconExtractor, "C:\\Tests"));
+            Tabs.Add(new TabViewModel(this, fileSystem, iconExtractor, "C:\\Tests"));
+            Tabs.Add(new TabViewModel(this, fileSystem, iconExtractor, "C:\\Tests"));
+            Tabs.Add(new TabViewModel(this, fileSystem, iconExtractor, "C:\\Tests"));
 
             OnTabClicked(Tabs[0]);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Tabs)));
@@ -46,28 +47,24 @@ namespace FileFlow.Views
         public void Open(StorageElement storageElement)
         {
             ActiveTab.Open(storageElement);
-            UpdateFileWatcher();
         }
         public void Back()
         {
             ActiveTab.Back();
-            UpdateFileWatcher();
         }
         public void Next()
         {
             ActiveTab.Next();
-            UpdateFileWatcher();
         }
         public void CreateTab(StorageElement storageElement)
         {
-            Tabs.Add(new TabViewModel(this, fileSystem, storageElement.Path));
+            Tabs.Add(new TabViewModel(this, fileSystem, iconExtractor, storageElement.Path));
             OnTabClicked(Tabs.Last());
         }
         public void OnTabClicked(TabViewModel tab)
         {
             ActiveTab = tab;
             this.RaisePropertyChanged(nameof(ActiveTab));
-            UpdateFileWatcher();
 
             foreach (TabViewModel item in Tabs)
             {
@@ -90,28 +87,6 @@ namespace FileFlow.Views
                 Tabs.Remove(tab);
             }
             this.RaisePropertyChanged(nameof(Tabs));
-        }
-        private void UpdateFileWatcher()
-        {
-            string path = ActiveTab.FolderPath;
-            if (watcher == null)
-            {
-                watcher = new FileSystemWatcher(path);
-                watcher.Filter = "*.*";
-                watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
-                watcher.Created += FilesChanged;
-                watcher.Deleted += FilesChanged;
-                watcher.Renamed += FilesChanged;
-                watcher.EnableRaisingEvents = true;
-            }
-            else
-            {
-                watcher.Path = path;
-            }
-        }
-        private void FilesChanged(object sender, FileSystemEventArgs e)
-        {
-            ActiveTab.OnFilesChanged();          
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
