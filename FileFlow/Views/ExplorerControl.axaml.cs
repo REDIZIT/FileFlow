@@ -49,6 +49,7 @@ namespace FileFlow.Views
                 DataObject data = new();
                 data.Set(DataFormats.FileNames, new string[] { "C:/testfile.txt" });
                 DragDrop.DoDragDrop(e, data, DragDropEffects.Move);
+                e.Handled = true;
             }
         }
         public void Click(object sender, PointerPressedEventArgs e)
@@ -64,6 +65,7 @@ namespace FileFlow.Views
             if (e.ClickCount % 2 == 0 && props.IsLeftButtonPressed)
             {
                 model.Open(storageElement);
+                e.Handled = true;
             }
         }
         private void OnExplorerPointerPressed(object sender, PointerPressedEventArgs e)

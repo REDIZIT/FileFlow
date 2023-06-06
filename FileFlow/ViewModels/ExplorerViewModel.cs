@@ -15,6 +15,7 @@ namespace FileFlow.Views
         public string Path { get; private set; }
         public ObservableCollection<StorageElement> StorageElements { get; set; }
         public ObservableCollection<PathBarHintViewModel> PathBarHints { get; set; }
+        public ObservableCollection<string> Tabs { get; set; } = new() { "12asda sd asd asd 3", "2a sdas dad 34", " asd asd as d345", "12asda sd asd asd 3", "2a sdas dad 34", " asd asd as d345", "12asda sd asd asd 3", "2a sdas dad 34", " asd asd as d345" };
 
         public event PropertyChangedEventHandler PropertyChanged;
 

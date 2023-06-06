@@ -10,29 +10,40 @@
              DragDrop.AllowDrop="True">
 
   <UserControl.Styles>
-    <Style Selector="Button">
-      <Setter Property="Background" Value="#555"/>
-      <Setter Property="Padding" Value="0"/>
-    </Style>
-    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-      <Setter Property="Background" Value="#666" />
-    </Style>
     <StyleInclude Source="/Styles/FileFlowStyle.axaml"/>
+    
   </UserControl.Styles>
 
   <Grid RowDefinitions="Auto, *">
-    <Border Grid.Row="0" Height="42" Background="#a222" BorderThickness="0, 0, 0, 1" BorderBrush="#444">
-      <Grid RowDefinitions="Auto, Auto">
-        <TextBox
-        Name="pathText"
-        CornerRadius="8"
-        Padding="12, 6, 12, 6"
-        MinHeight="0"
-        FontSize="12"
-        KeyDown="OnPathBarKeyDown"
-        Height="28"
-        Margin="12, 7">
-        </TextBox>
+    <Border Grid.Row="0" Background="#a222" BorderThickness="0, 0, 0, 1" BorderBrush="#444">
+      <Panel>
+        <StackPanel VerticalAlignment="Top" Spacing="0">
+          
+          <TextBox
+            Name="pathText"
+            CornerRadius="8"
+            MinHeight="0"
+            FontSize="12"
+            KeyDown="OnPathBarKeyDown"
+            Height="28"
+            Margin="12, 7, 12, 0">
+          </TextBox>
+
+          <ItemsControl Items="{Binding Tabs}" HorizontalAlignment="Left" Margin="12, 4, 12, 6">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel/>
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Button Height="28" Padding="16, 0" CornerRadius="6" Classes="Item" Margin="0, 2, 2, 0">
+                  <TextBlock Text="{Binding}" FontSize="11" VerticalAlignment="Center"/>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
         <Popup 
           Name="pathPopup"
           StaysOpen="True"
@@ -79,7 +90,7 @@
             </ListBox>
           </Border>
         </Popup>
-      </Grid>
+      </Panel>
     </Border>
 
     <Panel Grid.Row="1" Margin="12, 6, 12, 0">
@@ -165,6 +176,17 @@
           Background="#2c2c2c" BorderBrush="#555" BorderThickness="1" Padding="6, 6"
           CornerRadius="8">
           <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" VerticalAlignment="Top">
+
+            <Grid.Styles>
+              <Style Selector="Button">
+                <Setter Property="Background" Value="#555"/>
+                <Setter Property="Padding" Value="0"/>
+              </Style>
+              <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="#666" />
+              </Style>
+            </Grid.Styles>
+            
             <Button Name="newFolderButton" Grid.Column="0" Grid.Row="0"
               CornerRadius="6, 0, 0, 6" Padding="6" HorizontalAlignment="Stretch"
               BorderBrush="#666" BorderThickness="0, 0, 1, 0">

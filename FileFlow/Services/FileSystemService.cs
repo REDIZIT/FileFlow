@@ -65,6 +65,8 @@ namespace FileFlow.Services
                 }
                 foreach (string entryPath in Directory.EnumerateFiles(folderPath))
                 {
+                    if (Path.GetExtension(entryPath) == ".meta") continue;
+
                     ls.Add(new StorageElement(entryPath, this)
                     {
                         Name = Path.GetFileName(entryPath),
