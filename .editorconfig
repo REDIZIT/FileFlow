@@ -20,3 +20,6 @@ dotnet_diagnostic.CS8625.severity = none
 
 # CS8622: Допустимость значений NULL для ссылочных типов в типе параметра не соответствует целевому объекту делегирования (возможно, из-за атрибутов допустимости значений NULL).
 dotnet_diagnostic.CS8622.severity = none
+
+# CS8603: Возможно, возврат ссылки, допускающей значение NULL.
+dotnet_diagnostic.CS8603.severity = none

@@ -15,7 +15,7 @@ namespace FileFlow.Views
         public string Path { get; private set; }
         public ObservableCollection<StorageElement> StorageElements { get; set; }
         public ObservableCollection<PathBarHintViewModel> PathBarHints { get; set; }
-        public ObservableCollection<string> Tabs { get; set; } = new() { "12asda sd asd asd 3", "2a sdas dad 34", " asd asd as d345", "12asda sd asd asd 3", "2a sdas dad 34", " asd asd as d345", "12asda sd asd asd 3", "2a sdas dad 34", " asd asd as d345" };
+        public ObservableCollection<TabViewModel> Tabs { get; set; } = new();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -30,6 +30,9 @@ namespace FileFlow.Views
         public ExplorerViewModel(IFileSystemService fileSystem)
         {
             this.fileSystem = fileSystem;
+
+            Tabs.Add(new TabViewModel(this, "C:/123/345"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Tabs)));
 
             PathBarHints = new()
             {
@@ -64,6 +67,10 @@ namespace FileFlow.Views
             {
                 SetPath(storageElement.Path);
             }
+        }
+        public void OnTabClicked(TabViewModel model)
+        {
+            model.FolderPath = "C:/1/2/3/4/5/6";
         }
 
         private void SetPath(string path)

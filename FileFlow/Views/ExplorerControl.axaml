@@ -37,8 +37,8 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
               <DataTemplate>
-                <Button Height="28" Padding="16, 0" CornerRadius="6" Classes="Item" Margin="0, 2, 2, 0">
-                  <TextBlock Text="{Binding}" FontSize="11" VerticalAlignment="Center"/>
+                <Button Command="{Binding OnClick}" Height="28" Padding="16, 0" CornerRadius="6" Classes="Item" Margin="0, 2, 2, 0">
+                  <TextBlock Text="{Binding Title}" FontSize="11" VerticalAlignment="Center"/>
                 </Button>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
