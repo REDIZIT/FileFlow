@@ -125,6 +125,8 @@ namespace FileFlow.Services
         }
         public void Move(string oldPath, string newPath)
         {
+            if (oldPath == newPath) return;
+
             if (Directory.Exists(oldPath))
             {
                 Directory.Move(oldPath, newPath);

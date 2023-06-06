@@ -38,19 +38,5 @@ namespace FileFlow.Views
             }
             explorer.Opacity = 1;
         }
-        public void OnExplorerDragStarted(string folderPath)
-        {
-            foreach (var explorer in explorers)
-            {
-                explorer.OnExplorerDragStarted(folderPath);
-            }
-        }
-        public void OnExplorerDropEvent()
-        {
-            foreach (var explorer in explorers)
-            {
-                explorer.OnExplorerDropEvent();
-            }
-        }
     }
 }

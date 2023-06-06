@@ -20,7 +20,6 @@ namespace FileFlow.Views
         private StorageElement contextedElement;
 
         private Point leftClickPoint;
-        private bool isSelfDragDrop;
 
         public ExplorerControl()
         {
@@ -34,8 +33,12 @@ namespace FileFlow.Views
             model = new(fileSystem);
             model.onFolderLoaded += OnFolderLoaded;
             DataContext = model;
-            
+
             InitializeComponent();
+
+            model.Initialize();
+            
+
             fileCreationView.Content = new FileCreationView(fileSystem, iconExtractor);
             newFileButton.Click += (_, _) => ShowFileCreationView(true, FileCreationView.Action.Create);
             newFolderButton.Click += (_, _) => ShowFileCreationView(false, FileCreationView.Action.Create);
@@ -57,7 +60,6 @@ namespace FileFlow.Views
 
             if (point.Properties.IsLeftButtonPressed && magnitude > 12)
             {
-                mainWindow.OnExplorerDragStarted(model.ActiveTab.FolderPath);
                 StorageElement storageElement = (StorageElement)((Control)e.Source).Tag;
                 DataObject data = new();
                 data.Set(DataFormats.FileNames, new string[] { storageElement.Path });
@@ -65,17 +67,6 @@ namespace FileFlow.Views
                 e.Handled = true;
             }
         }
-        public void OnExplorerDragStarted(string folderPath)
-        {
-            isSelfDragDrop = model.ActiveTab.FolderPath == folderPath;
-            //DragDrop.SetAllowDrop(this, IsDropAllowed);
-        }
-        public void OnExplorerDropEvent()
-        {
-            isSelfDragDrop = false;
-            //DragDrop.SetAllowDrop(this, IsDropAllowed);
-        }
-
         public void Click(object sender, PointerPressedEventArgs e)
         {
             PointerPoint point = e.GetCurrentPoint(this);
@@ -196,24 +187,18 @@ namespace FileFlow.Views
 
         private void DragEnter(object sender, DragEventArgs e)
         {
-            if (isSelfDragDrop) return;
             dropPanel.IsVisible = true;
         }
         private void DragExit(object sender, RoutedEventArgs e)
         {
-            if (isSelfDragDrop) return;
             dropPanel.IsVisible = false;
         }
         private void DropEvent(object sender, DragEventArgs e)
         {
-            if (isSelfDragDrop) return;
-
             DragExit(null, null);
             var names = e.Data.GetFileNames();
 
             fileSystem.Move(names, model.ActiveTab.FolderPath);
-
-            mainWindow.OnExplorerDropEvent();
         }
     }
 }

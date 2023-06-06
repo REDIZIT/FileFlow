@@ -23,8 +23,10 @@ namespace FileFlow.Views
 
         public ExplorerViewModel(IFileSystemService fileSystem)
         {
-            this.fileSystem = fileSystem;
-
+            this.fileSystem = fileSystem; 
+        }
+        public void Initialize()
+        {
             Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Tests"));
             Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Tests"));
             Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Tests"));
