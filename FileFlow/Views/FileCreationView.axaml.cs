@@ -97,17 +97,17 @@ namespace FileFlow.Views
 
             if (args.IsFile)
             {
-                FileIcon = iconExtractor.GetFileIcon(text).ConvertToAvaloniaBitmap();
+                FileIcon = iconExtractor.GetFileIcon(text);
             }
             else
             {
                 if (args.Action == Action.Create)
                 {
-                    FileIcon = iconExtractor.EmptyFolder.ConvertToAvaloniaBitmap();
+                    FileIcon = iconExtractor.EmptyFolder;
                 }
                 else
                 {
-                    FileIcon = iconExtractor.GetFolderIcon(args.SelectedElement.Path).ConvertToAvaloniaBitmap();
+                    FileIcon = iconExtractor.GetFolderIcon(args.SelectedElement.Path);
                 }
             }
 

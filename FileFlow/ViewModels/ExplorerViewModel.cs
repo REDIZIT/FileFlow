@@ -25,11 +25,11 @@ namespace FileFlow.Views
         {
             this.fileSystem = fileSystem;
 
-            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Users\\REDIZIT\\Documents\\GitHub\\FileFlow"));
-            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Users\\REDIZIT"));
-            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Users\\REDIZIT"));
-            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Users\\REDIZIT"));
-            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Users\\REDIZIT"));
+            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Tests"));
+            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Tests"));
+            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Tests"));
+            Tabs.Add(new TabViewModel(this, fileSystem, "C:\\Tests"));
+
             OnTabClicked(Tabs[0]);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Tabs)));
 

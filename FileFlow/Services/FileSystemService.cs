@@ -23,6 +23,7 @@ namespace FileFlow.Services
         void CreateFile(string filePath);
         void CreateFolder(string folderPath);
         void Move(string oldPath, string newPath);
+        void Move(IEnumerable<string> elementsToMove, string targetFolder);
         void Delete(string filePath);
     }
     public class FileSystemService : IFileSystemService
@@ -60,7 +61,7 @@ namespace FileFlow.Services
                     ls.Add(new StorageElement(entryPath, this)
                     {
                         Name = Path.GetFileName(entryPath),
-                        Icon = iconExtractor.GetFolderIcon(entryPath).ConvertToAvaloniaBitmap(),
+                        Icon = iconExtractor.GetFolderIcon(entryPath),
                     });
                 }
                 foreach (string entryPath in Directory.EnumerateFiles(folderPath))
@@ -70,14 +71,14 @@ namespace FileFlow.Services
                     ls.Add(new StorageElement(entryPath, this)
                     {
                         Name = Path.GetFileName(entryPath),
-                        Icon = iconExtractor.GetFileIcon(entryPath).ConvertToAvaloniaBitmap()
+                        Icon = iconExtractor.GetFileIcon(entryPath)
                     });
                 }
 
                 status = ls.Count > 0 ? LoadStatus.Ok : LoadStatus.Empty;
                 return ls;
             }
-            catch(UnauthorizedAccessException)
+            catch (UnauthorizedAccessException)
             {
                 status = LoadStatus.NoAuth;
                 return ls;
@@ -99,11 +100,11 @@ namespace FileFlow.Services
                         int foldersCount = Directory.GetFileSystemEntries(path).Length;
                         return foldersCount > 0 ? foldersCount + " элементов" : "Нет элементов";
                     }
-                    catch(System.UnauthorizedAccessException err)
+                    catch (System.UnauthorizedAccessException err)
                     {
                         return "Нет доступа";
                     }
-                   
+
                 }
             });
         }
@@ -131,6 +132,13 @@ namespace FileFlow.Services
             else
             {
                 File.Move(oldPath, newPath);
+            }
+        }
+        public void Move(IEnumerable<string> elementsToMove, string targetFolder)
+        {
+            foreach (string element in elementsToMove)
+            {
+                Move(element, targetFolder + "/" + Path.GetFileName(element));
             }
         }
         public void Delete(string path)

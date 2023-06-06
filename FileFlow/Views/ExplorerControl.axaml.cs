@@ -1,8 +1,11 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using FileFlow.Extensions;
 using FileFlow.Services;
 using FileFlow.ViewModels;
+using System;
 using System.Linq;
 
 namespace FileFlow.Views
@@ -16,6 +19,9 @@ namespace FileFlow.Views
         private ExplorerViewModel model;
         private StorageElement contextedElement;
 
+        private Point leftClickPoint;
+        private bool isSelfDragDrop;
+
         public ExplorerControl()
         {
             InitializeComponent();
@@ -28,7 +34,6 @@ namespace FileFlow.Views
             model = new(fileSystem);
             model.onFolderLoaded += OnFolderLoaded;
             DataContext = model;
-
             
             InitializeComponent();
             fileCreationView.Content = new FileCreationView(fileSystem, iconExtractor);
@@ -36,30 +41,53 @@ namespace FileFlow.Views
             newFolderButton.Click += (_, _) => ShowFileCreationView(false, FileCreationView.Action.Create);
             renameButton.Click += (_, _) => ShowFileCreationView(!contextedElement.IsFolder, FileCreationView.Action.Rename);
 
-            AddHandler(PointerPressedEvent, OnExplorerPointerPressed, Avalonia.Interactivity.RoutingStrategies.Tunnel);
-            AddHandler(KeyDownEvent, OnExplorerKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+            AddHandler(PointerPressedEvent, OnExplorerPointerPressed, RoutingStrategies.Tunnel);
+            AddHandler(KeyDownEvent, OnExplorerKeyDown, RoutingStrategies.Tunnel);
+
+            AddHandler(DragDrop.DragEnterEvent, DragEnter);
+            AddHandler(DragDrop.DragLeaveEvent, DragExit);
+            AddHandler(DragDrop.DropEvent, DropEvent);
         }
-        public void Moved(object sender, PointerEventArgs e)
+        public void ListItemPointerMove(object sender, PointerEventArgs e)
         {
-            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            var point = e.GetCurrentPoint(this);
+
+            Point delta = point.Position - leftClickPoint;
+            double magnitude = Math.Abs(delta.X) + Math.Abs(delta.Y);
+
+            if (point.Properties.IsLeftButtonPressed && magnitude > 12)
             {
+                mainWindow.OnExplorerDragStarted(model.ActiveTab.FolderPath);
+                StorageElement storageElement = (StorageElement)((Control)e.Source).Tag;
                 DataObject data = new();
-                data.Set(DataFormats.FileNames, new string[] { "C:/testfile.txt" });
+                data.Set(DataFormats.FileNames, new string[] { storageElement.Path });
                 DragDrop.DoDragDrop(e, data, DragDropEffects.Move);
                 e.Handled = true;
             }
         }
+        public void OnExplorerDragStarted(string folderPath)
+        {
+            isSelfDragDrop = model.ActiveTab.FolderPath == folderPath;
+            //DragDrop.SetAllowDrop(this, IsDropAllowed);
+        }
+        public void OnExplorerDropEvent()
+        {
+            isSelfDragDrop = false;
+            //DragDrop.SetAllowDrop(this, IsDropAllowed);
+        }
+
         public void Click(object sender, PointerPressedEventArgs e)
         {
+            PointerPoint point = e.GetCurrentPoint(this);
+            leftClickPoint = point.Position;
+
             mainWindow.OnExplorerClicked(this);
 
             // e.ClickCount does not resetting on listbox refresh (path change)
             // If it would, then we easily use >= 2 or even == 2
             // But due to reset missing, use % 2 == 0
             StorageElement storageElement = (StorageElement)((Control)e.Source).Tag;
-            var props = e.GetCurrentPoint(this).Properties;
-
-            if (e.ClickCount % 2 == 0 && props.IsLeftButtonPressed)
+            if (e.ClickCount % 2 == 0 && point.Properties.IsLeftButtonPressed)
             {
                 model.Open(storageElement);
                 e.Handled = true;
@@ -130,15 +158,15 @@ namespace FileFlow.Views
                 isAnyKeyPressed = true;
             }
 
-            if (e.Key == Key.Down)
-            {
-                var listBoxItem = (ListBoxItem)pathList
-                    .ItemContainerGenerator
-                    .Containers.First().ContainerControl;
+            //if (e.Key == Key.Down)
+            //{
+            //    var listBoxItem = (ListBoxItem)pathList
+            //        .ItemContainerGenerator
+            //        .Containers.First().ContainerControl;
 
-                pathList.SelectedIndex = 0;
-                listBoxItem.Focus();
-            }
+            //    pathList.SelectedIndex = 0;
+            //    listBoxItem.Focus();
+            //}
 
             if (isAnyKeyPressed)
             {
@@ -163,6 +191,29 @@ namespace FileFlow.Views
         {
             FileCreationView.Show(new FileCreationView.Args(model.ActiveTab.FolderPath, isFile, action, contextedElement));
             contextMenu.Close();
+        }
+
+
+        private void DragEnter(object sender, DragEventArgs e)
+        {
+            if (isSelfDragDrop) return;
+            dropPanel.IsVisible = true;
+        }
+        private void DragExit(object sender, RoutedEventArgs e)
+        {
+            if (isSelfDragDrop) return;
+            dropPanel.IsVisible = false;
+        }
+        private void DropEvent(object sender, DragEventArgs e)
+        {
+            if (isSelfDragDrop) return;
+
+            DragExit(null, null);
+            var names = e.Data.GetFileNames();
+
+            fileSystem.Move(names, model.ActiveTab.FolderPath);
+
+            mainWindow.OnExplorerDropEvent();
         }
     }
 }

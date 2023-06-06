@@ -30,12 +30,6 @@ namespace FileFlow.Views
             explorerPlaceholder2.Content = control2;
         }
 
-        public void Click(object sender, PointerPressedEventArgs el)
-        {
-            //statusText.Text = ((Control)el.Source).Tag.GetType().Name;
-            //StorageElement storageElement = (StorageElement)((Control)el.Source).Tag;
-        }
-
         public void OnExplorerClicked(ExplorerControl explorer)
         {
             foreach (var item in explorers)
@@ -43,6 +37,20 @@ namespace FileFlow.Views
                 item.Opacity = 0.7f;
             }
             explorer.Opacity = 1;
+        }
+        public void OnExplorerDragStarted(string folderPath)
+        {
+            foreach (var explorer in explorers)
+            {
+                explorer.OnExplorerDragStarted(folderPath);
+            }
+        }
+        public void OnExplorerDropEvent()
+        {
+            foreach (var explorer in explorers)
+            {
+                explorer.OnExplorerDropEvent();
+            }
         }
     }
 }

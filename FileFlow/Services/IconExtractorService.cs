@@ -12,17 +12,17 @@ namespace FileFlow.Services
 {
     public interface IIconExtractorService
     {
-        Bitmap EmptyFolder { get; }
-        Bitmap GetFolderIcon(string folderPath);
-        Bitmap GetFileIcon(string filePath);
+        Avalonia.Media.Imaging.Bitmap EmptyFolder { get; }
+        Avalonia.Media.Imaging.Bitmap GetFolderIcon(string folderPath);
+        Avalonia.Media.Imaging.Bitmap GetFileIcon(string filePath);
     }
     public class IconExtractorService : IIconExtractorService
     {
-        public Bitmap EmptyFolder => emptyFolder;
+        public Avalonia.Media.Imaging.Bitmap EmptyFolder => emptyFolder;
 
-        private Bitmap folder, emptyFolder;
+        private Avalonia.Media.Imaging.Bitmap folder, emptyFolder;
 
-        private Dictionary<string, Bitmap> cachedIcons = new();
+        private Dictionary<string, Avalonia.Media.Imaging.Bitmap> cachedIcons = new();
         private HashSet<string> ignoredExtensions = new()
         {
             ".exe", ".lnk", ".url"
@@ -31,11 +31,11 @@ namespace FileFlow.Services
         public IconExtractorService()
         {
             var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-            folder = new Bitmap(assets.Open(new Uri("avares://FileFlow/Assets/Icons/folder.png")));
-            emptyFolder = new Bitmap(assets.Open(new Uri("avares://FileFlow/Assets/Icons/folder_empty.png")));
+            folder = new Bitmap(assets.Open(new Uri("avares://FileFlow/Assets/Icons/folder.png"))).ConvertToAvaloniaBitmap();
+            emptyFolder = new Bitmap(assets.Open(new Uri("avares://FileFlow/Assets/Icons/folder_empty.png"))).ConvertToAvaloniaBitmap();
         }
 
-        public Bitmap GetFolderIcon(string folderPath)
+        public Avalonia.Media.Imaging.Bitmap GetFolderIcon(string folderPath)
         {
             try
             {
@@ -49,18 +49,18 @@ namespace FileFlow.Services
             }
             return emptyFolder;
         }
-        public Bitmap GetFileIcon(string filePath)
+        public Avalonia.Media.Imaging.Bitmap GetFileIcon(string filePath)
         {
             string ext = Path.GetExtension(filePath);
             bool isIgnored = ignoredExtensions.Contains(ext);
 
-            if (isIgnored == false && cachedIcons.TryGetValue(ext, out Bitmap value))
+            if (isIgnored == false && cachedIcons.TryGetValue(ext, out Avalonia.Media.Imaging.Bitmap value))
             {
                 return value;
             }
             else
             {
-                Bitmap icon = IconReader.GetFileIcon(filePath, IconReader.IconSize.Small, false).ToBitmap();
+                Avalonia.Media.Imaging.Bitmap icon = IconReader.GetFileIcon(filePath, IconReader.IconSize.Small, false).ToBitmap().ConvertToAvaloniaBitmap();
 
                 if (isIgnored == false)
                 {
