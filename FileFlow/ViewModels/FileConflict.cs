@@ -53,7 +53,7 @@ namespace FileFlow.ViewModels
             List<string> conflictedPathes = new();
             foreach (ConflictResolveControl.Record record in conflictRecords)
             {
-                string targetPath = record.TargetFolder + "/" + record.NewName;
+                string targetPath = record.TargetFolder + "/" + record.NewLocalPath;
 
                 if (File.Exists(targetPath) || Directory.Exists(targetPath))
                 {
@@ -63,7 +63,7 @@ namespace FileFlow.ViewModels
 
             if (conflictedPathes.Count > 0)
             {
-                conflict = new FileConflict(conflictRecords.First().TargetFolder, conflictRecords.Select(r => r.SourcePath), conflictedPathes);
+                conflict = new FileConflict(conflictRecords.First().TargetFolder, conflictRecords.Select(r => r.SourceFolder), conflictedPathes);
                 return true;
             }
             else

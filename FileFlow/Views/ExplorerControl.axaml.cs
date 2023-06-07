@@ -191,9 +191,9 @@ namespace FileFlow.Views
             FileCreationView.Show(new FileCreationView.Args(model.ActiveTab.FolderPath, isFile, action, contextedElement));
             contextMenu.Close();
         }
-        private void ShowConflictResolve(FileConflict conflict)
+        private void ShowConflictResolve(MoveAction action)
         {
-            ConflictResolveControl.Show(conflict);
+            ConflictResolveControl.Show(action);
             contextMenu.Close();
         }
 
@@ -210,9 +210,10 @@ namespace FileFlow.Views
             DragExit(null, null);
             var names = e.Data.GetFileNames();
 
-            if (fileSystem.Move(names, model.ActiveTab.FolderPath, out FileConflict conflict) == false)
+            MoveAction moveAction = new MoveAction(fileSystem, names, model.ActiveTab.FolderPath);
+            if (moveAction.TryPerform() == false)
             {
-                ShowConflictResolve(conflict);
+                ShowConflictResolve(moveAction);
             }
         }
     }

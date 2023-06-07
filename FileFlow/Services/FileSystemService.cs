@@ -1,9 +1,12 @@
-﻿using FileFlow.ViewModels;
+﻿using FileFlow.Extensions;
+using FileFlow.ViewModels;
 using FileFlow.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace FileFlow.Services
@@ -23,9 +26,9 @@ namespace FileFlow.Services
         void Run(string filePath);
         void CreateFile(string filePath);
         void CreateFolder(string folderPath);
-        bool Move(string oldPath, string newPath, bool overwrite = false);
-        bool Move(IEnumerable<string> elementsToMove, string targetFolder, out FileConflict conflict, bool overwrite = false);
-        bool Move(FileConflict resolvedConflict, out FileConflict conflict);
+        void Move(string oldPath, string newPath, ActionType type);
+        void Move(IEnumerable<string> elementsToMove, string targetFolder, out FileConflict conflict, ActionType type);
+        void Rename(string oldPath, string newPath);
         bool Exists(string path);
         void Delete(string filePath);
     }
@@ -122,54 +125,100 @@ namespace FileFlow.Services
         {
             Directory.CreateDirectory(folderPath);
         }
-        public bool Move(string oldPath, string newPath, bool overwrite = false)
+        public void Move(string oldPath, string newPath, ActionType type)
         {
-            if (oldPath == newPath) return true;
+            if (oldPath == newPath) return;
 
+            if (Directory.Exists(oldPath))
+            {
+                // If we're moving folder
+                MoveFilesRecursively(oldPath, newPath, type);
+            }
+            else
+            {
+                // If we're moving file
+
+                // If file exists at target folder
+                if (File.Exists(newPath))
+                {
+                    if (type == ActionType.Rename)
+                    {
+                        string resolvedPath = FileSystemExtensions.GetRenamedPath(newPath);
+                        File.Move(oldPath, resolvedPath);
+                    }
+                    else if (type == ActionType.Overwrite)
+                    {
+                        File.Move(oldPath, newPath, overwrite: true);
+                    }
+                    else if (type == ActionType.Skip)
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    File.Move(oldPath, newPath);
+                }
+            }
+        }
+        private void MoveFilesRecursively(string sourcePath, string targetPath, ActionType type)
+        {
+            Directory.CreateDirectory(targetPath);
+
+            foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
+            {
+                Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
+            }
+
+            foreach (string sourceFilePath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
+            {
+                string targetFilePath = sourceFilePath.Replace(sourcePath, targetPath);
+                Move(sourceFilePath, targetFilePath, type);
+            }
+
+            if (type == ActionType.Skip)
+            {
+                // If we're skipping conflicting files, then they won't be moved
+                // If any file still inside folder (if any file skipped) - don't delete folder
+                bool hasAnyFilesInside = Directory.EnumerateFiles(sourcePath, "*.*", SearchOption.AllDirectories).Any();
+                if (hasAnyFilesInside == false)
+                {
+                    Directory.Delete(sourcePath, true);
+                }
+            }
+            else
+            {
+                Directory.Delete(sourcePath, true);
+            }
+        }
+        public void Move(IEnumerable<string> elementsToMove, string targetFolder, out FileConflict conflict, ActionType type)
+        {
+            //if (ActionType && FileConflict.HasConflict(targetFolder, elementsToMove, out conflict)) return false;
+
+            foreach (string element in elementsToMove)
+            {
+                Move(element, targetFolder + "/" + Path.GetFileName(element), type);
+            }
+
+            conflict = null;
+            return;
+        }
+        public void Rename(string oldPath, string newPath)
+        {
             if (Directory.Exists(oldPath))
             {
                 Directory.Move(oldPath, newPath);
             }
             else
             {
-                File.Move(oldPath, newPath, overwrite);
+                File.Move(oldPath, newPath);
             }
-            return true;
-        }
-        public bool Move(IEnumerable<string> elementsToMove, string targetFolder, out FileConflict conflict, bool overwrite = false)
-        {
-            if (overwrite == false && FileConflict.HasConflict(targetFolder, elementsToMove, out conflict)) return false;
-
-            foreach (string element in elementsToMove)
-            {
-                Move(element, targetFolder + "/" + Path.GetFileName(element), overwrite);
-            }
-
-            conflict = null;
-            return true;
-        }
-        public bool Move(FileConflict resolvedConflict, out FileConflict conflict)
-        {
-            foreach (string sourcePath in resolvedConflict.sourcePathes)
-            {
-                string name = Path.GetFileName(sourcePath);
-                
-                if (resolvedConflict.resolvedNames.TryGetValue(sourcePath, out string resolvedName))
-                {
-                    name = resolvedName;
-                }
-
-                Move(sourcePath, resolvedConflict.targetFolder + "/" + name);
-            }
-
-            conflict = null;
-            return true;
         }
         public void Delete(string path)
         {
             if (Directory.Exists(path))
             {
-                Directory.Delete(path);
+                Directory.Delete(path, true);
             }
             else
             {

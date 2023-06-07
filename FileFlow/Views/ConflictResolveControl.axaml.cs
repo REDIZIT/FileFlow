@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
+using FileFlow.Extensions;
 using FileFlow.Services;
 using FileFlow.ViewModels;
 using Ninject;
@@ -20,7 +21,7 @@ namespace FileFlow.Views
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private List<string> newNames = new();
-        private FileConflict conflict;
+        private MoveAction conflict;
 
         private IIconExtractorService iconExtractor;
         private IFileSystemService fileSystem;
@@ -28,60 +29,45 @@ namespace FileFlow.Views
         public class Record : INotifyPropertyChanged
         {
             public string OldName { get; set; }
-            public string NewName { get; set; }
+            public string NewLocalPath { get; set; }
             public Bitmap FileIcon { get; set; }
             public bool IsInvalid { get; set; }
-            public string SourcePath { get; set; }
+            public string SourceFolder { get; set; }
             public string TargetFolder { get; set; }
+            public string LocalPath { get; set; }
 
-            public Record(string sourcePath, string targetFolder, IIconExtractorService iconExtractor)
+            public Record(IIconExtractorService iconExtractor, string sourceFolder, string targetFolder, string localPath)
             {
-                SourcePath = sourcePath;
+                SourceFolder = sourceFolder;
                 TargetFolder = targetFolder;
+                LocalPath = localPath;
 
-                OldName = Path.GetFileName(SourcePath);
-                NewName = OldName;
+                OldName = localPath;
+                NewLocalPath = OldName;
 
-                FileIcon = iconExtractor.GetFileIcon(sourcePath);
+                FileIcon = iconExtractor.GetFileIcon(sourceFolder + "/" + localPath);
 
                 UpdateValidity();
             }
 
             public event PropertyChangedEventHandler? PropertyChanged;
 
-            public void ChangeName(List<string> newNames)
+            public void ChangeName(List<string> resolvedLocalPathes)
             {
-                string name = Path.GetFileNameWithoutExtension(OldName);
-                string postFix;
-                string ext = Path.GetExtension(OldName);
-                int index = 0;
-
-                while (true)
-                {
-                    index++;
-                    postFix = " (" + index + ")";
-
-                    string newName = name + postFix + ext;
-                    if (File.Exists(TargetFolder + "/" + newName) == false)
-                    {
-                        if (newNames.Contains(newName) == false)
-                        {
-                            NewName = newName;
-                            newNames.Add(newName);
-                            this.RaisePropertyChanged(nameof(NewName));
-                            break;
-                        }
-                    }
-                }
+                string targetFilePath = TargetFolder + "/" + LocalPath;
+                string resolvedFilePath = FileSystemExtensions.GetRenamedPath(targetFilePath, n => resolvedLocalPathes.Contains(n) == false);
+                resolvedLocalPathes.Add(resolvedFilePath);
+                NewLocalPath = resolvedFilePath.Replace(TargetFolder.CleanUp() + "/", "");
+                this.RaisePropertyChanged(nameof(NewLocalPath));
             }
             public void ResetName()
             {
-                NewName = OldName;
-                this.RaisePropertyChanged(nameof(NewName));
+                NewLocalPath = OldName;
+                this.RaisePropertyChanged(nameof(NewLocalPath));
             }
             public void UpdateValidity()
             {
-                IsInvalid = File.Exists(TargetFolder + "/" + NewName);
+                IsInvalid = File.Exists(TargetFolder + "/" + NewLocalPath);
 
                 this.RaisePropertyChanged(nameof(IsInvalid));
             }
@@ -101,20 +87,23 @@ namespace FileFlow.Views
 
             rewriteButton.Click += RewriteButton_Click;
             renameButton.Click += RenameButton_Click;
+            skipButton.Click += SkipButton_Click;
             cancelButton.Click += CancelButton_Click;
         }
 
-        public void Show(FileConflict conflict)
+        
+
+        public void Show(MoveAction action)
         {
-            this.conflict = conflict;
+            this.conflict = action;
 
             IsHitTestVisible = true;
             IsShowed = true;
 
             Files.Clear();
-            foreach (string path in conflict.conflictedPathes)
+            foreach (string localPath in conflict.conflictedLocalPathes)
             {
-                Files.Add(new Record(path, conflict.targetFolder, iconExtractor));
+                Files.Add(new Record(iconExtractor, action.sourceFolder, action.targetFolder, localPath));
             }
 
             this.RaisePropertyChanged(nameof(IsShowed));
@@ -147,24 +136,17 @@ namespace FileFlow.Views
 
         private void RenameButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            foreach (Record record in Files)
-            {
-                conflict.Resolve(record.SourcePath, record.NewName);
-            }
-
-            if (fileSystem.Move(conflict, out var newConflict) == false)
-            {
-                Show(newConflict);
-            }
-            else
-            {
-                Hide();
-            }
+            conflict.Perform(ActionType.Rename);
+            Hide();
         }
-
         private void RewriteButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            fileSystem.Move(conflict.sourcePathes, conflict.targetFolder, out _, overwrite: true);
+            conflict.Perform(ActionType.Overwrite);
+            Hide();
+        }
+        private void SkipButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            conflict.Perform(ActionType.Skip);
             Hide();
         }
         private void CancelButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

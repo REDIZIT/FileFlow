@@ -42,7 +42,7 @@
                 MinHeight="0" Margin="42, 0, 12, 1" VerticalAlignment="Center">
               </TextBlock>
               <TextBlock
-                Text="{Binding NewName}" FontSize="11" Classes.invalid="{Binding IsInvalid}"
+                Text="{Binding NewLocalPath}" FontSize="11" Classes.invalid="{Binding IsInvalid}"
                 MinHeight="0" Margin="32, 0, 12, 1" VerticalAlignment="Center" HorizontalAlignment="Right">
               </TextBlock>
             </Panel>
@@ -50,7 +50,7 @@
         </ListBox.ItemTemplate>
       </ListBox>
 
-      <Grid Grid.Row="2" RowDefinitions="*, *, *" Margin="12, 6">
+      <Grid Grid.Row="2" RowDefinitions="*, *, *, *" Margin="12, 6">
         <Button Name="rewriteButton" Grid.Row="0" Height="24"
                 HorizontalAlignment="Stretch" Padding="0"
                 FontSize="11" VerticalAlignment="Stretch"
@@ -71,7 +71,16 @@
             <TextBlock Text="R" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#999" Margin="12, 0"/>
           </Panel>
         </Button>
-        <Button Name="cancelButton" Grid.Row="2" Height="24"
+        <Button Name="skipButton" Grid.Row="2" Height="24"
+                 HorizontalAlignment="Stretch" Padding="0"
+                 FontSize="11" VerticalAlignment="Stretch"
+                 CornerRadius="4" Margin="0, 2, 0, 0">
+          <Panel>
+            <TextBlock Text="Пропустить" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <TextBlock Text="S" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#999" Margin="12, 0"/>
+          </Panel>
+        </Button>
+        <Button Name="cancelButton" Grid.Row="3" Height="24"
                  HorizontalAlignment="Stretch" Padding="0"
                  FontSize="11" VerticalAlignment="Stretch"
                  CornerRadius="4" Margin="0, 2, 0, 0">
