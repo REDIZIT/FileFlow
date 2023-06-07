@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using FileFlow.Extensions;
 using FileFlow.Services;
 using FileFlow.ViewModels;
+using Ninject;
 using System;
 using System.Linq;
 
@@ -13,6 +14,7 @@ namespace FileFlow.Views
     public partial class ExplorerControl : UserControl
     {
         private FileCreationView FileCreationView => (FileCreationView)fileCreationView.Content;
+        private ConflictResolveControl ConflictResolveControl => (ConflictResolveControl)conflictResolveControl.Content;
 
         private MainWindow mainWindow;
         private IFileSystemService fileSystem;
@@ -26,11 +28,12 @@ namespace FileFlow.Views
         {
             InitializeComponent();
         }
-        public ExplorerControl(MainWindow mainWindow, IFileSystemService fileSystem, IIconExtractorService iconExtractor)
+        [Inject]
+        public ExplorerControl(MainWindow mainWindow, IKernel kernel)
         {
             this.mainWindow = mainWindow;
-            this.fileSystem = fileSystem;
-            this.iconExtractor = iconExtractor;
+            this.fileSystem = kernel.Get<IFileSystemService>();
+            this.iconExtractor = kernel.Get<IIconExtractorService>();
 
             model = new(fileSystem, iconExtractor);
             model.onFolderLoaded += OnFolderLoaded;
@@ -53,6 +56,8 @@ namespace FileFlow.Views
             AddHandler(DragDrop.DragEnterEvent, DragEnter);
             AddHandler(DragDrop.DragLeaveEvent, DragExit);
             AddHandler(DragDrop.DropEvent, DropEvent);
+
+            conflictResolveControl.Content = kernel.Get<ConflictResolveControl>();
         }
         public void ListItemPointerMove(object sender, PointerEventArgs e)
         {
@@ -186,7 +191,11 @@ namespace FileFlow.Views
             FileCreationView.Show(new FileCreationView.Args(model.ActiveTab.FolderPath, isFile, action, contextedElement));
             contextMenu.Close();
         }
-
+        private void ShowConflictResolve(FileConflict conflict)
+        {
+            ConflictResolveControl.Show(conflict);
+            contextMenu.Close();
+        }
 
         private void DragEnter(object sender, DragEventArgs e)
         {
@@ -201,7 +210,10 @@ namespace FileFlow.Views
             DragExit(null, null);
             var names = e.Data.GetFileNames();
 
-            fileSystem.Move(names, model.ActiveTab.FolderPath);
+            if (fileSystem.Move(names, model.ActiveTab.FolderPath, out FileConflict conflict) == false)
+            {
+                ShowConflictResolve(conflict);
+            }
         }
     }
 }

@@ -66,4 +66,28 @@
   <Style Selector="Button.Item:pressed /template/ ContentPresenter">
     <Setter Property="Background" Value="#a555"/>
   </Style>  
+  
+  <!--Window-->
+  <Style Selector="Border.Window">
+    <Setter Property="Opacity" Value="0"/>
+    <Setter Property="RenderTransform" Value="translateY(10px)"/>
+    <Setter Property="Background" Value="#2c2c2c"/>
+    <Setter Property="VerticalAlignment" Value="Top"/>
+    <Setter Property="Margin" Value="60, 160"/>
+    <Setter Property="BorderBrush" Value="#444"/>
+    <Setter Property="BoxShadow" Value="0 4 30 1 #c000"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="8"/>
+    <Setter Property="Width" Value="360"/>
+    <Setter Property="Transitions">
+      <Transitions>
+        <DoubleTransition Property="Opacity" Duration="0:0:0.1"/>
+        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Border.Window.showed">
+    <Setter Property="Opacity" Value="1"/>
+    <Setter Property="RenderTransform" Value="translateY(0px)"/>
+  </Style>
 </Styles>

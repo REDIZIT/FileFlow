@@ -1,4 +1,5 @@
 ﻿using FileFlow.ViewModels;
+using FileFlow.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,8 +23,10 @@ namespace FileFlow.Services
         void Run(string filePath);
         void CreateFile(string filePath);
         void CreateFolder(string folderPath);
-        void Move(string oldPath, string newPath);
-        void Move(IEnumerable<string> elementsToMove, string targetFolder);
+        bool Move(string oldPath, string newPath, bool overwrite = false);
+        bool Move(IEnumerable<string> elementsToMove, string targetFolder, out FileConflict conflict, bool overwrite = false);
+        bool Move(FileConflict resolvedConflict, out FileConflict conflict);
+        bool Exists(string path);
         void Delete(string filePath);
     }
     public class FileSystemService : IFileSystemService
@@ -107,6 +110,10 @@ namespace FileFlow.Services
                 return FileSizeUtil.PrettyModifyDate(new FileInfo(path).LastWriteTime);
             });
         }
+        public bool Exists(string path)
+        {
+            return Directory.Exists(path) || File.Exists(path);
+        }
         public void CreateFile(string filePath)
         {
             File.Create(filePath);
@@ -115,9 +122,9 @@ namespace FileFlow.Services
         {
             Directory.CreateDirectory(folderPath);
         }
-        public void Move(string oldPath, string newPath)
+        public bool Move(string oldPath, string newPath, bool overwrite = false)
         {
-            if (oldPath == newPath) return;
+            if (oldPath == newPath) return true;
 
             if (Directory.Exists(oldPath))
             {
@@ -125,15 +132,38 @@ namespace FileFlow.Services
             }
             else
             {
-                File.Move(oldPath, newPath);
+                File.Move(oldPath, newPath, overwrite);
             }
+            return true;
         }
-        public void Move(IEnumerable<string> elementsToMove, string targetFolder)
+        public bool Move(IEnumerable<string> elementsToMove, string targetFolder, out FileConflict conflict, bool overwrite = false)
         {
+            if (overwrite == false && FileConflict.HasConflict(targetFolder, elementsToMove, out conflict)) return false;
+
             foreach (string element in elementsToMove)
             {
-                Move(element, targetFolder + "/" + Path.GetFileName(element));
+                Move(element, targetFolder + "/" + Path.GetFileName(element), overwrite);
             }
+
+            conflict = null;
+            return true;
+        }
+        public bool Move(FileConflict resolvedConflict, out FileConflict conflict)
+        {
+            foreach (string sourcePath in resolvedConflict.sourcePathes)
+            {
+                string name = Path.GetFileName(sourcePath);
+                
+                if (resolvedConflict.resolvedNames.TryGetValue(sourcePath, out string resolvedName))
+                {
+                    name = resolvedName;
+                }
+
+                Move(sourcePath, resolvedConflict.targetFolder + "/" + name);
+            }
+
+            conflict = null;
+            return true;
         }
         public void Delete(string path)
         {

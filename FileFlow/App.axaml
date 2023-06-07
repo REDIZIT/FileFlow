@@ -23,6 +23,9 @@
     <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="#a555" />
 
     <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="#a444"/>
+
+
+    <SolidColorBrush x:Key="Error">#F35</SolidColorBrush>
   </Application.Resources>
   
 </Application>

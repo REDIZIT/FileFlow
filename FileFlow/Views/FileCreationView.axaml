@@ -7,32 +7,13 @@
              IsHitTestVisible="False">
 
   <UserControl.Styles>
-    <Style Selector="Border#window">
-      <Setter Property="Opacity" Value="0"/>
-      <Setter Property="RenderTransform" Value="translateY(10px)"/>
-    </Style>
-    <Style Selector="Border#window.showed">
-      <Setter Property="Opacity" Value="1"/>
-      <Setter Property="RenderTransform" Value="translateY(0px)"/>
-    </Style>
     <StyleInclude Source="/Styles/FileFlowStyle.axaml"/>
   </UserControl.Styles>
 
   
-  
   <Border
-        Name="window" Classes.showed="{Binding IsShowed}"
-        Background="#2c2c2c" VerticalAlignment="Top" Margin="60, 160"
-        Width="360" BorderBrush="#444" BorderThickness="1"
-        CornerRadius="8" BoxShadow="0 4 30 1 #c000"
+        Name="window" Classes="Window" Classes.showed="{Binding IsShowed}"
         KeyDown="OnKeyDown">
-
-    <Border.Transitions>
-      <Transitions>
-        <DoubleTransition Property="Opacity" Duration="0:0:0.1"/>
-        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
-      </Transitions>
-    </Border.Transitions>
 
     <Grid RowDefinitions="32, Auto, 42">
       
@@ -49,7 +30,7 @@
         <TextBlock
           Name="invalidText" Text="Имя занято" IsVisible="False"
           HorizontalAlignment="Right" FontSize="11" Padding="0, 1" IsHitTestVisible="False"
-          VerticalAlignment="Center" Margin="24, 0" Foreground="#F35" FontWeight="SemiBold"/>
+          VerticalAlignment="Center" Margin="24, 0" Foreground="{DynamicResource Error}" FontWeight="SemiBold"/>
       </Panel>
       
       <Grid Grid.Row="2" ColumnDefinitions="*, *" Margin="12, 6">

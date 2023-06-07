@@ -254,7 +254,10 @@
         </Panel>
       </Panel>
     </Grid>
+    
     <ContentControl Name="fileCreationView"/>
+    <ContentControl Name="conflictResolveControl"/>
+    
   </Panel>
 
 </UserControl>

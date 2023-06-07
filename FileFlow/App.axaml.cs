@@ -19,7 +19,6 @@ namespace FileFlow
         public override void OnFrameworkInitializationCompleted()
         {
             IKernel kernel = new StandardKernel(new AppNinjectModule());
-            
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {

@@ -4,6 +4,7 @@ using Avalonia.Input;
 using FileFlow.Services;
 using FileFlow.ViewModels;
 using Ninject;
+using Ninject.Parameters;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,7 +28,7 @@ namespace FileFlow.Views
             InitializeComponent();
         }
         [Inject]
-        public MainWindow(MainWindowViewModel model, IIconExtractorService iconExtractor, IFileSystemService fileSystem)
+        public MainWindow(MainWindowViewModel model, IKernel kernel)
         {
             this.model = model;
             this.iconExtractor = iconExtractor;
@@ -37,8 +38,8 @@ namespace FileFlow.Views
 
             InitializeComponent();
 
-            ExplorerControl control = new(this, model.fileSystem, iconExtractor);
-            ExplorerControl control2 = new(this, model.fileSystem, iconExtractor);
+            ExplorerControl control = kernel.Get<ExplorerControl>(new ConstructorArgument("mainWindow", this));
+            ExplorerControl control2 = kernel.Get<ExplorerControl>(new ConstructorArgument("mainWindow", this));
 
             explorers.Add(control);
             explorers.Add(control2);
