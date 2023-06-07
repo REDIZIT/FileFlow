@@ -42,6 +42,13 @@ namespace FileFlow.ViewModels
 
             foreach (string path in sourceFiles)
             {
+                // Prevent not existing files to be copied
+                // Example:
+                // 1) Ctrl+X in windows explorer
+                // 2) Ctrl+V in FileFlow (files will be removed from source folder)
+                // 3) Ctrl+V in FileFlow (files already remoed - continue;)
+                if (fileSystem.Exists(path) == false) continue;
+
                 sourceLocalPathes.Add(path.Substring(sourceFolder.Length + 1, path.Length - sourceFolder.Length - 1));
             }
 

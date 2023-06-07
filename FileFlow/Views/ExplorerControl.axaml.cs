@@ -56,6 +56,8 @@ namespace FileFlow.Views
             AddHandler(PointerPressedEvent, OnExplorerPointerPressed, RoutingStrategies.Tunnel);
             contextablePanel.AddHandler(PointerPressedEvent, OnContextablePanelPressed, RoutingStrategies.Tunnel);
             AddHandler(KeyDownEvent, OnExplorerKeyDown, RoutingStrategies.Tunnel);
+            AddHandler(KeyDownEvent, OnExplorerKeyDown, RoutingStrategies.Direct);
+            //backplate.KeyDown += OnExplorerKeyDown;
 
             AddHandler(DragDrop.DragEnterEvent, DragEnter);
             AddHandler(DragDrop.DragLeaveEvent, DragExit);
@@ -134,23 +136,31 @@ namespace FileFlow.Views
                     fileSystem.Delete(item.Path);
                 }
             }
-            if (e.Modifiers.HasAnyFlag(InputModifiers.Control) && e.Key == Key.V)
+            if (e.Modifiers.HasAnyFlag(InputModifiers.Control))
             {
-                var files = ClipboardService.GetFiles(out DragDropEffects effects);
+                if (e.Key == Key.V)
+                {
+                    var files = ClipboardUtils.GetFiles(out DragDropEffects effects);
 
-                MoveAction moveAction = null;
-                if (effects.HasFlag(DragDropEffects.Move))
-                {
-                    moveAction = new MoveAction(fileSystem, files, model.ActiveTab.FolderPath);
-                }
-                else if (effects.HasFlag(DragDropEffects.Copy))
-                {
-                    moveAction = new CopyAction(fileSystem, files, model.ActiveTab.FolderPath);
-                }
+                    MoveAction moveAction = null;
+                    if (effects.HasFlag(DragDropEffects.Move))
+                    {
+                        moveAction = new MoveAction(fileSystem, files, model.ActiveTab.FolderPath);
+                    }
+                    else if (effects.HasFlag(DragDropEffects.Copy))
+                    {
+                        moveAction = new CopyAction(fileSystem, files, model.ActiveTab.FolderPath);
+                    }
 
-                if (moveAction != null && moveAction.TryPerform() == false)
+                    if (moveAction != null && moveAction.TryPerform() == false)
+                    {
+                        ShowConflictResolve(moveAction);
+                    }
+                }
+                else if (e.Key is Key.C or Key.X)
                 {
-                    ShowConflictResolve(moveAction);
+                    var items = listBox.SelectedItems.Cast<StorageElement>();
+                    ClipboardUtils.CutOrCopyFiles(items.Select(e => e.Path), e.Key == Key.C);
                 }
             }
         }

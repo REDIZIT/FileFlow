@@ -6,8 +6,8 @@
              x:Class="FileFlow.Views.ExplorerControl"
              xmlns:local="clr-namespace:FileFlow.ViewModels"
              xmlns:views="clr-namespace:FileFlow.Views"
-             Background="Transparent"
-             DragDrop.AllowDrop="True">
+             DragDrop.AllowDrop="True"
+             Focusable="True">
 
   <UserControl.Styles>
     <StyleInclude Source="/Styles/FileFlowStyle.axaml"/>
