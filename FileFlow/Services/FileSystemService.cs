@@ -27,7 +27,6 @@ namespace FileFlow.Services
         void CreateFile(string filePath);
         void CreateFolder(string folderPath);
         void Move(string oldPath, string newPath, ActionType type);
-        void Move(IEnumerable<string> elementsToMove, string targetFolder, out FileConflict conflict, ActionType type);
         void Rename(string oldPath, string newPath);
         bool Exists(string path);
         void Delete(string filePath);
@@ -190,18 +189,6 @@ namespace FileFlow.Services
             {
                 Directory.Delete(sourcePath, true);
             }
-        }
-        public void Move(IEnumerable<string> elementsToMove, string targetFolder, out FileConflict conflict, ActionType type)
-        {
-            //if (ActionType && FileConflict.HasConflict(targetFolder, elementsToMove, out conflict)) return false;
-
-            foreach (string element in elementsToMove)
-            {
-                Move(element, targetFolder + "/" + Path.GetFileName(element), type);
-            }
-
-            conflict = null;
-            return;
         }
         public void Rename(string oldPath, string newPath)
         {
