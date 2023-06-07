@@ -1,17 +1,13 @@
-﻿using Avalonia.Controls.Shapes;
-using Avalonia.Threading;
-using DynamicData.Experimental;
+﻿using Avalonia.Threading;
 using FileFlow.Extensions;
 using FileFlow.Services;
 using FileFlow.Views;
-using ReactiveUI;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reactive.Linq;
 
 namespace FileFlow.ViewModels
 {
@@ -42,6 +38,8 @@ namespace FileFlow.ViewModels
         private IIconExtractorService iconExtractor;
         private LoadStatus status;
         private FileSystemWatcher watcher;
+
+        private List<FileSystemWatcher> foldersWatchers = new();
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -143,19 +141,23 @@ namespace FileFlow.ViewModels
 
             explorer.onFolderLoaded?.Invoke(status);
 
-            if (watcher == null)
+            // Setup or update openned folder watcher
+            if (watcher == null) watcher = SetupWatcher(path);
+            else watcher.Path = path;
+
+            // Recreate (TODO: Make a pool for that) openned folder's folders watchers
+            foreach (FileSystemWatcher folderWatcher in foldersWatchers)
             {
-                watcher = new FileSystemWatcher(path);
-                watcher.Filter = "*.*";
-                watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
-                watcher.Created += OnFilesChanged;
-                watcher.Deleted += OnFilesChanged;
-                watcher.Renamed += OnFilesChanged;
-                watcher.EnableRaisingEvents = true;
+                folderWatcher.Dispose();
             }
-            else
+            foldersWatchers.Clear();
+
+            foreach (StorageElement element in StorageElements.Values)
             {
-                watcher.Path = path;
+                if (element.IsFolder)
+                {
+                    foldersWatchers.Add(SetupFolderWatcher(element.Path));
+                }
             }
         }
         private void ReloadElements()
@@ -171,6 +173,36 @@ namespace FileFlow.ViewModels
         {
             StorageElementsValues = new(StorageElements.Values.OrderBy(e => e.Name).OrderByDescending(e => e.IsFolder));
             this.RaisePropertyChanged(nameof(StorageElementsValues));
+        }
+        private FileSystemWatcher SetupWatcher(string path)
+        {
+            FileSystemWatcher watcher = new(path);
+            watcher.Filter = "*.*";
+            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            watcher.Created += OnFilesChanged;
+            watcher.Deleted += OnFilesChanged;
+            watcher.Renamed += OnFilesChanged;
+            watcher.EnableRaisingEvents = true;
+
+            return watcher;
+        }
+        private FileSystemWatcher SetupFolderWatcher(string path)
+        {
+            FileSystemWatcher watcher = new(path);
+            watcher.Filter = "*.*";
+            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            watcher.Created += OnFoldersChanged;
+            watcher.Deleted += OnFoldersChanged;
+            watcher.EnableRaisingEvents = true;
+
+            return watcher;
+        }
+        private void OnFoldersChanged(object sender, FileSystemEventArgs e)
+        {
+            string watcherFolderName = Path.GetFileName(((FileSystemWatcher)sender).Path);
+            StorageElement element = StorageElements[watcherFolderName];
+            element.Refresh();
+            element.IsModified = true;
         }
     }
 }

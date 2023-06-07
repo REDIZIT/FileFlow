@@ -1,4 +1,5 @@
-﻿using Avalonia.Media.Imaging;
+﻿using Avalonia.Controls.Shapes;
+using Avalonia.Media.Imaging;
 using FileFlow.Extensions;
 using FileFlow.Services;
 using System.ComponentModel;
@@ -52,11 +53,15 @@ namespace FileFlow.ViewModels
             Name = System.IO.Path.GetFileName(path);
             IsFolder = File.Exists(Path) == false;
 
-            Icon = IsFolder ? iconExtractor.GetFolderIcon(path) : iconExtractor.GetFileIcon(path);
-
             this.RaisePropertyChanged(nameof(Path));
             this.RaisePropertyChanged(nameof(Name));
             this.RaisePropertyChanged(nameof(IsFolder));
+
+            Refresh();
+        }
+        public void Refresh()
+        {
+            Icon = IsFolder ? iconExtractor.GetFolderIcon(Path) : iconExtractor.GetFileIcon(Path);
             this.RaisePropertyChanged(nameof(Icon));
 
             UpdateSize(fileSystem);
