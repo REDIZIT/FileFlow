@@ -27,6 +27,7 @@ namespace FileFlow.Services
         void CreateFile(string filePath);
         void CreateFolder(string folderPath);
         void Move(string oldPath, string newPath, ActionType type);
+        void Copy(string oldPath, string newPath, ActionType type);
         void Rename(string oldPath, string newPath);
         bool Exists(string path);
         void Delete(string filePath);
@@ -126,12 +127,20 @@ namespace FileFlow.Services
         }
         public void Move(string oldPath, string newPath, ActionType type)
         {
+            MoveOrCopy(oldPath, newPath, type, false);
+        }
+        public void Copy(string oldPath, string newPath, ActionType type)
+        {
+            MoveOrCopy(oldPath, newPath, type, true);
+        }
+        private void MoveOrCopy(string oldPath, string newPath, ActionType type, bool copy)
+        {
             if (oldPath == newPath) return;
 
             if (Directory.Exists(oldPath))
             {
                 // If we're moving folder
-                MoveFilesRecursively(oldPath, newPath, type);
+                MoveOrCopyFolderContent(oldPath, newPath, type, copy);
             }
             else
             {
@@ -143,11 +152,11 @@ namespace FileFlow.Services
                     if (type == ActionType.Rename)
                     {
                         string resolvedPath = FileSystemExtensions.GetRenamedPath(newPath);
-                        File.Move(oldPath, resolvedPath);
+                        MoveOrCopyFile(oldPath, resolvedPath, type, copy);
                     }
                     else if (type == ActionType.Overwrite)
                     {
-                        File.Move(oldPath, newPath, overwrite: true);
+                        MoveOrCopyFile(oldPath, newPath, type, copy);
                     }
                     else if (type == ActionType.Skip)
                     {
@@ -156,11 +165,18 @@ namespace FileFlow.Services
                 }
                 else
                 {
-                    File.Move(oldPath, newPath);
+                    MoveOrCopyFile(oldPath, newPath, type, copy);
                 }
             }
         }
-        private void MoveFilesRecursively(string sourcePath, string targetPath, ActionType type)
+        private void MoveOrCopyFile(string oldPath, string newPath, ActionType type, bool copy)
+        {
+            bool overwrite = type == ActionType.Overwrite;
+            if (copy) File.Copy(oldPath, newPath, overwrite);
+            else File.Move(oldPath, newPath, overwrite);
+        }
+
+        private void MoveOrCopyFolderContent(string sourcePath, string targetPath, ActionType type, bool copy)
         {
             Directory.CreateDirectory(targetPath);
 
@@ -172,23 +188,44 @@ namespace FileFlow.Services
             foreach (string sourceFilePath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
             {
                 string targetFilePath = sourceFilePath.Replace(sourcePath, targetPath);
-                Move(sourceFilePath, targetFilePath, type);
+                MoveOrCopy(sourceFilePath, targetFilePath, type, copy);
             }
 
-            if (type == ActionType.Skip)
+            // Try to delete folder if we're moving this folder
+            if (copy == false)
             {
-                // If we're skipping conflicting files, then they won't be moved
-                // If any file still inside folder (if any file skipped) - don't delete folder
-                bool hasAnyFilesInside = Directory.EnumerateFiles(sourcePath, "*.*", SearchOption.AllDirectories).Any();
-                if (hasAnyFilesInside == false)
+                if (type == ActionType.Skip)
+                {
+                    // If we're skipping conflicting files, then they won't be moved
+                    // If any file still inside folder (if any file skipped) - don't delete folder
+                    bool hasAnyFilesInside = Directory.EnumerateFiles(sourcePath, "*.*", SearchOption.AllDirectories).Any();
+                    if (hasAnyFilesInside == false)
+                    {
+                        Directory.Delete(sourcePath, true);
+                    }
+                }
+                else
                 {
                     Directory.Delete(sourcePath, true);
                 }
             }
-            else
-            {
-                Directory.Delete(sourcePath, true);
-            }
+        }
+
+
+
+        public void Move(IEnumerable<string> sourceFiles, string targetFolder)
+        {
+            throw new NotImplementedException();
+            //foreach (string path in sourceFiles)
+            //{
+            //    string name = Path.GetFileName(path);
+            //    string targetFilePath = targetFolder + "/" + name;
+            //    Move(path, targetFilePath)
+            //}
+        }
+        public void Copy(IEnumerable<string> sourceFiles, string targetFolder)
+        {
+            throw new NotImplementedException();
         }
         public void Rename(string oldPath, string newPath)
         {

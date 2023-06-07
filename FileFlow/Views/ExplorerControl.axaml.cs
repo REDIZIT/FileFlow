@@ -3,11 +3,15 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using FileFlow.Extensions;
+using FileFlow.Misc;
 using FileFlow.Services;
 using FileFlow.ViewModels;
 using Ninject;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FileFlow.Views
 {
@@ -128,6 +132,25 @@ namespace FileFlow.Views
                 foreach (StorageElement item in listBox.SelectedItems)
                 {
                     fileSystem.Delete(item.Path);
+                }
+            }
+            if (e.Modifiers.HasAnyFlag(InputModifiers.Control) && e.Key == Key.V)
+            {
+                var files = ClipboardService.GetFiles(out DragDropEffects effects);
+
+                MoveAction moveAction = null;
+                if (effects.HasFlag(DragDropEffects.Move))
+                {
+                    moveAction = new MoveAction(fileSystem, files, model.ActiveTab.FolderPath);
+                }
+                else if (effects.HasFlag(DragDropEffects.Copy))
+                {
+                    moveAction = new CopyAction(fileSystem, files, model.ActiveTab.FolderPath);
+                }
+
+                if (moveAction != null && moveAction.TryPerform() == false)
+                {
+                    ShowConflictResolve(moveAction);
                 }
             }
         }

@@ -12,6 +12,17 @@ namespace FileFlow.ViewModels
         Skip,
         Overwrite
     }
+    public class CopyAction : MoveAction
+    {
+        public CopyAction(IFileSystemService fileSystem, IEnumerable<string> sourceFiles, string targetFolder) : base(fileSystem, sourceFiles, targetFolder)
+        {
+        }
+
+        protected override void PerformFileAction(string sourcePath, string targetPath, ActionType type)
+        {
+            fileSystem.Copy(sourcePath, targetPath, type);
+        }
+    }
     public class MoveAction
     {
         public string sourceFolder;
@@ -20,7 +31,7 @@ namespace FileFlow.ViewModels
 
         public string targetFolder;
 
-        private IFileSystemService fileSystem;
+        protected IFileSystemService fileSystem;
 
         public MoveAction(IFileSystemService fileSystem, IEnumerable<string> sourceFiles, string targetFolder)
         {
@@ -74,13 +85,21 @@ namespace FileFlow.ViewModels
             else if (type == ActionType.Overwrite) Overwrite();
             else throw new System.NotImplementedException();
         }
+
+
+        protected virtual void PerformFileAction(string sourcePath, string targetPath, ActionType type)
+        {
+            fileSystem.Move(sourcePath, targetPath, type);
+        }
+
+
         private void Overwrite()
         {
             foreach (string localPath in sourceLocalPathes)
             {
                 string sourcePath = sourceFolder + "/" + localPath;
                 string targetPath = targetFolder + "/" + localPath;
-                fileSystem.Move(sourcePath, targetPath, ActionType.Overwrite);
+                PerformFileAction(sourcePath, targetPath, ActionType.Overwrite);
             }
         }
         private void SkipConflicts()
@@ -94,7 +113,7 @@ namespace FileFlow.ViewModels
                 // If there is no folder or file at target, then just move
                 if (Directory.Exists(targetPath) || File.Exists(targetPath) == false)
                 {
-                    fileSystem.Move(sourcePath, targetPath, ActionType.Skip);
+                    PerformFileAction(sourcePath, targetPath, ActionType.Skip);
                 }
             }
         }
@@ -110,7 +129,7 @@ namespace FileFlow.ViewModels
                     targetPath = FileSystemExtensions.GetRenamedPath(targetPath);
                 }
 
-                fileSystem.Move(sourcePath, targetPath, ActionType.Rename);
+                PerformFileAction(sourcePath, targetPath, ActionType.Rename);
             }
         }
         private string GetCommonParentPath(IEnumerable<string> paths)
@@ -127,6 +146,5 @@ namespace FileFlow.ViewModels
 
             return commonPath;
         }
-       
     }
 }
