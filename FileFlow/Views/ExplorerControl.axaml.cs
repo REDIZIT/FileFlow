@@ -140,6 +140,7 @@ namespace FileFlow.Views
             {
                 if (e.Key == Key.V)
                 {
+                    // Paste files from clipboard
                     var files = ClipboardUtils.GetFiles(out DragDropEffects effects);
 
                     MoveAction moveAction = null;
@@ -159,8 +160,18 @@ namespace FileFlow.Views
                 }
                 else if (e.Key is Key.C or Key.X)
                 {
+                    // Copy or cut selected files to clipboard
                     var items = listBox.SelectedItems.Cast<StorageElement>();
                     ClipboardUtils.CutOrCopyFiles(items.Select(e => e.Path), e.Key == Key.C);
+                }
+                else if (e.Key == Key.D)
+                {
+                    // Duplicate file
+                    foreach (StorageElement element in listBox.SelectedItems.Cast<StorageElement>())
+                    {
+                        string newPath = FileSystemExtensions.GetRenamedPath(element.Path);
+                        fileSystem.Copy(element.Path, newPath, ActionType.Rename);
+                    }
                 }
             }
         }

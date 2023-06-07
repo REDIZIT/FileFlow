@@ -1,4 +1,5 @@
-﻿using FileFlow.Extensions;
+﻿using Avalonia.Controls.Shapes;
+using FileFlow.Extensions;
 using FileFlow.Services;
 using System.Collections.Generic;
 using System.IO;
@@ -141,13 +142,13 @@ namespace FileFlow.ViewModels
         }
         private string GetCommonParentPath(IEnumerable<string> paths)
         {
-            string commonPath = Directory.GetParent(paths.First()).FullName;
+            string commonPath = System.IO.Path.GetDirectoryName(paths.First()).CleanUp();
 
             foreach (string path in paths)
             {
-                while (!path.StartsWith(commonPath))
+                while (path.CleanUp().StartsWith(commonPath) == false)
                 {
-                    commonPath = Directory.GetParent(commonPath).FullName;
+                    commonPath = System.IO.Path.GetDirectoryName(commonPath).CleanUp();
                 }
             }
 
