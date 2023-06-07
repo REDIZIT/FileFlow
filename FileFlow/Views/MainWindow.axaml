@@ -28,8 +28,8 @@
     <StyleInclude Source="/Styles/FileFlowStyle.axaml"/>
   </Window.Styles>
 
-  <Grid RowDefinitions="*, 32" Background="#EE141414">
-    <Grid Name="explorerGrid" ColumnDefinitions="200, 2, *, 2, *" Grid.Row="0" Background="#0000">
+  <Panel>
+    <Grid Name="explorerGrid" ColumnDefinitions="200, 2, *, 2, *" Grid.Row="0" Background="#EE141414">
       <Grid.Styles>
         <Style Selector="GridSplitter">
           <Setter Property="Background" Value="#a333"/>
@@ -43,9 +43,28 @@
       <GridSplitter Grid.Column="3" ResizeDirection="Columns"/>
       <ContentControl Grid.Column="4" Name="explorerPlaceholder2"/>
     </Grid>
-    <TextBox Grid.Row="1" Text="444" Name="statusText"/>
-  </Grid>
+    <ItemsControl
+      HorizontalAlignment="Left"
+      VerticalAlignment="Bottom" Items="{Binding DownloadItems}" Padding="18, 12">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <Border Height="42" Margin="0, 2"
+              CornerRadius="6" BorderBrush="#555" BorderThickness="1"
+              BoxShadow="0 4 15 1 #c000" Background="#2c2c2c"
+              PointerPressed="OnDownloadItemPressed"
+              PointerMoved="OnDownloadItemMoved"
+              Tag="{Binding}">
+            <Panel IsHitTestVisible="False">
+              <Image Source="{Binding Icon}" Height="22" Width="22" HorizontalAlignment="Left" Margin="14, 0"/>
+              <TextBlock Text="Загружен файл" FontSize="9" VerticalAlignment="Top" Margin="46, 7, 16, 0" Foreground="#888"/>
+              <TextBlock Text="{Binding Name}" FontSize="11" VerticalAlignment="Top" Margin="46, 18, 16, 0"/>
+            </Panel>
+          </Border>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
 
+  </Panel>
 
 
 </Window>
