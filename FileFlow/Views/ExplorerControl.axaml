@@ -52,48 +52,14 @@
           </StackPanel>
           <Popup
             Name="pathPopup"
-            StaysOpen="True"
-            Width="400">
+            StaysOpen="False"
+            Width="400"
+            IsHitTestVisible="False">
             <Border
               BorderBrush="#111"
               BorderThickness="1"
               CornerRadius="0, 0, 12, 12"
               Background="#0d0d0d">
-              <!--<ListBox
-                Name="pathList"
-                HorizontalAlignment="Stretch"
-                CornerRadius="0, 0, 12, 12"
-                Items="{Binding PathBarHints}"
-                KeyDown="OnPathBarKeyPressed">
-
-                <ListBox.Styles>
-                  <Style Selector="ListBoxItem">
-                    <Setter Property="Padding" Value="0"/>
-                    <Setter Property="Height" Value="32"/>
-                    <Setter Property="Background" Value="#9333"/>
-                  </Style>
-                  <Style Selector="ListBoxItem > Grid">
-                    <Setter Property="Background" Value="#222"/>
-                  </Style>
-                  <Style Selector="ListBoxItem:selected > Grid">
-                    <Setter Property="Background" Value="#333"/>
-                  </Style>
-                  <Style Selector="ListBoxItem:pointerover > Grid">
-                    <Setter Property="Background" Value="#333"/>
-                  </Style>
-                </ListBox.Styles>
-                <ListBox.ItemTemplate>
-                  <DataTemplate>
-                    <Grid
-                      ColumnDefinitions="Auto, *, Auto"
-                      PointerPressed="OnPathBarClicked">
-                      <Image Grid.Column="0" Source="/Assets/Icons/file.png" Width="16" Height="16" Margin="12, 0, 0, 0"/>
-                      <TextBlock Grid.Column="1" FontSize="12" Text="{Binding DisplayText}" VerticalAlignment="Center" Margin="8, 0, 0, 0"/>
-                      <TextBlock Grid.Column="2" FontSize="12" Text="{Binding TypeText}" Foreground="#999" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="8, 0, 12, 0"/>
-                    </Grid>
-                  </DataTemplate>
-                </ListBox.ItemTemplate>
-              </ListBox>-->
             </Border>
           </Popup>
         </Panel>
@@ -117,6 +83,7 @@
             Background="Transparent">
 
             <ListBox.Styles>
+              
               <Style Selector="ListBoxItem">
                 <Setter Property="Padding" Value="0"/>
                 <Setter Property="CornerRadius" Value="6"/>
@@ -139,6 +106,14 @@
                 <Setter Property="Background" Value="#ccc"/>
                 <Setter Property="Opacity" Value="1"/>
               </Style>
+
+              <Style Selector="ListBoxItem.dropHover">
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="-1"/>
+                <Setter Property="BorderBrush" Value="#888"/>
+                <Setter Property="Background" Value="#a444"/>
+              </Style>
+
             </ListBox.Styles>
 
             <ListBox.Resources>
@@ -159,7 +134,8 @@
                   Background="Transparent"
                   PointerPressed="Click"
                   PointerMoved="ListItemPointerMove"
-                  Tag="{Binding}">
+                  Tag="{Binding}"
+                  DragDrop.AllowDrop="True">
                   <Grid
                     IsHitTestVisible="False">
                     <Grid.ColumnDefinitions>

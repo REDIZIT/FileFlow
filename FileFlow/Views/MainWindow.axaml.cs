@@ -38,8 +38,8 @@ namespace FileFlow.Views
 
             InitializeComponent();
 
-            ExplorerControl control = kernel.Get<ExplorerControl>(new ConstructorArgument("mainWindow", this));
-            ExplorerControl control2 = kernel.Get<ExplorerControl>(new ConstructorArgument("mainWindow", this));
+            ExplorerControl control = kernel.Get<ExplorerControl>(new ConstructorArgument("mainWindow", this), new ConstructorArgument("id", 0));
+            ExplorerControl control2 = kernel.Get<ExplorerControl>(new ConstructorArgument("mainWindow", this), new ConstructorArgument("id", 1));
 
             explorers.Add(control);
             explorers.Add(control2);

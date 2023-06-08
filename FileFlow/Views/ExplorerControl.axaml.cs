@@ -25,6 +25,7 @@ namespace FileFlow.Views
         private IIconExtractorService iconExtractor;
         private ExplorerViewModel model;
         private StorageElement contextedElement;
+        private int id;
 
         private Point leftClickPoint;
 
@@ -33,11 +34,12 @@ namespace FileFlow.Views
             InitializeComponent();
         }
         [Inject]
-        public ExplorerControl(MainWindow mainWindow, IKernel kernel)
+        public ExplorerControl(MainWindow mainWindow, IKernel kernel, int id)
         {
             this.mainWindow = mainWindow;
-            this.fileSystem = kernel.Get<IFileSystemService>();
-            this.iconExtractor = kernel.Get<IIconExtractorService>();
+            this.id = id;
+            fileSystem = kernel.Get<IFileSystemService>();
+            iconExtractor = kernel.Get<IIconExtractorService>();
 
             model = new(fileSystem, iconExtractor);
             model.onFolderLoaded += OnFolderLoaded;
@@ -57,7 +59,6 @@ namespace FileFlow.Views
             contextablePanel.AddHandler(PointerPressedEvent, OnContextablePanelPressed, RoutingStrategies.Tunnel);
             AddHandler(KeyDownEvent, OnExplorerKeyDown, RoutingStrategies.Tunnel);
             AddHandler(KeyDownEvent, OnExplorerKeyDown, RoutingStrategies.Direct);
-            //backplate.KeyDown += OnExplorerKeyDown;
 
             AddHandler(DragDrop.DragEnterEvent, DragEnter);
             AddHandler(DragDrop.DragLeaveEvent, DragExit);
@@ -75,8 +76,11 @@ namespace FileFlow.Views
             if (point.Properties.IsLeftButtonPressed && magnitude > 12)
             {
                 StorageElement storageElement = (StorageElement)((Control)e.Source).Tag;
+
                 DataObject data = new();
                 data.Set(DataFormats.FileNames, new string[] { storageElement.Path });
+                data.Set(Constants.DRAG_SOURCE, id);
+
                 DragDrop.DoDragDrop(e, data, DragDropEffects.Move);
                 e.Handled = true;
             }
@@ -243,18 +247,59 @@ namespace FileFlow.Views
 
         private void DragEnter(object sender, DragEventArgs e)
         {
-            dropPanel.IsVisible = true;
+            object? obj = e.Data.Get(Constants.DRAG_SOURCE);
+
+            Control control = ((Control)e.Source);
+            if (control.Tag is StorageElement element && element.IsFolder)
+            {
+                control.Parent.Classes.Add("dropHover");
+            }
+
+            if (obj == null || (int)obj != id)
+            {
+                // Drag started not from FileFlow or not from this Explorer
+                dropPanel.IsVisible = true;
+            }
+            else
+            {
+                // Drag started from this Explorer
+                dropPanel.IsVisible = false;
+            }
         }
         private void DragExit(object sender, RoutedEventArgs e)
         {
+            Control control = (Control)e.Source;
+            control.Parent.Classes.Remove("dropHover");
+
             dropPanel.IsVisible = false;
         }
         private void DropEvent(object sender, DragEventArgs e)
         {
-            DragExit(null, null);
+            string targetFolderPath;
+            Control control = (Control)e.Source;
+            control.Parent.Classes.Remove("dropHover");
+
+            if (control.Tag is StorageElement element == false)
+            {
+                // If dropped at openned folder
+                targetFolderPath = model.ActiveTab.FolderPath;
+            }
+            else if (element.IsFolder)
+            {
+                // If dropped at inner folder
+                targetFolderPath = element.Path;
+            }
+            else
+            {
+                // If dropped at inner file (not allowed)
+                return;
+            }
+
+
+            DragExit(sender, e);
             var names = e.Data.GetFileNames();
 
-            MoveAction moveAction = new MoveAction(fileSystem, names, model.ActiveTab.FolderPath);
+            MoveAction moveAction = new MoveAction(fileSystem, names, targetFolderPath);
             if (moveAction.TryPerform() == false)
             {
                 ShowConflictResolve(moveAction);
