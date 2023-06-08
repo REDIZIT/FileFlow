@@ -190,18 +190,29 @@ namespace FileFlow.Views
         }
         private void OnPathBarKeyDown(object sender, KeyEventArgs e)
         {
-            pathPopup.Width = pathText.Bounds.Width;
-            pathPopup.Open();
+            //pathPopup.Width = pathText.Bounds.Width;
+            //pathPopup.Open();
 
             bool isAnyKeyPressed = false;
 
             if (e.Key == Key.Enter)
             {
-                model.Open(new(pathText.Text, fileSystem, iconExtractor));
+                // If text is 'C:' or 'D:'
+                // Check this to prevent fileSystem using absolute path as relative
+                if (pathText.Text.CleanUp().Contains(":/"))
+                {
+                    model.Open(new(pathText.Text, fileSystem, iconExtractor));
+                }
+                else
+                {
+                    pathText.Text = model.ActiveTab.FolderPath;
+                }
+
                 isAnyKeyPressed = true;
             }
             else if (e.Key == Key.Escape)
             {
+                pathText.Text = model.ActiveTab.FolderPath;
                 isAnyKeyPressed = true;
             }
 

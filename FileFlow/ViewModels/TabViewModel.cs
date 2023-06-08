@@ -141,9 +141,6 @@ namespace FileFlow.ViewModels
 
             explorer.onFolderLoaded?.Invoke(status);
 
-            // Setup or update openned folder watcher
-            if (watcher == null) watcher = SetupWatcher(path);
-            else watcher.Path = path;
 
             // Recreate (TODO: Make a pool for that) openned folder's folders watchers
             foreach (FileSystemWatcher folderWatcher in foldersWatchers)
@@ -151,6 +148,16 @@ namespace FileFlow.ViewModels
                 folderWatcher.Dispose();
             }
             foldersWatchers.Clear();
+
+
+            if (status != LoadStatus.Ok)
+            {
+                return;
+            }
+
+            // Setup or update openned folder watcher
+            if (watcher == null) watcher = SetupWatcher(path);
+            else watcher.Path = path;
 
             foreach (StorageElement element in StorageElements.Values)
             {
@@ -193,7 +200,16 @@ namespace FileFlow.ViewModels
             watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
             watcher.Created += OnFoldersChanged;
             watcher.Deleted += OnFoldersChanged;
-            watcher.EnableRaisingEvents = true;
+
+            // Check if we have access to the folder
+            try
+            {
+                Directory.EnumerateFileSystemEntries(path).Any();
+                watcher.EnableRaisingEvents = true;
+            }
+            catch (UnauthorizedAccessException)
+            {
+            }
 
             return watcher;
         }

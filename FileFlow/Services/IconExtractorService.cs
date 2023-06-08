@@ -39,7 +39,11 @@ namespace FileFlow.Services
         {
             try
             {
-                if (Directory.EnumerateFileSystemEntries(folderPath).Count() > 0)
+                if (Directory.Exists(folderPath) == false)
+                {
+                    return null;
+                }
+                else if (Directory.EnumerateFileSystemEntries(folderPath).Any())
                 {
                     return folder;
                 }
