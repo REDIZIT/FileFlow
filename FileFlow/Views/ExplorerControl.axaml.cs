@@ -68,9 +68,12 @@ namespace FileFlow.Views
             conflictResolveControl.Content = kernel.Get<ConflictResolveControl>();
         }
 
-       
+        public void Open(StorageElement element)
+        {
+            model.Open(element);
+        }
 
-        public void ListItemPointerMove(object sender, PointerEventArgs e)
+        private void ListItemPointerMove(object sender, PointerEventArgs e)
         {
             var point = e.GetCurrentPoint(this);
 
@@ -89,7 +92,7 @@ namespace FileFlow.Views
                 e.Handled = true;
             }
         }
-        public void Click(object sender, PointerPressedEventArgs e)
+        private void Click(object sender, PointerPressedEventArgs e)
         {
             PointerPoint point = e.GetCurrentPoint(this);
             leftClickPoint = point.Position;

@@ -16,6 +16,7 @@ namespace FileFlow.Views
 {
     public partial class MainWindow : Window
     {
+        private ExplorerControl activeExplorer;
         private List<ExplorerControl> explorers = new();
         private Point leftCickPoint;
 
@@ -31,8 +32,8 @@ namespace FileFlow.Views
         public MainWindow(MainWindowViewModel model, IKernel kernel)
         {
             this.model = model;
-            this.iconExtractor = iconExtractor;
-            this.fileSystem = fileSystem;
+            iconExtractor = kernel.Get<IIconExtractorService>();
+            fileSystem = kernel.Get<IFileSystemService>();
 
             DataContext = model;
             Opened += (_, _) =>
@@ -55,6 +56,7 @@ namespace FileFlow.Views
 
         public void OnExplorerClicked(ExplorerControl explorer)
         {
+            activeExplorer = explorer;
             foreach (var item in explorers)
             {
                 item.Opacity = 0.7f;
@@ -68,14 +70,27 @@ namespace FileFlow.Views
             var point = e.GetCurrentPoint(this);
             var props = point.Properties;
 
+            var element = (StorageElement)((Control)e.Source).Tag;
             if (props.IsLeftButtonPressed)
             {
                 leftCickPoint = point.Position;
+
+                if (e.ClickCount >= 2)
+                {
+                    if (element.IsFolder)
+                    {
+                        activeExplorer.Open(element);
+                    }
+                    else
+                    {
+                        fileSystem.Run(element.Path);
+                    }
+                    model.CloseDownloadItem(element);
+                }
             }
             else if (props.IsRightButtonPressed)
             {
-                var element = (StorageElement)((Control)e.Source).Tag;
-                model.OnRightClicked(element);
+                model.CloseDownloadItem(element);
             }
         }
         private void OnDownloadItemMoved(object snder, PointerEventArgs e)
@@ -91,6 +106,7 @@ namespace FileFlow.Views
                 DataObject data = new();
                 data.Set(DataFormats.FileNames, new string[] { storageElement.Path });
                 DragDrop.DoDragDrop(e, data, DragDropEffects.Move);
+                model.CloseDownloadItem(storageElement);
             }
         }
     }

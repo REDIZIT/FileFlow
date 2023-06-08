@@ -32,7 +32,7 @@ namespace FileFlow.ViewModels
 
             UpdateDownloadsWatcher();
         }
-        public void OnRightClicked(StorageElement element)
+        public void CloseDownloadItem(StorageElement element)
         {
             DownloadItems.Remove(element);
             this.RaisePropertyChanged(nameof(DownloadItems));
