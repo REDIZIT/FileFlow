@@ -5,13 +5,12 @@ using Avalonia.Interactivity;
 using FileFlow.Extensions;
 using FileFlow.Misc;
 using FileFlow.Services;
+using FileFlow.Services.Hints;
 using FileFlow.ViewModels;
 using Ninject;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Reactive.Linq;
 
 namespace FileFlow.Views
 {
@@ -23,6 +22,7 @@ namespace FileFlow.Views
         private MainWindow mainWindow;
         private IFileSystemService fileSystem;
         private IIconExtractorService iconExtractor;
+
         private ExplorerViewModel model;
         private StorageElement contextedElement;
         private int id;
@@ -41,7 +41,7 @@ namespace FileFlow.Views
             fileSystem = kernel.Get<IFileSystemService>();
             iconExtractor = kernel.Get<IIconExtractorService>();
 
-            model = new(fileSystem, iconExtractor);
+            model = new(fileSystem, iconExtractor, kernel.Get<HintsService>());
             model.onFolderLoaded += OnFolderLoaded;
             DataContext = model;
 
@@ -54,6 +54,7 @@ namespace FileFlow.Views
             newFileButton.Click += (_, _) => ShowFileCreationView(true, FileCreationView.Action.Create);
             newFolderButton.Click += (_, _) => ShowFileCreationView(false, FileCreationView.Action.Create);
             renameButton.Click += (_, _) => ShowFileCreationView(!contextedElement.IsFolder, FileCreationView.Action.Rename);
+            pathText.GetObservable(TextBox.TextProperty).Subscribe(PathText_TextInput);
 
             AddHandler(PointerPressedEvent, OnExplorerPointerPressed, RoutingStrategies.Tunnel);
             contextablePanel.AddHandler(PointerPressedEvent, OnContextablePanelPressed, RoutingStrategies.Tunnel);
@@ -66,6 +67,9 @@ namespace FileFlow.Views
 
             conflictResolveControl.Content = kernel.Get<ConflictResolveControl>();
         }
+
+       
+
         public void ListItemPointerMove(object sender, PointerEventArgs e)
         {
             var point = e.GetCurrentPoint(this);
@@ -177,6 +181,12 @@ namespace FileFlow.Views
                         fileSystem.Copy(element.Path, newPath, ActionType.Rename);
                     }
                 }
+                else if (e.Key == Key.T)
+                {
+                    // Focus path bar
+                    pathText.Focus();
+                    pathText.SelectAll();
+                }
             }
         }
         private void OnFolderLoaded(LoadStatus status)
@@ -190,22 +200,44 @@ namespace FileFlow.Views
         }
         private void OnPathBarKeyDown(object sender, KeyEventArgs e)
         {
-            //pathPopup.Width = pathText.Bounds.Width;
-            //pathPopup.Open();
-
             bool isAnyKeyPressed = false;
+
+            if (hintsListBox.ItemCount > 0)
+            {
+                if (e.Key == Key.Down)
+                {
+                    hintsListBox.SelectedIndex = Math.Clamp(hintsListBox.SelectedIndex + 1, -1, hintsListBox.ItemCount - 1);
+                }
+                else if (e.Key == Key.Up)
+                {
+                    hintsListBox.SelectedIndex = Math.Clamp(hintsListBox.SelectedIndex - 1, -1, hintsListBox.ItemCount - 1);
+                }
+                else if (e.Key == Key.Tab && hintsListBox.SelectedIndex != -1)
+                {
+                    pathText.Text = ((IPathBarHint)hintsListBox.SelectedItem).GetFullPath();
+                }
+            }
+
 
             if (e.Key == Key.Enter)
             {
-                // If text is 'C:' or 'D:'
-                // Check this to prevent fileSystem using absolute path as relative
-                if (pathText.Text.CleanUp().Contains(":/"))
+                if (hintsListBox.SelectedIndex == -1)
                 {
-                    model.Open(new(pathText.Text, fileSystem, iconExtractor));
+                    // If text is 'C:' or 'D:'
+                    // Check this to prevent fileSystem using absolute path as relative
+                    if (pathText.Text.CleanUp().Contains(":/"))
+                    {
+                        model.Open(new(pathText.Text, fileSystem, iconExtractor));
+                    }
+                    else
+                    {
+                        pathText.Text = model.ActiveTab.FolderPath;
+                    }
                 }
                 else
                 {
-                    pathText.Text = model.ActiveTab.FolderPath;
+                    IPathBarHint hint = (IPathBarHint)hintsListBox.SelectedItem;
+                    model.Open(new(hint.GetFullPath(), fileSystem, iconExtractor));
                 }
 
                 isAnyKeyPressed = true;
@@ -216,21 +248,28 @@ namespace FileFlow.Views
                 isAnyKeyPressed = true;
             }
 
-            //if (e.Key == Key.Down)
-            //{
-            //    var listBoxItem = (ListBoxItem)pathList
-            //        .ItemContainerGenerator
-            //        .Containers.First().ContainerControl;
-
-            //    pathList.SelectedIndex = 0;
-            //    listBoxItem.Focus();
-            //}
+            
+            
 
             if (isAnyKeyPressed)
             {
-                KeyboardDevice.Instance.SetFocusedElement(null, NavigationMethod.Unspecified, KeyModifiers.None);
+                KeyboardDevice.Instance.SetFocusedElement(this, NavigationMethod.Unspecified, KeyModifiers.None);
             }
         }
+        private void PathText_TextInput(string text)
+        {
+            model.UpdateHints(text);
+            hintsListBox.SelectedIndex = 0;
+            if (hintsListBox.ItemCount > 0)
+            {
+                pathPopup.Open();
+            }
+            else
+            {
+                pathPopup.Close();
+            }
+        }
+
         private void OnPathBarClicked(object sender, PointerPressedEventArgs e)
         {
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)

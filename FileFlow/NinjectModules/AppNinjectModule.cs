@@ -9,6 +9,7 @@ namespace FileFlow.NinjectModules
         {
             Bind<IIconExtractorService>().To<IconExtractorService>().InSingletonScope();
             Bind<IFileSystemService>().To<FileSystemService>().InSingletonScope();
+            Bind<HintsService>().To<HintsService>().InSingletonScope();
         }
     }
 }

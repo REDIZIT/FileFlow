@@ -1,4 +1,5 @@
 ﻿using FileFlow.Services;
+using FileFlow.Services.Hints;
 using FileFlow.ViewModels;
 using System;
 using System.Collections.ObjectModel;
@@ -11,8 +12,9 @@ namespace FileFlow.Views
     public class ExplorerViewModel : ViewModelBase, INotifyPropertyChanged
     {
         public TabViewModel ActiveTab { get; private set; }
-        public ObservableCollection<PathBarHintViewModel> PathBarHints { get; set; }
+        public ObservableCollection<IPathBarHint> PathBarHints { get; set; } = new();
         public ObservableCollection<TabViewModel> Tabs { get; set; } = new();
+        public bool HasHints => PathBarHints.Any();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -20,11 +22,13 @@ namespace FileFlow.Views
 
         private IFileSystemService fileSystem;
         private IIconExtractorService iconExtractor;
+        private HintsService hintsService;
 
-        public ExplorerViewModel(IFileSystemService fileSystem, IIconExtractorService iconExtractor)
+        public ExplorerViewModel(IFileSystemService fileSystem, IIconExtractorService iconExtractor, HintsService hintsService)
         {
             this.fileSystem = fileSystem;
             this.iconExtractor = iconExtractor;
+            this.hintsService = hintsService;
         }
         public void Initialize()
         {
@@ -35,15 +39,8 @@ namespace FileFlow.Views
 
             OnTabClicked(Tabs[0]);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Tabs)));
-
-            PathBarHints = new()
-            {
-                new() { DisplayText = "123", TypeText = "System" },
-                new() { DisplayText = "234", TypeText = "App" },
-                new() { DisplayText = "345", TypeText = "System" }
-            };
         }
-        
+
         public void Open(StorageElement storageElement)
         {
             ActiveTab.Open(storageElement);
@@ -87,6 +84,12 @@ namespace FileFlow.Views
                 Tabs.Remove(tab);
             }
             this.RaisePropertyChanged(nameof(Tabs));
+        }
+        public void UpdateHints(string text)
+        {
+            PathBarHints = new(hintsService.UpdateHintItems(text));
+            this.RaisePropertyChanged(nameof(PathBarHints));
+            this.RaisePropertyChanged(nameof(HasHints));
         }
 
         protected virtual void OnPropertyChanged(string propertyName)

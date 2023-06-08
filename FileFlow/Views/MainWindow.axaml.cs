@@ -35,6 +35,11 @@ namespace FileFlow.Views
             this.fileSystem = fileSystem;
 
             DataContext = model;
+            Opened += (_, _) =>
+            {
+                explorers[0].Focus();
+                OnExplorerClicked(explorers[0]);
+            };
 
             InitializeComponent();
 

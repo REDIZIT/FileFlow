@@ -19,50 +19,92 @@
     <Style Selector="Button.ActiveTab:pointerover /template/ ContentPresenter">
       <Setter Property="BorderBrush" Value="#aaa"/>
     </Style>
+
+    <Style Selector="ListBoxItem">
+      <Setter Property="Padding" Value="0"/>
+      <!--FocusAdorner - Disable windows selection border-->
+      <Setter Property="FocusAdorner" Value="{x:Null}"/>
+    </Style>
+    
   </UserControl.Styles>
 
   <Panel>
     <Grid RowDefinitions="Auto, *">
-      <Border Grid.Row="0" Background="#a222" BorderThickness="0, 0, 0, 1" BorderBrush="#444">
-        <Panel>
-          <StackPanel VerticalAlignment="Top" Spacing="0">
+      <Border 
+        Grid.Row="0" Background="#a222" BorderThickness="0, 0, 0, 1" 
+        BorderBrush="#444">
+        <StackPanel VerticalAlignment="Top" Spacing="0">
+          <Panel Margin="12, 0">
 
+            <Panel.Styles>
+              <Style Selector="TextBox">
+                <Setter Property="CornerRadius" Value="8, 8, 8, 8"/>
+              </Style>
+              <Style Selector="TextBox.hasHints">
+                <Setter Property="CornerRadius" Value="8, 8, 0, 0"/>
+                
+              </Style>
+              <Style Selector="TextBox.hasHints:focus-within /template/ Border#PART_BorderElement">
+                <Setter Property="BorderThickness" Value="2, 2, 2, 0"/>
+                <Setter Property="Background" Value="#2c2c2c"/>
+              </Style>
+            </Panel.Styles>
+            
             <TextBox
               Name="pathText"
-              CornerRadius="8"
+              Classes.hasHints="{Binding #pathPopup.IsOpen}"
               MinHeight="0"
               FontSize="12"
               KeyDown="OnPathBarKeyDown"
               Height="28"
-              Margin="12, 7, 12, 0">
-            </TextBox>
+              Margin="0, 7, 0, 0"/>
+            
+            <Popup
+                Name="pathPopup"
+                StaysOpen="False"
+                Width="{Binding #pathText.Bounds.Width}"
+                IsOpen="False">
+              <Border
+                BorderBrush="#888"
+                BorderThickness="2, 0, 2, 2"
+                CornerRadius="0, 0, 8, 8"
+                Background="#2c2c2c">
+                
+                <ListBox 
+                  Name="hintsListBox" MaxHeight="168" Background="Transparent" 
+                  VirtualizationMode="None" Items="{Binding PathBarHints}">
 
-            <ItemsControl Items="{Binding Tabs}" HorizontalAlignment="Left" Margin="12, 4, 12, 6">
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <WrapPanel/>
-                </ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-              <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                  <views:CustomTabControl BorderThickness="1"/>
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
-          </StackPanel>
-          <Popup
-            Name="pathPopup"
-            StaysOpen="False"
-            Width="400"
-            IsHitTestVisible="False">
-            <Border
-              BorderBrush="#111"
-              BorderThickness="1"
-              CornerRadius="0, 0, 12, 12"
-              Background="#0d0d0d">
-            </Border>
-          </Popup>
-        </Panel>
+                  <ListBox.ItemTemplate>
+                    <DataTemplate>
+                      <Border Height="28">
+                        <Panel>
+                          <Image Source="/Assets/Icons/folder.png" Width="16" Height="16" HorizontalAlignment="Left" Margin="8, 0"/>
+                          <TextBlock Margin="30, 1, 0, 0" Text="{Binding DisplayText}" FontSize="11" Foreground="#ccc" VerticalAlignment="Center"/>
+                          <TextBlock Margin="0, 1, 16, 0" Text="System folder" FontSize="11" Foreground="#888" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                        </Panel>
+                      </Border>
+                    </DataTemplate>
+                  </ListBox.ItemTemplate>
+
+
+                </ListBox>
+              </Border>
+            </Popup>
+          </Panel>
+
+          <ItemsControl Items="{Binding Tabs}" HorizontalAlignment="Left" Margin="12, 4, 12, 6">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel/>
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <views:CustomTabControl BorderThickness="1"/>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
       </Border>
 
       <Panel Grid.Row="1" Name="contextablePanel" Background="Transparent">
@@ -85,7 +127,6 @@
             <ListBox.Styles>
               
               <Style Selector="ListBoxItem">
-                <Setter Property="Padding" Value="0"/>
                 <Setter Property="CornerRadius" Value="6"/>
                 <Setter Property="Margin" Value="0, 1"/>
                 <Setter Property="Background" Value="#2f656565"/>
