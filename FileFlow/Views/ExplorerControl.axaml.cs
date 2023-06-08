@@ -151,23 +151,27 @@ namespace FileFlow.Views
             {
                 if (e.Key == Key.V)
                 {
-                    // Paste files from clipboard
-                    var files = ClipboardUtils.GetFiles(out DragDropEffects effects);
+                    if (ClipboardUtils.IsFiles())
+                    {
+                        // Paste files from clipboard
+                        var files = ClipboardUtils.GetFiles(out DragDropEffects effects);
 
-                    MoveAction moveAction = null;
-                    if (effects.HasFlag(DragDropEffects.Move))
-                    {
-                        moveAction = new MoveAction(fileSystem, files, model.ActiveTab.FolderPath);
-                    }
-                    else if (effects.HasFlag(DragDropEffects.Copy))
-                    {
-                        moveAction = new CopyAction(fileSystem, files, model.ActiveTab.FolderPath);
-                    }
+                        MoveAction moveAction = null;
+                        if (effects.HasFlag(DragDropEffects.Move))
+                        {
+                            moveAction = new MoveAction(fileSystem, files, model.ActiveTab.FolderPath);
+                        }
+                        else if (effects.HasFlag(DragDropEffects.Copy))
+                        {
+                            moveAction = new CopyAction(fileSystem, files, model.ActiveTab.FolderPath);
+                        }
 
-                    if (moveAction != null && moveAction.TryPerform() == false)
-                    {
-                        ShowConflictResolve(moveAction);
+                        if (moveAction != null && moveAction.TryPerform() == false)
+                        {
+                            ShowConflictResolve(moveAction);
+                        }
                     }
+                    
                 }
                 else if (e.Key is Key.C or Key.X)
                 {

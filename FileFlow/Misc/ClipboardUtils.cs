@@ -3,6 +3,7 @@ using Avalonia.Input;
 using Avalonia.Input.Platform;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FileFlow.Misc
 {
@@ -10,6 +11,10 @@ namespace FileFlow.Misc
     {
         public static IClipboard Clip => Application.Current.Clipboard;
 
+        public static bool IsFiles()
+        {
+            return Clip.GetFormatsAsync().Result.Contains(DataFormats.FileNames);
+        }
         public static IEnumerable<string> GetFiles(out DragDropEffects effects)
         {
             effects = GetEffects();
