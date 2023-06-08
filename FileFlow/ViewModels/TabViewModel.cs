@@ -215,10 +215,18 @@ namespace FileFlow.ViewModels
         }
         private void OnFoldersChanged(object sender, FileSystemEventArgs e)
         {
-            string watcherFolderName = Path.GetFileName(((FileSystemWatcher)sender).Path);
-            StorageElement element = StorageElements[watcherFolderName];
-            element.Refresh();
-            element.IsModified = true;
+            Dispatcher.UIThread.Post(() =>
+            {
+                string watcherFolderName = Path.GetFileName(((FileSystemWatcher)sender).Path);
+                if (StorageElements.TryGetValue(watcherFolderName, out StorageElement element))
+                {
+                    if (Directory.Exists(element.Path))
+                    {
+                        element.Refresh();
+                        element.IsModified = true;
+                    }
+                }
+            });
         }
     }
 }
