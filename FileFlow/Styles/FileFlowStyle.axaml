@@ -90,4 +90,15 @@
     <Setter Property="Opacity" Value="1"/>
     <Setter Property="RenderTransform" Value="translateY(0px)"/>
   </Style>
+  
+  
+  <!--Listbox-->
+  <Style Selector=":is(ListBoxItem)">
+    <Setter Property="Padding" Value="0"/>
+  </Style>
+
+  <!--TextBlock-->
+  <Style Selector=":is(TextBlock)">
+    <Setter Property="FontSize" Value="11"/>
+  </Style>
 </Styles>
