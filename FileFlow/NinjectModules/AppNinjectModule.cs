@@ -1,4 +1,5 @@
 ﻿using FileFlow.Services;
+using Microsoft.Extensions.Configuration;
 using Ninject.Modules;
 
 namespace FileFlow.NinjectModules
@@ -7,6 +8,17 @@ namespace FileFlow.NinjectModules
     {
         public override void Load()
         {
+            IConfiguration config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            Settings settings = config.GetSection("Settings").Get<Settings>();
+            if (settings != null) Bind<Settings>().ToConstant(settings).InSingletonScope();
+            else throw new System.Exception("Settings are not defined");
+
+
+            Bind<ProjectService>().To<ProjectService>().InSingletonScope();
+
             Bind<IIconExtractorService>().To<IconExtractorService>().InSingletonScope();
             Bind<IFileSystemService>().To<FileSystemService>().InSingletonScope();
             Bind<HintsService>().To<HintsService>().InSingletonScope();

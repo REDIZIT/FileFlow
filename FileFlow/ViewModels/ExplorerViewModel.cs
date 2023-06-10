@@ -1,6 +1,8 @@
 ﻿using FileFlow.Services;
 using FileFlow.Services.Hints;
 using FileFlow.ViewModels;
+using Ninject;
+using Ninject.Parameters;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -20,19 +22,19 @@ namespace FileFlow.Views
 
         public Action<LoadStatus> onFolderLoaded;
 
-        private IFileSystemService fileSystem;
-        private IIconExtractorService iconExtractor;
-        private HintsService hintsService;
+        [Inject] public HintsService hintsService { get; set; }
+        [Inject] public IKernel kernel { get; set; }
 
-        public ExplorerViewModel(IFileSystemService fileSystem, IIconExtractorService iconExtractor, HintsService hintsService)
+        [Inject]
+        public ExplorerViewModel()
         {
-            this.fileSystem = fileSystem;
-            this.iconExtractor = iconExtractor;
-            this.hintsService = hintsService;
+            
         }
+
         public void Initialize()
         {
-            Tabs.Add(new TabViewModel(this, fileSystem, iconExtractor, "C:\\Tests"));
+            var tab = kernel.Get<TabViewModel>(new ConstructorArgument("explorer", this), new ConstructorArgument("folderPath", "C:/Tests"));
+            Tabs.Add(tab);
 
             OnTabClicked(Tabs[0]);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Tabs)));
@@ -52,7 +54,7 @@ namespace FileFlow.Views
         }
         public void CreateTab(StorageElement storageElement)
         {
-            Tabs.Add(new TabViewModel(this, fileSystem, iconExtractor, storageElement.Path));
+            Tabs.Add(kernel.Get<TabViewModel>(new ConstructorArgument("explorer", this), new ConstructorArgument("folderPath", storageElement.Path)));
             OnTabClicked(Tabs.Last());
         }
         public void OnTabClicked(TabViewModel tab)
@@ -84,7 +86,7 @@ namespace FileFlow.Views
         }
         public void UpdateHints(string text)
         {
-            PathBarHints = new(hintsService.UpdateHintItems(text));
+            PathBarHints = new(hintsService.UpdateHintItems(text, ActiveTab));
             this.RaisePropertyChanged(nameof(PathBarHints));
             this.RaisePropertyChanged(nameof(HasHints));
         }

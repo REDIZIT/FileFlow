@@ -28,6 +28,7 @@ namespace FileFlow.Views
         private int id;
 
         private Point leftClickPoint;
+        private bool isResettingTextBox;
 
         public ExplorerControl()
         {
@@ -41,7 +42,7 @@ namespace FileFlow.Views
             fileSystem = kernel.Get<IFileSystemService>();
             iconExtractor = kernel.Get<IIconExtractorService>();
 
-            model = new(fileSystem, iconExtractor, kernel.Get<HintsService>());
+            model = kernel.TryGetAndThrowOnInvalidBinding<ExplorerViewModel>();
             model.onFolderLoaded += OnFolderLoaded;
             DataContext = model;
 
@@ -54,7 +55,10 @@ namespace FileFlow.Views
             newFileButton.Click += (_, _) => ShowFileCreationView(true, FileCreationView.Action.Create);
             newFolderButton.Click += (_, _) => ShowFileCreationView(false, FileCreationView.Action.Create);
             renameButton.Click += (_, _) => ShowFileCreationView(!contextedElement.IsFolder, FileCreationView.Action.Rename);
+
+            isResettingTextBox = true;
             pathText.GetObservable(TextBox.TextProperty).Subscribe(PathText_TextInput);
+            isResettingTextBox = false;
 
             AddHandler(PointerPressedEvent, OnExplorerPointerPressed, RoutingStrategies.Tunnel);
             contextablePanel.AddHandler(PointerPressedEvent, OnContextablePanelPressed, RoutingStrategies.Tunnel);
@@ -198,7 +202,8 @@ namespace FileFlow.Views
         }
         private void OnFolderLoaded(LoadStatus status)
         {
-            pathText.Text = model.ActiveTab.FolderPath;
+            SetPathText(model.ActiveTab.FolderPath);
+
             bool hasElements = model.ActiveTab.StorageElements.Any();
             listBox.IsVisible = hasElements;
             messageText.IsVisible = hasElements == false;
@@ -221,7 +226,7 @@ namespace FileFlow.Views
                 }
                 else if (e.Key == Key.Tab && hintsListBox.SelectedIndex != -1)
                 {
-                    pathText.Text = ((IPathBarHint)hintsListBox.SelectedItem).GetFullPath();
+                    SetPathText(((IPathBarHint)hintsListBox.SelectedItem).GetFullPath());
                 }
             }
 
@@ -238,7 +243,7 @@ namespace FileFlow.Views
                     }
                     else
                     {
-                        pathText.Text = model.ActiveTab.FolderPath;
+                        SetPathText(model.ActiveTab.FolderPath);
                     }
                 }
                 else
@@ -251,7 +256,7 @@ namespace FileFlow.Views
             }
             else if (e.Key == Key.Escape)
             {
-                pathText.Text = model.ActiveTab.FolderPath;
+                SetPathText(model.ActiveTab.FolderPath);
                 isAnyKeyPressed = true;
             }
 
@@ -265,6 +270,12 @@ namespace FileFlow.Views
         }
         private void PathText_TextInput(string text)
         {
+            if (string.IsNullOrWhiteSpace(text) || isResettingTextBox)
+            {
+                pathPopup.Close();
+                return;
+            }
+
             model.UpdateHints(text);
             hintsListBox.SelectedIndex = 0;
             if (hintsListBox.ItemCount > 0)
@@ -300,6 +311,12 @@ namespace FileFlow.Views
         {
             ConflictResolveControl.Show(action);
             contextMenu.Close();
+        }
+        private void SetPathText(string text)
+        {
+            isResettingTextBox = true;
+            pathText.Text = text;
+            isResettingTextBox = false;
         }
 
         private void DragEnter(object sender, DragEventArgs e)

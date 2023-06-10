@@ -34,6 +34,13 @@
         Grid.Row="0" Background="#a222" BorderThickness="0, 0, 0, 1" 
         BorderBrush="#444">
         <StackPanel VerticalAlignment="Top" Spacing="0">
+
+
+          <StackPanel Background="#09F" Height="32" Orientation="Horizontal" Spacing="8">
+            <Image Source="/Assets/avalonia-logo.ico" Width="16" Height="16" HorizontalAlignment="Left" Margin="16, 0, 0, 0"/>
+            <TextBlock Text="{Binding ActiveTab.Project.Name}" VerticalAlignment="Center" Foreground="#d000" FontSize="12" FontWeight="Bold"/>
+          </StackPanel>
+
           <Panel Margin="12, 0">
 
             <Panel.Styles>
@@ -80,7 +87,7 @@
                         <Panel>
                           <Image Source="/Assets/Icons/folder.png" Width="16" Height="16" HorizontalAlignment="Left" Margin="8, 0"/>
                           <TextBlock Margin="30, 1, 0, 0" Text="{Binding DisplayText}" FontSize="11" Foreground="#ccc" VerticalAlignment="Center"/>
-                          <TextBlock Margin="0, 1, 16, 0" Text="System folder" FontSize="11" Foreground="#888" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                          <TextBlock Margin="0, 1, 16, 0" Text="{Binding TypeText}" FontSize="11" Foreground="#888" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                         </Panel>
                       </Border>
                     </DataTemplate>
@@ -104,6 +111,8 @@
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
+
+          
         </StackPanel>
       </Border>
 

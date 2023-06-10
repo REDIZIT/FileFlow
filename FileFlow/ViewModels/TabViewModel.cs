@@ -2,6 +2,7 @@
 using FileFlow.Extensions;
 using FileFlow.Services;
 using FileFlow.Views;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,10 +17,13 @@ namespace FileFlow.ViewModels
         public string FolderPath
         {
             get { return folderPath; }
-            set
+            private set
             {
                 folderPath = value;
-                Title = new DirectoryInfo(folderPath).Name;
+
+                if (Project == null) Title = new DirectoryInfo(folderPath).Name;
+                else Title = Project.Name + ": " + new DirectoryInfo(folderPath).Name;
+
                 this.RaisePropertyChanged(nameof(Title));
             }
         }
@@ -28,14 +32,20 @@ namespace FileFlow.ViewModels
 
         public ObservableCollection<StorageElement> StorageElementsValues { get; private set; }
         public Dictionary<string, StorageElement> StorageElements { get; set; } = new();
+        public Project Project { get; private set; }
+
 
         private string folderPath;
         private History<StorageElement> history = new(HistoryPointerType.TargetFrame);
         private bool isLoaded;
 
+        [Inject] public IFileSystemService fileSystem { get; set; }
+        [Inject] public IIconExtractorService iconExtractor { get; set; }
+        [Inject] public Settings settings { get; set; }
+        [Inject] public ProjectService projectService { get; set; }
+
         private ExplorerViewModel explorer;
-        private IFileSystemService fileSystem;
-        private IIconExtractorService iconExtractor;
+
         private LoadStatus status;
         private FileSystemWatcher watcher;
 
@@ -43,13 +53,10 @@ namespace FileFlow.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public TabViewModel(ExplorerViewModel explorer, IFileSystemService fileSystem, IIconExtractorService iconExtractor, string folderPath)
+        public TabViewModel(ExplorerViewModel explorer, string folderPath)
         {
-            this.explorer = explorer;
-            this.fileSystem = fileSystem;
-            this.iconExtractor = iconExtractor;
-
             FolderPath = folderPath;
+            this.explorer = explorer;
         }
 
         public void OnClick()
@@ -134,7 +141,14 @@ namespace FileFlow.ViewModels
         }
         private void SetPath(string path)
         {
+            // Update project
+            Project = settings.Projects.TryGetProjectAt(path);
+            if (Project != null) projectService.IndexProject(Project);
+            this.RaisePropertyChanged(nameof(Project));
+
             FolderPath = path;
+
+
             this.RaisePropertyChanged(nameof(FolderPath));
 
             ReloadElements();
@@ -166,6 +180,9 @@ namespace FileFlow.ViewModels
                     foldersWatchers.Add(SetupFolderWatcher(element.Path));
                 }
             }
+
+
+            
         }
         private void ReloadElements()
         {
