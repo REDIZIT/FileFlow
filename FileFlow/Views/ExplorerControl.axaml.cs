@@ -52,9 +52,7 @@ namespace FileFlow.Views
             
 
             fileCreationView.Content = new FileCreationView(fileSystem, iconExtractor);
-            newFileButton.Click += (_, _) => ShowFileCreationView(true, FileCreationView.Action.Create);
-            newFolderButton.Click += (_, _) => ShowFileCreationView(false, FileCreationView.Action.Create);
-            renameButton.Click += (_, _) => ShowFileCreationView(!contextedElement.IsFolder, FileCreationView.Action.Rename);
+            contextControl.Setup(this);
 
             isResettingTextBox = true;
             pathText.GetObservable(TextBox.TextProperty).Subscribe(PathText_TextInput);
@@ -134,8 +132,7 @@ namespace FileFlow.Views
             if (props.IsRightButtonPressed)
             {
                 contextedElement = element;
-                contextMenu.PlacementMode = PlacementMode.Pointer;
-                contextMenu.Open();
+                contextControl.Open();
             }
             else if (element != null && props.IsMiddleButtonPressed && element.IsFolder)
             {
@@ -312,15 +309,15 @@ namespace FileFlow.Views
                 ClosePathPopup();
             }
         }
-        private void ShowFileCreationView(bool isFile, FileCreationView.Action action)
+        public void ShowFileCreationView(bool isFile, FileCreationView.Action action)
         {
             FileCreationView.Show(new FileCreationView.Args(model.ActiveTab.FolderPath, isFile, action, contextedElement));
-            contextMenu.Close();
+            contextControl.Close();
         }
         private void ShowConflictResolve(MoveAction action)
         {
             ConflictResolveControl.Show(action);
-            contextMenu.Close();
+            contextControl.Close();
         }
 
         private void SetPathText(string text)

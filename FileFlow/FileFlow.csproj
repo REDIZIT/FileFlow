@@ -14,10 +14,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
     <AvaloniaResource Include="Assets\**" />
-    <Folder Include="Assets\Icons\" />
     <None Remove=".gitignore" />
+    <None Remove="Assets\Icons\setting.png" />
   </ItemGroup>
 
   <ItemGroup>
