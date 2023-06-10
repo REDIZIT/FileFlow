@@ -237,12 +237,14 @@ namespace FileFlow.Views
                 {
                     // If text is 'C:' or 'D:'
                     // Check this to prevent fileSystem using absolute path as relative
-                    if (pathText.Text.CleanUp().Contains(":/"))
+                    string path = GetPathText();
+                    if (path.Contains(":/"))
                     {
-                        model.Open(new(pathText.Text, fileSystem, iconExtractor));
+                        model.Open(new(path, fileSystem, iconExtractor));
                     }
                     else
                     {
+                        // Revert input changes
                         SetPathText(model.ActiveTab.FolderPath);
                     }
                 }
@@ -256,8 +258,15 @@ namespace FileFlow.Views
             }
             else if (e.Key == Key.Escape)
             {
-                SetPathText(model.ActiveTab.FolderPath);
-                isAnyKeyPressed = true;
+                if (pathPopup.IsOpen && hintsListBox.SelectedIndex != -1)
+                {
+                    hintsListBox.SelectedIndex = -1;
+                }
+                else
+                {
+                    SetPathText(model.ActiveTab.FolderPath);
+                    isAnyKeyPressed = true;
+                }
             }
 
             
@@ -265,6 +274,7 @@ namespace FileFlow.Views
 
             if (isAnyKeyPressed)
             {
+                ClosePathPopup();
                 KeyboardDevice.Instance.SetFocusedElement(this, NavigationMethod.Unspecified, KeyModifiers.None);
             }
         }
@@ -272,7 +282,7 @@ namespace FileFlow.Views
         {
             if (string.IsNullOrWhiteSpace(text) || isResettingTextBox)
             {
-                pathPopup.Close();
+                ClosePathPopup();
                 return;
             }
 
@@ -284,7 +294,7 @@ namespace FileFlow.Views
             }
             else
             {
-                pathPopup.Close();
+                ClosePathPopup();
             }
         }
 
@@ -292,14 +302,14 @@ namespace FileFlow.Views
         {
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                pathPopup.Close();
+                ClosePathPopup();
             }
         }
         private void OnPathBarKeyPressed(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                pathPopup.Close();
+                ClosePathPopup();
             }
         }
         private void ShowFileCreationView(bool isFile, FileCreationView.Action action)
@@ -312,11 +322,38 @@ namespace FileFlow.Views
             ConflictResolveControl.Show(action);
             contextMenu.Close();
         }
+
         private void SetPathText(string text)
         {
             isResettingTextBox = true;
-            pathText.Text = text;
+
+            if (model.HasProject)
+            {
+                pathText.Text = text.Replace(model.ActiveTab.Project.Folder, "");
+            }
+            else
+            {
+                pathText.Text = text;
+            }
+            
             isResettingTextBox = false;
+        }
+        private string GetPathText()
+        {
+            string path = pathText.Text.CleanUp();
+            if (model.HasProject && path.Contains(":/") == false)
+            {
+                return (model.ActiveTab.Project.Folder + "/" + path).CleanUp();
+            }
+            else
+            {
+                return pathText.Text.CleanUp();
+            }
+        }
+        private void ClosePathPopup()
+        {
+            pathPopup.Close();
+            model.ClearHints();
         }
 
         private void DragEnter(object sender, DragEventArgs e)

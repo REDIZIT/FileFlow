@@ -4,7 +4,7 @@
     {
         public static string CleanUp(this string path)
         {
-            return path.Replace("\\", "/");
+            return path.Replace("\\", "/").Replace("//", "/");
         }
     }
 }

@@ -43,15 +43,16 @@ namespace FileFlow.Services
 
             for (int i = 0; i < allFolders.Length; i++)
             {
-                string path = allFolders[i].Substring(substringStartIndex + 1).CleanUp();
-                int lastSeparatorIndex = path.LastIndexOf("/");
-                displayPathes[i] = path.Substring(lastSeparatorIndex + 1) + " - " + (lastSeparatorIndex == -1 ? "/" : path.Substring(0, lastSeparatorIndex));
+                string absolutePath = allFolders[i].CleanUp();
+                string localPath = absolutePath.Substring(substringStartIndex + 1);
+                int lastSeparatorIndex = localPath.LastIndexOf("/");
+                displayPathes[i] = localPath.Substring(lastSeparatorIndex + 1) + " - " + (lastSeparatorIndex == -1 ? "/" : localPath.Substring(0, lastSeparatorIndex));
 
                 project.indexedFolders[i] = new ProjectFolderData()
                 {
-                    path = allFolders[i],
+                    path = absolutePath,
                     displayText = displayPathes[i],
-                    depth = path.Count(c => c == '/')
+                    depth = localPath.Count(c => c == '/')
                 };
             }
 

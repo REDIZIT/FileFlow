@@ -1,4 +1,6 @@
-﻿using FileFlow.Services;
+﻿using Avalonia;
+using Avalonia.Controls;
+using FileFlow.Services;
 using FileFlow.Services.Hints;
 using FileFlow.ViewModels;
 using Ninject;
@@ -16,7 +18,10 @@ namespace FileFlow.Views
         public TabViewModel ActiveTab { get; private set; }
         public ObservableCollection<IPathBarHint> PathBarHints { get; set; } = new();
         public ObservableCollection<TabViewModel> Tabs { get; set; } = new();
-        public bool HasHints => PathBarHints.Any();
+        public CornerRadius ProjectCorners { get; set; }
+        public CornerRadius PathBarCorners { get; set; }
+        public bool HasProject => ActiveTab?.Project != null;
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -25,11 +30,6 @@ namespace FileFlow.Views
         [Inject] public HintsService hintsService { get; set; }
         [Inject] public IKernel kernel { get; set; }
 
-        [Inject]
-        public ExplorerViewModel()
-        {
-            
-        }
 
         public void Initialize()
         {
@@ -38,6 +38,8 @@ namespace FileFlow.Views
 
             OnTabClicked(Tabs[0]);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Tabs)));
+
+            UpdateCorners();
         }
 
         public void Open(StorageElement storageElement)
@@ -66,6 +68,8 @@ namespace FileFlow.Views
             {
                 item.SetActive(item == ActiveTab);
             }
+
+            OnPathChanged();
         }
         public void OnTabClose(TabViewModel tab)
         {
@@ -88,12 +92,57 @@ namespace FileFlow.Views
         {
             PathBarHints = new(hintsService.UpdateHintItems(text, ActiveTab));
             this.RaisePropertyChanged(nameof(PathBarHints));
-            this.RaisePropertyChanged(nameof(HasHints));
+
+            UpdateCorners();
+        }
+        public void ClearHints()
+        {
+            PathBarHints.Clear();
+            this.RaisePropertyChanged(nameof(PathBarHints));
+            UpdateCorners();
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void OnPathChanged()
+        {
+            UpdateCorners();
+        }
+        private void UpdateCorners()
+        {
+            bool hasHints = PathBarHints.Any();
+
+            if (HasProject)
+            {
+                if (hasHints)
+                {
+                    ProjectCorners = new CornerRadius(8, 0, 0, 0);
+                    PathBarCorners = new CornerRadius(0, 8, 0, 0);
+                }
+                else
+                {
+                    ProjectCorners = new CornerRadius(8, 0, 0, 8);
+                    PathBarCorners = new CornerRadius(0, 8, 8, 0);
+                }
+            }
+            else
+            {
+                if (hasHints)
+                {   
+                    PathBarCorners = new CornerRadius(8, 8, 0, 0);
+                }
+                else
+                {
+                    PathBarCorners = new CornerRadius(8, 8, 8, 8);
+                }
+            }
+
+            this.RaisePropertyChanged(nameof(ProjectCorners));
+            this.RaisePropertyChanged(nameof(PathBarCorners));
+            this.RaisePropertyChanged(nameof(HasProject));
         }
     }
 }

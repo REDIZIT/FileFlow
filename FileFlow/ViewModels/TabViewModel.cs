@@ -21,8 +21,8 @@ namespace FileFlow.ViewModels
             {
                 folderPath = value;
 
-                if (Project == null) Title = new DirectoryInfo(folderPath).Name;
-                else Title = Project.Name + ": " + new DirectoryInfo(folderPath).Name;
+                Title = new DirectoryInfo(folderPath).Name.CleanUp();
+                if (Project != null) Title = Project.Name + ": " + Title;
 
                 this.RaisePropertyChanged(nameof(Title));
             }
@@ -182,7 +182,7 @@ namespace FileFlow.ViewModels
             }
 
 
-            
+            explorer.OnPathChanged();
         }
         private void ReloadElements()
         {
