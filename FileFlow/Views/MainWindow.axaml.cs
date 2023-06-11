@@ -21,7 +21,6 @@ namespace FileFlow.Views
         private Point leftCickPoint;
 
         private MainWindowViewModel model;
-        private IIconExtractorService iconExtractor;
         private IFileSystemService fileSystem;
 
         public MainWindow()
@@ -32,7 +31,6 @@ namespace FileFlow.Views
         public MainWindow(MainWindowViewModel model, IKernel kernel)
         {
             this.model = model;
-            iconExtractor = kernel.Get<IIconExtractorService>();
             fileSystem = kernel.Get<IFileSystemService>();
 
             DataContext = model;
@@ -62,6 +60,13 @@ namespace FileFlow.Views
                 item.Opacity = 0.7f;
             }
             explorer.Opacity = 1;
+
+            model.SetActiveExplorer(activeExplorer);
+        }
+
+        public ExplorerControl GetActiveExplorer()
+        {
+            return activeExplorer;
         }
         
         

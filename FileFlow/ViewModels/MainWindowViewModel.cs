@@ -2,6 +2,8 @@
 using Avalonia.Input;
 using DynamicData.Experimental;
 using FileFlow.Services;
+using FileFlow.Views;
+using Ninject;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -13,22 +15,22 @@ namespace FileFlow.ViewModels
     public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     {
         public ObservableCollection<StorageElement> DownloadItems { get; set; } = new();
+        public SidebarViewModel SidebarModel { get; private set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private FileSystemWatcher watcher;
+        public ExplorerControl activeExplorer;
 
         public IFileSystemService fileSystem;
         public IIconExtractorService iconExtractor;
 
-        public MainWindowViewModel(IFileSystemService fileSystem, IIconExtractorService iconExtractor)
+        public MainWindowViewModel(IKernel kernel)
         {
-            this.fileSystem = fileSystem;
-            this.iconExtractor = iconExtractor;
+            fileSystem = kernel.Get<IFileSystemService>();
+            iconExtractor = kernel.Get<IIconExtractorService>();
 
-            //DownloadItems.Add(new("C:/Tests/123.txt", fileSystem, iconExtractor));
-            //DownloadItems.Add(new("C:/Tests/123.txt", fileSystem, iconExtractor));
-            //DownloadItems.Add(new("C:/Tests/123.txt", fileSystem, iconExtractor));
+            SidebarModel = new SidebarViewModel(this, kernel);
 
             UpdateDownloadsWatcher();
         }
@@ -36,6 +38,10 @@ namespace FileFlow.ViewModels
         {
             DownloadItems.Remove(element);
             this.RaisePropertyChanged(nameof(DownloadItems));
+        }
+        public void SetActiveExplorer(ExplorerControl explorer)
+        {
+            activeExplorer = explorer;
         }
         private void UpdateDownloadsWatcher()
         {

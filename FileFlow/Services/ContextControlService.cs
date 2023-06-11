@@ -7,11 +7,11 @@ using System.Reflection;
 
 namespace FileFlow.ViewModels
 {
-    public class ContextControlService
+    public class ContextService
     {
         private List<ContextItem> items = new();
 
-        public ContextControlService()
+        public ContextService()
         {
             foreach (Type type in Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsSubclassOf(typeof(ContextItem))))
             {
@@ -33,6 +33,8 @@ namespace FileFlow.ViewModels
     public abstract class ContextItem
     {
         public abstract string Text { get; }
+        public string Icon => "avares://FileFlow" + IconPath;
+        public abstract string IconPath { get; }
 
         public abstract bool CanBeApplied(StorageElement target);
         public abstract void Apply(StorageElement target);
@@ -40,6 +42,7 @@ namespace FileFlow.ViewModels
     public class RenameContextItem : ContextItem
     {
         public override string Text => "Переименовать";
+        public override string IconPath => "/Assets/Icons/rename.png";
 
         [Inject] public ExplorerControl explorer { get; }
 
@@ -55,10 +58,11 @@ namespace FileFlow.ViewModels
     public class CreateProjectContextItem : ContextItem
     {
         public override string Text => "Создать проект";
+        public override string IconPath => "/Assets/Icons/setting.png";
 
         public override bool CanBeApplied(StorageElement target)
         {
-            return target.IsFolder;
+            return target != null && target.IsFolder;
         }
         public override void Apply(StorageElement elemet)
         {
@@ -68,10 +72,11 @@ namespace FileFlow.ViewModels
     public class DeleteProjectContextItem : ContextItem
     {
         public override string Text => "Удалить проект";
+        public override string IconPath => "/Assets/Icons/setting.png";
 
         public override bool CanBeApplied(StorageElement target)
         {
-            return target.IsFolder;
+            return target != null && target.IsFolder;
         }
         public override void Apply(StorageElement elemet)
         {

@@ -38,7 +38,7 @@
         </Style>
       </Grid.Styles>
 
-      <views:Sidebar/>
+      <views:Sidebar DataContext="{Binding SidebarModel}"/>
       <GridSplitter Grid.Column="1" ResizeDirection="Columns"/>
       <ContentControl Grid.Column="2" Name="explorerPlaceholder"/>
       <GridSplitter Grid.Column="3" ResizeDirection="Columns"/>

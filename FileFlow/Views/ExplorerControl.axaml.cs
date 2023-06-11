@@ -52,6 +52,7 @@ namespace FileFlow.Views
             
 
             fileCreationView.Content = new FileCreationView(fileSystem, iconExtractor);
+            kernel.Inject(contextControl);
             contextControl.Setup(this);
 
             isResettingTextBox = true;
@@ -132,7 +133,7 @@ namespace FileFlow.Views
             if (props.IsRightButtonPressed)
             {
                 contextedElement = element;
-                contextControl.Open();
+                contextControl.Open(element);
             }
             else if (element != null && props.IsMiddleButtonPressed && element.IsFolder)
             {

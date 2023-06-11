@@ -20,7 +20,7 @@ namespace FileFlow.NinjectModules
 
             Bind<ProjectService>().To<ProjectService>().InSingletonScope();
 
-            Bind<ContextControlService>().To<ContextControlService>().InSingletonScope();
+            Bind<ContextService>().To<ContextService>().InSingletonScope();
 
             Bind<IIconExtractorService>().To<IconExtractorService>().InSingletonScope();
             Bind<IFileSystemService>().To<FileSystemService>().InSingletonScope();

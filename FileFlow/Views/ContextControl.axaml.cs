@@ -1,13 +1,25 @@
 using Avalonia.Controls;
+using FileFlow.ViewModels;
+using Ninject;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 
 namespace FileFlow.Views
 {
-    public partial class ContextControl : UserControl
+    public partial class ContextControl : UserControl, INotifyPropertyChanged
     {
+        public ObservableCollection<ContextItem> Items { get; set; }
+
+        [Inject] public ContextService ContextService { get; set; }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         private ExplorerControl explorer;
 
         public ContextControl()
         {
+            DataContext = this;
             InitializeComponent();
         }
 
@@ -18,8 +30,11 @@ namespace FileFlow.Views
             newFolderButton.Click += (_, _) => explorer.ShowFileCreationView(false, FileCreationView.Action.Create);
         }
 
-        public void Open()
+        public void Open(StorageElement selectedElement)
         {
+            Items = new(ContextService.GetContextItems(selectedElement));
+            this.RaisePropertyChanged(nameof(Items));
+
             contextMenu.PlacementMode = PlacementMode.Pointer;
             contextMenu.Open();
         }

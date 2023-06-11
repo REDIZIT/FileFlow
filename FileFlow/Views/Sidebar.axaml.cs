@@ -1,4 +1,6 @@
 using Avalonia.Controls;
+using Ninject;
+using System.Collections.ObjectModel;
 
 namespace FileFlow.Views
 {
