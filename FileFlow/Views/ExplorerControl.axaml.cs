@@ -310,6 +310,7 @@ namespace FileFlow.Views
                 ClosePathPopup();
             }
         }
+    
         public void ShowFileCreationView(bool isFile, FileCreationView.Action action)
         {
             FileCreationView.Show(new FileCreationView.Args(model.ActiveTab.FolderPath, isFile, action, contextedElement));

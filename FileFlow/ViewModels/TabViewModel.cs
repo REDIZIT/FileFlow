@@ -109,6 +109,14 @@ namespace FileFlow.ViewModels
                 SetPath(storageElement.Path);
             }
         }
+        public void MoveUp()
+        {
+            string path = Path.GetDirectoryName(folderPath);
+            if (fileSystem.Exists(path))
+            {
+                Open(new(path, fileSystem, iconExtractor));
+            }
+        }
         public void OnFilesChanged(object sender, FileSystemEventArgs e)
         {
             if (e.ChangeType == WatcherChangeTypes.Created)

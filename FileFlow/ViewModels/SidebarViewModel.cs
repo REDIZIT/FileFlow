@@ -16,25 +16,27 @@ namespace FileFlow.ViewModels
         public ObservableCollection<BookmarkViewModel> Bookmarks { get; set; }
 
         public Settings Settings { get; private set; }
+        public IKernel Kernel { get; private set; }
+        public ContextControl ContextControl { get; set; }
 
         private DiskConnectionWatcher watcher;
         private MainWindowViewModel mainWindow;
-        private IKernel kernel;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public SidebarViewModel(MainWindowViewModel mainWindow, IKernel kernel)
         {
-            Settings = kernel.Get<Settings>();
             this.mainWindow = mainWindow;
-            this.kernel = kernel;
+            this.Kernel = kernel;
+
+            Settings = kernel.Get<Settings>();
+
             watcher = new(OnDisksChanged);
 
             Settings.onChanged += UpdateAll;
-            UpdateAll();
         }
 
-        private void UpdateAll()
+        public void UpdateAll()
         {
             OnDisksChanged();
             UpdateProjects();
@@ -45,7 +47,7 @@ namespace FileFlow.ViewModels
             LogicDrives = new();
             foreach (DriveInfo info in DriveInfo.GetDrives())
             {
-                LogicDrives.Add(new(info, mainWindow, kernel));
+                LogicDrives.Add(new(info, mainWindow, Kernel, ContextControl));
             }
             this.RaisePropertyChanged(nameof(LogicDrives));
         }
@@ -54,7 +56,7 @@ namespace FileFlow.ViewModels
             Projects = new();
             foreach (Project project in Settings.Projects.ProjectsList)
             {
-                Projects.Add(new(project, mainWindow, kernel));
+                Projects.Add(new(project, mainWindow, Kernel, ContextControl));
             }
             this.RaisePropertyChanged(nameof(Projects));
         }
@@ -63,7 +65,7 @@ namespace FileFlow.ViewModels
             Bookmarks = new();
             foreach (string path in Settings.Bookmarks)
             {
-                Bookmarks.Add(new(path, mainWindow, kernel));
+                Bookmarks.Add(new(path, mainWindow, Kernel, ContextControl));
             }
             this.RaisePropertyChanged(nameof(Bookmarks));
         }
@@ -72,18 +74,27 @@ namespace FileFlow.ViewModels
     {
         protected MainWindowViewModel mainWindow;
         protected IKernel kernel;
+        protected ContextControl contextControl;
 
-        public SidebarItemViewModel(MainWindowViewModel mainWindow, IKernel kernel)
+        public SidebarItemViewModel(MainWindowViewModel mainWindow, IKernel kernel, ContextControl contextControl)
         {
             this.mainWindow = mainWindow;
             this.kernel = kernel;
+            this.contextControl = contextControl;
         }
 
         public void OnClick()
         {
-            mainWindow.activeExplorer.Open(new StorageElement(GetPath(), kernel.Get<IFileSystemService>(), kernel.Get<IIconExtractorService>()));
+            mainWindow.activeExplorer.Open(GetStorageElement());
         }
-
+        public void OnRightClick()
+        {
+            contextControl.Open(GetStorageElement());
+        }
+        public StorageElement GetStorageElement()
+        {
+            return new StorageElement(GetPath(), kernel.Get<IFileSystemService>(), kernel.Get<IIconExtractorService>());
+        }
         protected abstract string GetPath();
     }
     public class ProjectViewModel : SidebarItemViewModel
@@ -92,7 +103,7 @@ namespace FileFlow.ViewModels
 
         private Project project;
 
-        public ProjectViewModel(Project project, MainWindowViewModel mainWindow, IKernel kernel) : base(mainWindow, kernel)
+        public ProjectViewModel(Project project, MainWindowViewModel mainWindow, IKernel kernel, ContextControl contextControl) : base(mainWindow, kernel, contextControl)
         {
             this.project = project;
         }
@@ -110,7 +121,7 @@ namespace FileFlow.ViewModels
 
         private DriveInfo info;
 
-        public LogicDriveViewModel(DriveInfo info, MainWindowViewModel mainWindow, IKernel kernel) : base(mainWindow, kernel)
+        public LogicDriveViewModel(DriveInfo info, MainWindowViewModel mainWindow, IKernel kernel, ContextControl contextControl) : base(mainWindow, kernel, contextControl)
         {
             this.info = info;
             Name = info.VolumeLabel + $" ({info.Name})".CleanUp();
@@ -128,7 +139,7 @@ namespace FileFlow.ViewModels
 
         private string path;
 
-        public BookmarkViewModel(string path, MainWindowViewModel mainWindow, IKernel kernel) : base(mainWindow, kernel)
+        public BookmarkViewModel(string path, MainWindowViewModel mainWindow, IKernel kernel, ContextControl contextControl) : base(mainWindow, kernel, contextControl)
         {
             this.path = path;
             Name = Path.GetFileName(path);

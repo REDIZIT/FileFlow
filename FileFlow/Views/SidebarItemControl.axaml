@@ -1,0 +1,13 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="FileFlow.Views.SidebarItemControl">
+  <Button Name="button" Height="32" Classes="Item" HorizontalAlignment="Stretch" Command="{Binding OnClick}">
+    <Panel>
+      <Image VerticalAlignment="Center" Source="/Assets/Icons/folder.png" Height="16" Width="16" HorizontalAlignment="Left" Margin="12, 0"/>
+      <TextBlock VerticalAlignment="Center" Text="{Binding Name}" FontSize="11" Margin="34, 0, 0, 1"/>
+    </Panel>
+  </Button>
+</UserControl>

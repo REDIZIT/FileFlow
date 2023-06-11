@@ -1,6 +1,5 @@
 ﻿using FileFlow.Services;
 using FileFlow.ViewModels;
-using Microsoft.Extensions.Configuration;
 using Ninject.Modules;
 
 namespace FileFlow.NinjectModules

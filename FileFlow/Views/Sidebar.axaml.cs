@@ -1,8 +1,11 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml.Templates;
+using FileFlow.Services;
 using FileFlow.ViewModels;
 using Ninject;
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 
@@ -19,6 +22,17 @@ namespace FileFlow.Views
             AddHandler(DragDrop.DragEnterEvent, DragEnter);
             AddHandler(DragDrop.DragLeaveEvent, DragExit);
             AddHandler(DragDrop.DropEvent, DropEvent);
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            Model.ContextControl = ContextControl;
+            Model.UpdateAll();
+        }
+
+        private void RebindButtons()
+        {
         }
         private void DragEnter(object sender, DragEventArgs e)
         {

@@ -101,6 +101,10 @@ namespace FileFlow.Views
             this.RaisePropertyChanged(nameof(PathBarHints));
             UpdateCorners();
         }
+        private void OnMoveUpClicked()
+        {
+            ActiveTab.MoveUp();
+        }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {

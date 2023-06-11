@@ -45,9 +45,9 @@ namespace FileFlow
         public string Folder { get; set; }
         public string FolderToIndex { get; set; }
 
-        [NonSerialized]
-        public ProjectFolderData[] indexedFolders = Array.Empty<ProjectFolderData>();
-        public bool isIndexing;
+        [NonSerialized] public ProjectFolderData[] indexedFolders = Array.Empty<ProjectFolderData>();
+
+        [NonSerialized] public bool isIndexing;
     }
     public class ProjectFolderData
     {
