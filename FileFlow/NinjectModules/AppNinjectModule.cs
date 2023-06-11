@@ -9,14 +9,8 @@ namespace FileFlow.NinjectModules
     {
         public override void Load()
         {
-            IConfiguration config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
-
-            Settings settings = config.GetSection("Settings").Get<Settings>();
-            if (settings != null) Bind<Settings>().ToConstant(settings).InSingletonScope();
-            else throw new System.Exception("Settings are not defined");
-
+            SettingsService settingsService = new();
+            settingsService.LoadAndBind(Kernel);
 
             Bind<ProjectService>().To<ProjectService>().InSingletonScope();
 

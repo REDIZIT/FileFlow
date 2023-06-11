@@ -1,13 +1,33 @@
 ﻿using FileFlow.Extensions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace FileFlow
 {
-    public class Settings
+    [Serializable]
+    public class Settings : INotifyPropertyChanged
     {
+        [JsonIgnore] public SettingsService service;
+
         public Projects Projects { get; set; } = new();
+        public List<string> Bookmarks { get; set; } = new();
+
+        [JsonIgnore] public Action onChanged;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public void Save()
+        {
+            service.Save(this);
+
+            onChanged?.Invoke();
+
+            this.RaisePropertyChanged(nameof(Projects));
+            this.RaisePropertyChanged(nameof(Bookmarks));
+        }
     }
     public class Projects
     {

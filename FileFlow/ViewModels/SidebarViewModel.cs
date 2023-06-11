@@ -13,25 +13,33 @@ namespace FileFlow.ViewModels
     {
         public ObservableCollection<ProjectViewModel> Projects { get; set; }
         public ObservableCollection<LogicDriveViewModel> LogicDrives { get; set; }
+        public ObservableCollection<BookmarkViewModel> Bookmarks { get; set; }
+
+        public Settings Settings { get; private set; }
 
         private DiskConnectionWatcher watcher;
         private MainWindowViewModel mainWindow;
-        private Settings settings;
         private IKernel kernel;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public SidebarViewModel(MainWindowViewModel mainWindow, IKernel kernel)
         {
-            settings = kernel.Get<Settings>();
+            Settings = kernel.Get<Settings>();
             this.mainWindow = mainWindow;
             this.kernel = kernel;
             watcher = new(OnDisksChanged);
 
-            OnDisksChanged();
-            UpdateProjects();
+            Settings.onChanged += UpdateAll;
+            UpdateAll();
         }
 
+        private void UpdateAll()
+        {
+            OnDisksChanged();
+            UpdateProjects();
+            UpdateBookmarks();
+        }
         private void OnDisksChanged()
         {
             LogicDrives = new();
@@ -44,13 +52,21 @@ namespace FileFlow.ViewModels
         private void UpdateProjects() 
         {
             Projects = new();
-            foreach (Project project in settings.Projects.ProjectsList)
+            foreach (Project project in Settings.Projects.ProjectsList)
             {
                 Projects.Add(new(project, mainWindow, kernel));
             }
             this.RaisePropertyChanged(nameof(Projects));
         }
-        
+        private void UpdateBookmarks()
+        {
+            Bookmarks = new();
+            foreach (string path in Settings.Bookmarks)
+            {
+                Bookmarks.Add(new(path, mainWindow, kernel));
+            }
+            this.RaisePropertyChanged(nameof(Bookmarks));
+        }
     }
     public abstract class SidebarItemViewModel
     {
@@ -104,6 +120,23 @@ namespace FileFlow.ViewModels
         protected override string GetPath()
         {
             return info.Name.CleanUp();
+        }
+    }
+    public class BookmarkViewModel : SidebarItemViewModel
+    {
+        public string Name { get; set; }
+
+        private string path;
+
+        public BookmarkViewModel(string path, MainWindowViewModel mainWindow, IKernel kernel) : base(mainWindow, kernel)
+        {
+            this.path = path;
+            Name = Path.GetFileName(path);
+        }
+
+        protected override string GetPath()
+        {
+            return path;
         }
     }
 }
