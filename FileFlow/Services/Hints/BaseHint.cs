@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Avalonia.Media.Imaging;
+using System;
 
 namespace FileFlow.Services.Hints
 {
@@ -6,17 +7,23 @@ namespace FileFlow.Services.Hints
     {
         string DisplayText { get; }
         string TypeText { get; }
+        Bitmap Icon { get; }
         string GetFullPath();
         float GetMatchesCount(string input);
-        string GetIconPath();
     }
     public abstract class BaseHint : IPathBarHint
     {
         public string DisplayText { get; set; }
         public string TypeText { get; set; }
+        public Bitmap Icon { get; set; }
 
         public abstract string GetFullPath();
         public abstract string GetIconPath();
+
+        public BaseHint()
+        {
+            Icon = IconExtractorService.GetAssetIcon(GetIconPath());
+        }
 
         public float GetMatchesCount(string input)
         {
@@ -60,7 +67,7 @@ namespace FileFlow.Services.Hints
         }
         public override string GetIconPath()
         {
-            return "/Assets/Icons/rename.png";
+            return "Assets/Icons/system_folder.png";
         }
     }
     public class ProjectHint : BaseHint
@@ -80,7 +87,7 @@ namespace FileFlow.Services.Hints
         }
         public override string GetIconPath()
         {
-            return "/Assets/Icons/rename.png";
+            return "Assets/Icons/unity.png";
         }
     }
     public class ProjectFolderHint : BaseHint
@@ -99,7 +106,7 @@ namespace FileFlow.Services.Hints
         }
         public override string GetIconPath()
         {
-            return "/Assets/Icons/rename.png";
+            return "Assets/Icons/subfolder.png";
         }
 
         protected override float GetTextMatches(string text, string input)

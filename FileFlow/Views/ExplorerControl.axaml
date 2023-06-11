@@ -44,37 +44,38 @@
             </Panel.Styles>
 
 
+            <Grid ColumnDefinitions="*, Auto" Margin="0, 7, 0, 0" Height="28">
+              <Grid Grid.Column="0" ColumnDefinitions="Auto, *, Auto" Name="pathBarGrid" >
 
-            <Grid ColumnDefinitions="Auto, *, Auto" Margin="0, 7, 0, 0" Name="pathBarGrid" Height="28">
+                <Border
+                    IsVisible="{Binding HasProject}"
+                    Grid.Column="0" Background="#09F"
+                    CornerRadius="{Binding ProjectCorners}">
+                  <StackPanel Height="32" Orientation="Horizontal">
+                    <Image Source="/Assets/Icons/unity.png" Width="16" Height="16" HorizontalAlignment="Left" Margin="8, 0, 0, 0"/>
+                    <TextBlock Text="{Binding ActiveTab.Project.Name}" VerticalAlignment="Center" Foreground="#d000" FontSize="11" FontWeight="Bold" Margin="8, 0, 12, 0"/>
+                  </StackPanel>
+                </Border>
 
-              <Border
-                  IsVisible="{Binding HasProject}"
-                  Grid.Column="0" Background="#09F"
-                  CornerRadius="{Binding ProjectCorners}">
-                <StackPanel Height="32" Orientation="Horizontal">
-                  <Image Source="/Assets/avalonia-logo.ico" Width="16" Height="16" HorizontalAlignment="Left" Margin="8, 0, 0, 0"/>
-                  <TextBlock Text="{Binding ActiveTab.Project.Name}" VerticalAlignment="Center" Foreground="#d000" FontSize="11" FontWeight="Bold" Margin="8, 0, 12, 0"/>
-                </StackPanel>
-              </Border>
+                <TextBox
+                  Name="pathText"
+                  CornerRadius="{Binding PathBarCorners}"
+                  Grid.Column="1"
+                  MinHeight="0"
+                  FontSize="12"
+                  KeyDown="OnPathBarKeyDown"/>                
 
-              <TextBox
-                Name="pathText"
-                CornerRadius="{Binding PathBarCorners}"
-                Grid.Column="1"
-                MinHeight="0"
-                FontSize="12"
-                KeyDown="OnPathBarKeyDown"/>
-
-              <Button Grid.Column="2" Margin="6, 0, 0, 0" Classes="Item" Height="28" Command="{Binding OnMoveUpClicked}">
+              </Grid>
+              <Button Grid.Column="1" Margin="6, 0, 0, 0" Classes="Item" Height="28" Command="{Binding OnMoveUpClicked}">
                 <Image Height="16" Width="16" Source="/Assets/Icons/folder_up.png" Margin="8, 0"/>
               </Button>
-
             </Grid>
-            
 
 
-            
-            
+
+
+
+
             <Popup
                 Name="pathPopup"
                 StaysOpen="False"
@@ -94,7 +95,7 @@
                     <DataTemplate>
                       <Border Height="28">
                         <Panel>
-                          <Image Source="/Assets/Icons/folder.png" Width="16" Height="16" HorizontalAlignment="Left" Margin="8, 0"/>
+                          <Image Source="{Binding Icon}" Width="16" Height="16" HorizontalAlignment="Left" Margin="8, 0"/>
                           <TextBlock Margin="30, 1, 0, 0" Text="{Binding DisplayText}" FontSize="11" Foreground="#ccc" VerticalAlignment="Center"/>
                           <TextBlock Margin="0, 1, 16, 0" Text="{Binding TypeText}" FontSize="11" Foreground="#888" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                         </Panel>

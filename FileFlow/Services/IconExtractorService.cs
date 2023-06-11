@@ -30,9 +30,15 @@ namespace FileFlow.Services
 
         public IconExtractorService()
         {
+            folder = GetAssetIcon("Assets/Icons/folder.png");
+            emptyFolder = GetAssetIcon("Assets/Icons/folder_empty.png");
+        }
+
+
+        public static Avalonia.Media.Imaging.Bitmap GetAssetIcon(string localPath)
+        {
             var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-            folder = new Bitmap(assets.Open(new Uri("avares://FileFlow/Assets/Icons/folder.png"))).ConvertToAvaloniaBitmap();
-            emptyFolder = new Bitmap(assets.Open(new Uri("avares://FileFlow/Assets/Icons/folder_empty.png"))).ConvertToAvaloniaBitmap();
+            return new Bitmap(assets.Open(new Uri("avares://FileFlow/" + localPath))).ConvertToAvaloniaBitmap();
         }
 
         public Avalonia.Media.Imaging.Bitmap GetFolderIcon(string folderPath)

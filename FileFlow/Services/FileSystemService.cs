@@ -62,11 +62,17 @@ namespace FileFlow.Services
 
             try
             {
-                foreach (string entryPath in Directory.EnumerateDirectories(folderPath))
+                Stopwatch w = Stopwatch.StartNew();
+
+                EnumerationOptions options = new()
+                {
+                    IgnoreInaccessible = true
+                };
+                foreach (string entryPath in Directory.EnumerateDirectories(folderPath, "*", options))
                 {
                     ls.Add(new StorageElement(entryPath, this, iconExtractor));
                 }
-                foreach (string entryPath in Directory.EnumerateFiles(folderPath))
+                foreach (string entryPath in Directory.EnumerateFiles(folderPath, "*.*", options))
                 {
                     if (Path.GetExtension(entryPath) == ".meta") continue;
 
@@ -74,6 +80,10 @@ namespace FileFlow.Services
                 }
 
                 status = ls.Count > 0 ? LoadStatus.Ok : LoadStatus.Empty;
+
+                w.Stop();
+                Trace.WriteLine("Got storage elements in " + w.ElapsedMilliseconds + "ms");
+
                 return ls;
             }
             catch (UnauthorizedAccessException)
