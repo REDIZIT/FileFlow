@@ -7,6 +7,7 @@ using FileFlow.ViewModels;
 using System;
 using System.ComponentModel;
 using System.IO;
+using Zenject;
 
 namespace FileFlow.Views
 {
@@ -21,8 +22,9 @@ namespace FileFlow.Views
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private IIconExtractorService iconExtractor;
-        private IFileSystemService fileSystem;
+        [Inject] private IIconExtractorService iconExtractor;
+        [Inject] private IFileSystemService fileSystem;
+
         private Args args;
 
         public record Args(string ParentFolder, bool IsFile, Action Action, StorageElement SelectedElement);
@@ -35,15 +37,6 @@ namespace FileFlow.Views
 
         public FileCreationView()
         {
-            DataContext = this;
-            InitializeComponent();
-            newFileBox.GetObservable(TextBox.TextProperty).Subscribe(OnTextChanged);
-        }
-
-        public FileCreationView(IFileSystemService fileSystem, IIconExtractorService iconExtractor)
-        {
-            this.fileSystem = fileSystem;
-            this.iconExtractor = iconExtractor;
             DataContext = this;
 
             InitializeComponent();

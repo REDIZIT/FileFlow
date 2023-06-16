@@ -20,8 +20,8 @@ namespace FileFlow.Views
         private ConflictResolveControl ConflictResolveControl => (ConflictResolveControl)conflictResolveControl.Content;
 
         private MainWindow mainWindow;
-        private IFileSystemService fileSystem;
-        private IIconExtractorService iconExtractor;
+        [Inject] private IFileSystemService fileSystem;
+        [Inject] private IIconExtractorService iconExtractor;
 
         private ExplorerViewModel model;
         private StorageElement contextedElement;
@@ -35,25 +35,26 @@ namespace FileFlow.Views
             InitializeComponent();
         }
         [Inject]
-        public ExplorerControl(MainWindow mainWindow, DiContainer kernel, int id)
+        public ExplorerControl(MainWindow mainWindow, DiContainer container, int id)
         {
             this.mainWindow = mainWindow;
             this.id = id;
-            fileSystem = kernel.Resolve<IFileSystemService>();
-            iconExtractor = kernel.Resolve<IIconExtractorService>();
 
-            model = kernel.Instantiate<ExplorerViewModel>();
+            var sub = container.CreateSubContainer();
+            sub.Bind<ExplorerControl>().FromInstance(this);
+
+            model = container.Instantiate<ExplorerViewModel>();
             model.onFolderLoaded += OnFolderLoaded;
             DataContext = model;
 
             InitializeComponent();
 
             model.Initialize();
-            
 
-            fileCreationView.Content = new FileCreationView(fileSystem, iconExtractor);
-            kernel.Inject(contextControl);
-            contextControl.Setup(kernel, this);
+
+            fileCreationView.Content = sub.Instantiate<FileCreationView>();
+            sub.Inject(contextControl);
+
 
             isResettingTextBox = true;
             pathText.GetObservable(TextBox.TextProperty).Subscribe(PathText_TextInput);
@@ -68,7 +69,7 @@ namespace FileFlow.Views
             AddHandler(DragDrop.DragLeaveEvent, DragExit);
             AddHandler(DragDrop.DropEvent, DropEvent);
 
-            conflictResolveControl.Content = kernel.Instantiate<ConflictResolveControl>();
+            conflictResolveControl.Content = container.Instantiate<ConflictResolveControl>();
         }
 
         public void Open(StorageElement element)

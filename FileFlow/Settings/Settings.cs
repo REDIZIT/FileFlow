@@ -1,8 +1,10 @@
 ﻿using FileFlow.Extensions;
+using FileFlow.ViewModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 
 namespace FileFlow
@@ -36,6 +38,23 @@ namespace FileFlow
         public Project TryGetProjectAt(string currentFolder)
         {
             return ProjectsList.FirstOrDefault(p => currentFolder.CleanUp().StartsWith(p.Folder));
+        }
+        public Project TryGetProjectRootAt(string projectRootFolder)
+        {
+            return ProjectsList.FirstOrDefault(p => p.Folder.CleanUp() == projectRootFolder.CleanUp());
+        }
+        public void CreateFromFolder(StorageElement folder)
+        {
+            Project proj = new Project()
+            {
+                Name = Path.GetFileName(folder.Name),
+                Folder = folder.Path.CleanUp()
+            };
+            ProjectsList.Add(proj);
+        }
+        public void RemoveFromFolder(StorageElement folder)
+        {
+            ProjectsList.RemoveAll(p => p.Folder.CleanUp() == folder.Path.CleanUp());
         }
     }
     [Serializable]
