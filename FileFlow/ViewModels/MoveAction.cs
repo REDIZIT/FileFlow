@@ -50,7 +50,7 @@ namespace FileFlow.ViewModels
                 // 3) Ctrl+V in FileFlow (files already remoed - continue;)
                 if (fileSystem.Exists(path) == false) continue;
 
-                sourceLocalPathes.Add(path.Substring(sourceFolder.Length + 1, path.Length - sourceFolder.Length - 1));
+                sourceLocalPathes.Add(path.Substring(sourceFolder.Length, path.Length - sourceFolder.Length));
             }
 
 

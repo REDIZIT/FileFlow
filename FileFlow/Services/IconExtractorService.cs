@@ -37,6 +37,8 @@ namespace FileFlow.Services
 
         public static Avalonia.Media.Imaging.Bitmap GetAssetIcon(string localPath)
         {
+            if (string.IsNullOrWhiteSpace(localPath)) return null;
+
             var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
             return new Bitmap(assets.Open(new Uri("avares://FileFlow/" + localPath))).ConvertToAvaloniaBitmap();
         }

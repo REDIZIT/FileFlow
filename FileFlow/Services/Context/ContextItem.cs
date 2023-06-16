@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media.Imaging;
 using FileFlow.Services;
 using FileFlow.Views;
+using SharpCompress.Readers;
 using Zenject;
 
 namespace FileFlow.ViewModels
