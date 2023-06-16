@@ -1,11 +1,11 @@
 ﻿using Avalonia.Media.Imaging;
 using FileFlow.Services;
 using FileFlow.Views;
-using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Zenject;
 
 namespace FileFlow.ViewModels
 {
@@ -21,12 +21,15 @@ namespace FileFlow.ViewModels
             }
         }
 
-        public IEnumerable<ContextItem> GetContextItems(IKernel kernel, ContextControl control, ExplorerControl explorer, StorageElement selectedElement)
+        public IEnumerable<ContextItem> GetContextItems(DiContainer container, ContextControl control, ExplorerControl explorer, StorageElement selectedElement)
         {
            
             foreach (ContextItem item in items)
             {
-                kernel.Inject(item, new Ninject.Parameters.PropertyValue("explorer", explorer));
+                var sub = container.CreateSubContainer();
+                sub.Bind<ExplorerControl>().FromInstance(explorer);
+                sub.Inject(item);
+
                 item.control = control;
                 if (item.CanBeApplied(selectedElement))
                 {

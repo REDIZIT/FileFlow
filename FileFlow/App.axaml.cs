@@ -1,11 +1,10 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using FileFlow.NinjectModules;
-using FileFlow.Services;
+using FileFlow.DI;
 using FileFlow.ViewModels;
 using FileFlow.Views;
-using Ninject;
+using Zenject;
 
 namespace FileFlow
 {
@@ -18,11 +17,13 @@ namespace FileFlow
 
         public override void OnFrameworkInitializationCompleted()
         {
-            IKernel kernel = new StandardKernel(new AppNinjectModule());
+            DiContainer container = new();
+            container.Install<AppInstaller>();
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = kernel.Get<MainWindow>();
+                container.Bind<MainWindowViewModel>().FromNew().AsSingle();
+                desktop.MainWindow = container.Instantiate<MainWindow>();
             }
 
             base.OnFrameworkInitializationCompleted();

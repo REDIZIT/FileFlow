@@ -7,10 +7,10 @@ using FileFlow.Misc;
 using FileFlow.Services;
 using FileFlow.Services.Hints;
 using FileFlow.ViewModels;
-using Ninject;
 using System;
 using System.Linq;
 using System.Reactive.Linq;
+using Zenject;
 
 namespace FileFlow.Views
 {
@@ -35,14 +35,14 @@ namespace FileFlow.Views
             InitializeComponent();
         }
         [Inject]
-        public ExplorerControl(MainWindow mainWindow, IKernel kernel, int id)
+        public ExplorerControl(MainWindow mainWindow, DiContainer kernel, int id)
         {
             this.mainWindow = mainWindow;
             this.id = id;
-            fileSystem = kernel.Get<IFileSystemService>();
-            iconExtractor = kernel.Get<IIconExtractorService>();
+            fileSystem = kernel.Resolve<IFileSystemService>();
+            iconExtractor = kernel.Resolve<IIconExtractorService>();
 
-            model = kernel.TryGetAndThrowOnInvalidBinding<ExplorerViewModel>();
+            model = kernel.Instantiate<ExplorerViewModel>();
             model.onFolderLoaded += OnFolderLoaded;
             DataContext = model;
 
@@ -68,7 +68,7 @@ namespace FileFlow.Views
             AddHandler(DragDrop.DragLeaveEvent, DragExit);
             AddHandler(DragDrop.DropEvent, DropEvent);
 
-            conflictResolveControl.Content = kernel.Get<ConflictResolveControl>();
+            conflictResolveControl.Content = kernel.Instantiate<ConflictResolveControl>();
         }
 
         public void Open(StorageElement element)

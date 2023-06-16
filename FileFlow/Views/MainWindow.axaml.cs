@@ -3,14 +3,9 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using FileFlow.Services;
 using FileFlow.ViewModels;
-using Ninject;
-using Ninject.Parameters;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
+using Zenject;
 
 namespace FileFlow.Views
 {
@@ -28,10 +23,10 @@ namespace FileFlow.Views
             InitializeComponent();
         }
         [Inject]
-        public MainWindow(MainWindowViewModel model, IKernel kernel)
+        public MainWindow(MainWindowViewModel model, DiContainer container)
         {
             this.model = model;
-            fileSystem = kernel.Get<IFileSystemService>();
+            fileSystem = container.Resolve<IFileSystemService>();
 
             DataContext = model;
             Opened += (_, _) =>
@@ -42,8 +37,8 @@ namespace FileFlow.Views
 
             InitializeComponent();
 
-            ExplorerControl control = kernel.Get<ExplorerControl>(new ConstructorArgument("mainWindow", this), new ConstructorArgument("id", 0));
-            ExplorerControl control2 = kernel.Get<ExplorerControl>(new ConstructorArgument("mainWindow", this), new ConstructorArgument("id", 1));
+            ExplorerControl control = container.Instantiate<ExplorerControl>(new object[] { this, 0 });
+            ExplorerControl control2 = container.Instantiate<ExplorerControl>(new object[] { this, 1 });
 
             explorers.Add(control);
             explorers.Add(control2);

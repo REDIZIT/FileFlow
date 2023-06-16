@@ -4,12 +4,11 @@ using Avalonia.Media.Imaging;
 using FileFlow.Extensions;
 using FileFlow.Services;
 using FileFlow.ViewModels;
-using Ninject;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
+using Zenject;
 
 namespace FileFlow.Views
 {

@@ -1,11 +1,10 @@
 ﻿using FileFlow.Extensions;
 using FileFlow.Services;
 using FileFlow.Views;
-using Ninject;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Drawing.Text;
 using System.IO;
+using Zenject;
 
 namespace FileFlow.ViewModels
 {
@@ -16,7 +15,7 @@ namespace FileFlow.ViewModels
         public ObservableCollection<BookmarkViewModel> Bookmarks { get; set; }
 
         public Settings Settings { get; private set; }
-        public IKernel Kernel { get; private set; }
+        public DiContainer Kernel { get; private set; }
         public ContextControl ContextControl { get; set; }
 
         private DiskConnectionWatcher watcher;
@@ -24,12 +23,12 @@ namespace FileFlow.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public SidebarViewModel(MainWindowViewModel mainWindow, IKernel kernel)
+        public SidebarViewModel(MainWindowViewModel mainWindow, DiContainer kernel)
         {
             this.mainWindow = mainWindow;
             this.Kernel = kernel;
 
-            Settings = kernel.Get<Settings>();
+            Settings = kernel.Resolve<Settings>();
 
             watcher = new(OnDisksChanged);
 
@@ -73,10 +72,10 @@ namespace FileFlow.ViewModels
     public abstract class SidebarItemViewModel
     {
         protected MainWindowViewModel mainWindow;
-        protected IKernel kernel;
+        protected DiContainer kernel;
         protected ContextControl contextControl;
 
-        public SidebarItemViewModel(MainWindowViewModel mainWindow, IKernel kernel, ContextControl contextControl)
+        public SidebarItemViewModel(MainWindowViewModel mainWindow, DiContainer kernel, ContextControl contextControl)
         {
             this.mainWindow = mainWindow;
             this.kernel = kernel;
@@ -93,7 +92,7 @@ namespace FileFlow.ViewModels
         }
         public StorageElement GetStorageElement()
         {
-            return new StorageElement(GetPath(), kernel.Get<IFileSystemService>(), kernel.Get<IIconExtractorService>());
+            return new StorageElement(GetPath(), kernel.Resolve<IFileSystemService>(), kernel.Resolve<IIconExtractorService>());
         }
         protected abstract string GetPath();
     }
@@ -103,7 +102,7 @@ namespace FileFlow.ViewModels
 
         private Project project;
 
-        public ProjectViewModel(Project project, MainWindowViewModel mainWindow, IKernel kernel, ContextControl contextControl) : base(mainWindow, kernel, contextControl)
+        public ProjectViewModel(Project project, MainWindowViewModel mainWindow, DiContainer kernel, ContextControl contextControl) : base(mainWindow, kernel, contextControl)
         {
             this.project = project;
         }
@@ -121,7 +120,7 @@ namespace FileFlow.ViewModels
 
         private DriveInfo info;
 
-        public LogicDriveViewModel(DriveInfo info, MainWindowViewModel mainWindow, IKernel kernel, ContextControl contextControl) : base(mainWindow, kernel, contextControl)
+        public LogicDriveViewModel(DriveInfo info, MainWindowViewModel mainWindow, DiContainer kernel, ContextControl contextControl) : base(mainWindow, kernel, contextControl)
         {
             this.info = info;
             Name = info.VolumeLabel + $" ({info.Name})".CleanUp();
@@ -139,7 +138,7 @@ namespace FileFlow.ViewModels
 
         private string path;
 
-        public BookmarkViewModel(string path, MainWindowViewModel mainWindow, IKernel kernel, ContextControl contextControl) : base(mainWindow, kernel, contextControl)
+        public BookmarkViewModel(string path, MainWindowViewModel mainWindow, DiContainer kernel, ContextControl contextControl) : base(mainWindow, kernel, contextControl)
         {
             this.path = path;
             Name = Path.GetFileName(path);

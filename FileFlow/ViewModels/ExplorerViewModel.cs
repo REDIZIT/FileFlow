@@ -1,15 +1,12 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using FileFlow.Services;
 using FileFlow.Services.Hints;
 using FileFlow.ViewModels;
-using Ninject;
-using Ninject.Parameters;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
+using Zenject;
 
 namespace FileFlow.Views
 {
@@ -28,12 +25,12 @@ namespace FileFlow.Views
         public Action<LoadStatus> onFolderLoaded;
 
         [Inject] public HintsService hintsService { get; set; }
-        [Inject] public IKernel kernel { get; set; }
+        [Inject] public DiContainer kernel { get; set; }
 
 
         public void Initialize()
         {
-            var tab = kernel.Get<TabViewModel>(new ConstructorArgument("explorer", this), new ConstructorArgument("folderPath", "C:/Tests"));
+            var tab = kernel.Instantiate<TabViewModel>(new object[] { this, "C:/Tests" });
             Tabs.Add(tab);
 
             OnTabClicked(Tabs[0]);
@@ -56,7 +53,7 @@ namespace FileFlow.Views
         }
         public void CreateTab(StorageElement storageElement)
         {
-            Tabs.Add(kernel.Get<TabViewModel>(new ConstructorArgument("explorer", this), new ConstructorArgument("folderPath", storageElement.Path)));
+            Tabs.Add(kernel.Instantiate<TabViewModel>(new object[] { this, storageElement.Path }));
             OnTabClicked(Tabs.Last());
         }
         public void OnTabClicked(TabViewModel tab)

@@ -1,9 +1,8 @@
 using Avalonia.Controls;
 using FileFlow.ViewModels;
-using Ninject;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
+using Zenject;
 
 namespace FileFlow.Views
 {
@@ -15,7 +14,7 @@ namespace FileFlow.Views
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private IKernel kernel;
+        private DiContainer kernel;
         private ExplorerControl explorer;
         private StorageElement selectedElement;
 
@@ -25,7 +24,7 @@ namespace FileFlow.Views
             InitializeComponent();
         }
 
-        public void Setup(IKernel kernel, ExplorerControl explorer)
+        public void Setup(DiContainer kernel, ExplorerControl explorer)
         {
             this.kernel = kernel;
             this.explorer = explorer;

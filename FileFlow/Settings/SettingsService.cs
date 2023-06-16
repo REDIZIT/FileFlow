@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
-using Ninject;
 using System;
 using System.IO;
+using Zenject;
 
 namespace FileFlow
 {
@@ -14,7 +14,7 @@ namespace FileFlow
         {
             
         }
-        public void LoadAndBind(IKernel kernel)
+        public void LoadAndBind(DiContainer container)
         {
             folder = Environment.CurrentDirectory;
             string filepath = folder + "/" + FILE_NAME;
@@ -36,8 +36,8 @@ namespace FileFlow
                 settings.Save();
             }
 
-            kernel.Inject(settings);
-            kernel.Bind<Settings>().ToConstant(settings).InSingletonScope();
+            container.Inject(settings);
+            container.Bind<Settings>().FromInstance(settings).AsSingle();
         }
 
         public void Save(Settings settings)

@@ -1,14 +1,10 @@
-﻿using Avalonia.Controls;
-using Avalonia.Input;
-using DynamicData.Experimental;
-using FileFlow.Services;
+﻿using FileFlow.Services;
 using FileFlow.Views;
-using Ninject;
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using Zenject;
 
 namespace FileFlow.ViewModels
 {
@@ -25,10 +21,10 @@ namespace FileFlow.ViewModels
         public IFileSystemService fileSystem;
         public IIconExtractorService iconExtractor;
 
-        public MainWindowViewModel(IKernel kernel)
+        public MainWindowViewModel(DiContainer kernel)
         {
-            fileSystem = kernel.Get<IFileSystemService>();
-            iconExtractor = kernel.Get<IIconExtractorService>();
+            fileSystem = kernel.Resolve<IFileSystemService>();
+            iconExtractor = kernel.Resolve<IIconExtractorService>();
 
             SidebarModel = new SidebarViewModel(this, kernel);
 

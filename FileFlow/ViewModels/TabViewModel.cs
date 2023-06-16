@@ -2,13 +2,13 @@
 using FileFlow.Extensions;
 using FileFlow.Services;
 using FileFlow.Views;
-using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using Zenject;
 
 namespace FileFlow.ViewModels
 {

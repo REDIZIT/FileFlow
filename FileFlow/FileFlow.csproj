@@ -33,7 +33,6 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.18" />
-    <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.18" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.18" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.18" />
@@ -42,10 +41,21 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Ninject" Version="3.3.6" />
     <PackageReference Include="PostSharp.Redist" Version="2023.0.5" />
     <PackageReference Include="System.Management" Version="7.0.1" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Zenject">
+      <HintPath>..\..\..\..\Downloads\Zenject.dll</HintPath>
+    </Reference>
+    <Reference Include="Zenject-Signals">
+      <HintPath>..\..\..\..\Downloads\Zenject-Signals.dll</HintPath>
+    </Reference>
+    <Reference Include="Zenject-usage">
+      <HintPath>..\..\..\..\Downloads\Zenject-usage.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

@@ -1,12 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml.Templates;
-using FileFlow.Services;
 using FileFlow.ViewModels;
-using Ninject;
-using System;
-using System.Collections.ObjectModel;
 using System.IO;
 
 namespace FileFlow.Views
