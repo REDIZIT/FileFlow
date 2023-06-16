@@ -1,4 +1,6 @@
-﻿using FileFlow.Views;
+﻿using Avalonia.Media.Imaging;
+using FileFlow.Services;
+using FileFlow.Views;
 using Ninject;
 using System;
 using System.Collections.Generic;
@@ -19,10 +21,13 @@ namespace FileFlow.ViewModels
             }
         }
 
-        public IEnumerable<ContextItem> GetContextItems(StorageElement selectedElement)
+        public IEnumerable<ContextItem> GetContextItems(IKernel kernel, ContextControl control, ExplorerControl explorer, StorageElement selectedElement)
         {
+           
             foreach (ContextItem item in items)
             {
+                kernel.Inject(item, new Ninject.Parameters.PropertyValue("explorer", explorer));
+                item.control = control;
                 if (item.CanBeApplied(selectedElement))
                 {
                     yield return item;
@@ -32,19 +37,26 @@ namespace FileFlow.ViewModels
     }
     public abstract class ContextItem
     {
+        public ContextControl control;
+
         public abstract string Text { get; }
-        public string Icon => "avares://FileFlow" + IconPath;
+        public Bitmap Icon => IconExtractorService.GetAssetIcon(IconPath);
         public abstract string IconPath { get; }
 
         public abstract bool CanBeApplied(StorageElement target);
         public abstract void Apply(StorageElement target);
+
+        public void OnClick()
+        {
+            control.OnClick(this);
+        }
     }
     public class RenameContextItem : ContextItem
     {
         public override string Text => "Переименовать";
-        public override string IconPath => "/Assets/Icons/rename.png";
+        public override string IconPath => "Assets/Icons/rename.png";
 
-        [Inject] public ExplorerControl explorer { get; }
+        [Inject] public ExplorerControl explorer { get; set;  }
 
         public override bool CanBeApplied(StorageElement target)
         {
@@ -58,7 +70,7 @@ namespace FileFlow.ViewModels
     public class CreateProjectContextItem : ContextItem
     {
         public override string Text => "Создать проект";
-        public override string IconPath => "/Assets/Icons/setting.png";
+        public override string IconPath => "Assets/Icons/setting.png";
 
         public override bool CanBeApplied(StorageElement target)
         {
@@ -72,7 +84,7 @@ namespace FileFlow.ViewModels
     public class DeleteProjectContextItem : ContextItem
     {
         public override string Text => "Удалить проект";
-        public override string IconPath => "/Assets/Icons/setting.png";
+        public override string IconPath => "Assets/Icons/setting.png";
 
         public override bool CanBeApplied(StorageElement target)
         {

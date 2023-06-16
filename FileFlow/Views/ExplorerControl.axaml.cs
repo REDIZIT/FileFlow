@@ -53,7 +53,7 @@ namespace FileFlow.Views
 
             fileCreationView.Content = new FileCreationView(fileSystem, iconExtractor);
             kernel.Inject(contextControl);
-            contextControl.Setup(this);
+            contextControl.Setup(kernel, this);
 
             isResettingTextBox = true;
             pathText.GetObservable(TextBox.TextProperty).Subscribe(PathText_TextInput);
