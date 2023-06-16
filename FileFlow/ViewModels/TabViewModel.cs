@@ -1,5 +1,6 @@
 ﻿using Avalonia.Threading;
 using FileFlow.Extensions;
+using FileFlow.Providers;
 using FileFlow.Services;
 using FileFlow.Views;
 using System;
@@ -38,11 +39,12 @@ namespace FileFlow.ViewModels
         private string folderPath;
         private History<StorageElement> history = new(HistoryPointerType.TargetFrame);
         private bool isLoaded;
+        private StorageProdiver provider;
 
         [Inject] private IFileSystemService fileSystem;
         [Inject] private IIconExtractorService iconExtractor;
-        [Inject] private Settings settings;
         [Inject] private ProjectService projectService;
+        [Inject] private StorageProdiverFactory providerFactory;
 
         private ExplorerViewModel explorer;
 
@@ -92,7 +94,7 @@ namespace FileFlow.ViewModels
             }
             else
             {
-                fileSystem.Run(storageElement.Path);
+                provider.Run(storageElement.Path);
             }
         }
         public void Back()
@@ -112,7 +114,7 @@ namespace FileFlow.ViewModels
         public void MoveUp()
         {
             string path = Path.GetDirectoryName(folderPath);
-            if (fileSystem.Exists(path))
+            if (provider.Exists(path))
             {
                 Open(new(path, fileSystem, iconExtractor));
             }
@@ -151,19 +153,22 @@ namespace FileFlow.ViewModels
         }
         private void SetPath(string path)
         {
+            provider = providerFactory.Create(path);
+
             // Update project
-            Project = settings.Projects.TryGetProjectAt(path);
-            if (Project != null) projectService.IndexProject(Project);
+            if (provider is ProjectProvider projectProvider)
+            {
+                Project = projectProvider.Project;
+                projectService.IndexProject(Project);
+            }
             this.RaisePropertyChanged(nameof(Project));
 
             FolderPath = path;
-
-
             this.RaisePropertyChanged(nameof(FolderPath));
 
             ReloadElements();
 
-            explorer.onFolderLoaded?.Invoke(status);
+            
 
 
             // Recreate (TODO: Make a pool for that) openned folder's folders watchers
@@ -196,11 +201,12 @@ namespace FileFlow.ViewModels
         private void ReloadElements()
         {
             StorageElements.Clear();
-            foreach (StorageElement element in fileSystem.GetStorageElements(FolderPath, out status))
+            foreach (StorageElement element in provider.GetElements(null, out status))
             {
                 StorageElements.Add(element.Name, element);
             }
             SortElements();
+            explorer.onFolderLoaded?.Invoke(status);
         }
         private void SortElements()
         {

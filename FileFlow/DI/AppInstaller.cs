@@ -1,4 +1,5 @@
-﻿using FileFlow.Services;
+﻿using FileFlow.Providers;
+using FileFlow.Services;
 using FileFlow.ViewModels;
 using Zenject;
 
@@ -18,6 +19,8 @@ namespace FileFlow.DI
             Container.Bind<IIconExtractorService>().To<IconExtractorService>().AsSingle();
             Container.Bind<IFileSystemService>().To<FileSystemService>().AsSingle();
             Container.Bind<HintsService>().To<HintsService>().AsSingle();
+
+            Container.BindFactory<string, StorageProdiver, StorageProdiverFactory>().FromFactory<StorageProdiverFactory>();
         }
     }
 }

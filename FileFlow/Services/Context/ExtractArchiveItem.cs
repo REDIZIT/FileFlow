@@ -9,7 +9,7 @@ namespace FileFlow.ViewModels
     {
         public override string Text => "Распаковать здесь";
 
-        public override string IconPath => "";
+        public override string IconPath => "Assets/Icons/archive.png";
 
         public override void Apply(StorageElement target)
         {

@@ -39,6 +39,11 @@ namespace FileFlow
         {
             return ProjectsList.FirstOrDefault(p => currentFolder.CleanUp().StartsWith(p.Folder));
         }
+        public bool TryGetProjectAt(string currentFolder, out Project project)
+        {
+            project = ProjectsList.FirstOrDefault(p => currentFolder.CleanUp().StartsWith(p.Folder));
+            return project != null;
+        }
         public Project TryGetProjectRootAt(string projectRootFolder)
         {
             return ProjectsList.FirstOrDefault(p => p.Folder.CleanUp() == projectRootFolder.CleanUp());
