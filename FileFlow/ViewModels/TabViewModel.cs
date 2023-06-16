@@ -39,10 +39,10 @@ namespace FileFlow.ViewModels
         private History<StorageElement> history = new(HistoryPointerType.TargetFrame);
         private bool isLoaded;
 
-        [Inject] public IFileSystemService fileSystem { get; set; }
-        [Inject] public IIconExtractorService iconExtractor { get; set; }
-        [Inject] public Settings settings { get; set; }
-        [Inject] public ProjectService projectService { get; set; }
+        [Inject] private IFileSystemService fileSystem;
+        [Inject] private IIconExtractorService iconExtractor;
+        [Inject] private Settings settings;
+        [Inject] private ProjectService projectService;
 
         private ExplorerViewModel explorer;
 
@@ -124,6 +124,7 @@ namespace FileFlow.ViewModels
                 StorageElement element = new(e.FullPath, fileSystem, iconExtractor);
                 element.IsAdded = true;
                 StorageElements.Add(element.Name, element);
+                status = LoadStatus.Ok;
             }
             else if (e.ChangeType == WatcherChangeTypes.Renamed)
             {
@@ -138,6 +139,7 @@ namespace FileFlow.ViewModels
             else if (e.ChangeType == WatcherChangeTypes.Deleted)
             {
                 StorageElements.Remove(e.Name);
+                if (StorageElements.Count == 0) status = LoadStatus.Empty;
             }
 
             Dispatcher.UIThread.Post(() =>
@@ -172,7 +174,7 @@ namespace FileFlow.ViewModels
             foldersWatchers.Clear();
 
 
-            if (status != LoadStatus.Ok)
+            if (status is not (LoadStatus.Ok or LoadStatus.Empty))
             {
                 return;
             }
@@ -189,8 +191,7 @@ namespace FileFlow.ViewModels
                 }
             }
 
-
-            explorer.OnPathChanged();
+            Dispatcher.UIThread.Post(explorer.OnPathChanged);
         }
         private void ReloadElements()
         {

@@ -24,13 +24,13 @@ namespace FileFlow.Views
 
         public Action<LoadStatus> onFolderLoaded;
 
-        [Inject] public HintsService hintsService { get; set; }
-        [Inject] public DiContainer kernel { get; set; }
+        [Inject] private HintsService hintsService;
+        [Inject] private DiContainer container;
 
 
         public void Initialize()
         {
-            var tab = kernel.Instantiate<TabViewModel>(new object[] { this, "C:/Tests" });
+            var tab = container.Instantiate<TabViewModel>(new object[] { this, "C:/Tests" });
             Tabs.Add(tab);
 
             OnTabClicked(Tabs[0]);
@@ -53,7 +53,7 @@ namespace FileFlow.Views
         }
         public void CreateTab(StorageElement storageElement)
         {
-            Tabs.Add(kernel.Instantiate<TabViewModel>(new object[] { this, storageElement.Path }));
+            Tabs.Add(container.Instantiate<TabViewModel>(new object[] { this, storageElement.Path }));
             OnTabClicked(Tabs.Last());
         }
         public void OnTabClicked(TabViewModel tab)

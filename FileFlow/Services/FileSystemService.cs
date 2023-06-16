@@ -72,7 +72,7 @@ namespace FileFlow.Services
                 {
                     ls.Add(new StorageElement(entryPath, this, iconExtractor));
                 }
-                foreach (string entryPath in Directory.EnumerateFiles(folderPath, "*.*", options))
+                foreach (string entryPath in Directory.EnumerateFiles(folderPath, "*.*"))
                 {
                     if (Path.GetExtension(entryPath) == ".meta") continue;
 
