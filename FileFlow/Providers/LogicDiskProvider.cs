@@ -1,6 +1,7 @@
 ﻿using FileFlow.Services;
 using FileFlow.ViewModels;
 using SharpCompress.Common;
+using SharpCompress.Readers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,20 +20,6 @@ namespace FileFlow.Providers
         public abstract void Run(string localPath);
         public abstract bool Exists(string absolutePath);
         
-    }
-    public class StorageProdiverFactory : PlaceholderFactory<string, StorageProdiver>
-    {
-        [Inject] private Settings settings;
-        [Inject] private DiContainer container;
-
-        public override StorageProdiver Create(string absolutePath)
-        {
-            if (settings.Projects.TryGetProjectAt(absolutePath, out Project project))
-            {
-                return container.Instantiate<ProjectProvider>(new object[] { absolutePath, project });
-            }
-            return container.Instantiate<LogicDiskProvider>(new object[] { absolutePath });
-        }
     }
     public class LogicDiskProvider : StorageProdiver
     {
@@ -76,6 +63,75 @@ namespace FileFlow.Providers
         public ProjectProvider(string folder, Project project) : base(folder)
         {
             this.project = project;
+        }
+    }
+    public class ArchiveProvider : StorageProdiver
+    {
+        private string archiveAbsolutePath;
+
+        private Dictionary<string, StorageElement> elements = new();
+
+        public ArchiveProvider(string archiveAbsolutePath, IFileSystemService fileSystem, IIconExtractorService iconExtractor)
+        {
+            this.archiveAbsolutePath = archiveAbsolutePath;
+
+            using (Stream stream = File.OpenRead(archiveAbsolutePath))
+            using (var reader = ReaderFactory.Open(stream))
+            {
+                while (reader.MoveToNextEntry())
+                {
+                    string localPath = reader.Entry.Key;
+                    StorageElement element = new(localPath, fileSystem, iconExtractor);
+                    elements.Add(element.Path, element);
+
+                    //if (!reader.Entry.IsDirectory)
+                    //{
+                    //    Console.WriteLine(reader.Entry.Key);
+                    //    reader.WriteEntryToDirectory(@"C:\temp", new ExtractionOptions()
+                    //    {
+                    //        ExtractFullPath = true,
+                    //        Overwrite = true
+                    //    });
+                    //}
+                }
+            }
+        }
+
+        public static bool IsArchive(string filepath)
+        {
+            using (Stream stream = File.OpenRead(filepath))
+            try
+            {
+                using (var reader = ReaderFactory.Open(stream))
+                {
+                    return true;
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+        }
+
+        public override bool Exists(string absolutePath)
+        {
+            return true;
+        }
+
+        public override IEnumerable<StorageElement> GetElements(string localPath, out LoadStatus status)
+        {
+            List<StorageElement> ls = new();
+            foreach (StorageElement element in elements.Values)
+            {
+                ls.Add(element);
+            }
+            status = ls.Count == 0 ? LoadStatus.Empty : LoadStatus.Ok;
+            return ls;
+        }
+
+        public override void Run(string localPath)
+        {
+            throw new NotImplementedException();
         }
     }
 }

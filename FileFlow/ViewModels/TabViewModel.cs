@@ -87,7 +87,7 @@ namespace FileFlow.ViewModels
 
         public void Open(StorageElement storageElement)
         {
-            if (storageElement.IsFolder)
+            if (storageElement.IsFolder || ArchiveProvider.IsArchive(storageElement.Path))
             {
                 history.Add(storageElement);
                 SetPath(storageElement.Path);
@@ -170,7 +170,6 @@ namespace FileFlow.ViewModels
 
             
 
-
             // Recreate (TODO: Make a pool for that) openned folder's folders watchers
             foreach (FileSystemWatcher folderWatcher in foldersWatchers)
             {
@@ -184,15 +183,18 @@ namespace FileFlow.ViewModels
                 return;
             }
 
-            // Setup or update openned folder watcher
-            if (watcher == null) watcher = SetupWatcher(path);
-            else watcher.Path = path;
-
-            foreach (StorageElement element in StorageElements.Values)
+            if (provider is LogicDiskProvider)
             {
-                if (element.IsFolder)
+                // Setup or update openned folder watcher
+                if (watcher == null) watcher = SetupWatcher(path);
+                else watcher.Path = path;
+
+                foreach (StorageElement element in StorageElements.Values)
                 {
-                    foldersWatchers.Add(SetupFolderWatcher(element.Path));
+                    if (element.IsFolder)
+                    {
+                        foldersWatchers.Add(SetupFolderWatcher(element.Path));
+                    }
                 }
             }
 
