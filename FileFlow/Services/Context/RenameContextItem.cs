@@ -10,13 +10,13 @@ namespace FileFlow.ViewModels
 
         [Inject] private ExplorerControl explorer;
 
-        public override bool CanBeApplied(StorageElement target)
+        public override bool CanBeApplied(ContextWorkspace workspace)
         {
-            return true;
+            return workspace.selected != null;
         }
-        public override void Apply(StorageElement elemet)
+        public override void Apply(ContextWorkspace workspace)
         {
-            explorer.ShowFileCreationView(!elemet.IsFolder, FileCreationView.Action.Rename);
+            explorer.ShowFileCreationView(!workspace.selected.IsFolder, FileCreationView.Action.Rename);
         }
     }
 }

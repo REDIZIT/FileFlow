@@ -88,7 +88,11 @@ namespace FileFlow.ViewModels
         }
         public void OnRightClick()
         {
-            contextControl.Open(GetStorageElement());
+            contextControl.Open(new ContextWorkspace()
+            {
+                parent = null,
+                selected = GetStorageElement()
+            });
         }
         public StorageElement GetStorageElement()
         {

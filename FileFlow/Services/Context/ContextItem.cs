@@ -16,8 +16,8 @@ namespace FileFlow.ViewModels
         [Inject] private ContextControl control;
 
 
-        public abstract bool CanBeApplied(StorageElement target);
-        public abstract void Apply(StorageElement target);
+        public abstract bool CanBeApplied(ContextWorkspace workspace);
+        public abstract void Apply(ContextWorkspace workspace);
 
         public void OnClick()
         {

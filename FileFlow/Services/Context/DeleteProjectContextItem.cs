@@ -9,13 +9,13 @@ namespace FileFlow.ViewModels
 
         [Inject] private Settings settings;
 
-        public override bool CanBeApplied(StorageElement target)
+        public override bool CanBeApplied(ContextWorkspace workspace)
         {
-            return target != null && target.IsFolder && settings.Projects.TryGetProjectRootAt(target.Path) != null;
+            return workspace.selected != null && workspace.selected.IsFolder && settings.Projects.TryGetProjectRootAt(workspace.selected.Path) != null;
         }
-        public override void Apply(StorageElement element)
+        public override void Apply(ContextWorkspace workspace)
         {
-            settings.Projects.RemoveFromFolder(element);
+            settings.Projects.RemoveFromFolder(workspace.selected);
             settings.Save();
         }
     }

@@ -134,7 +134,11 @@ namespace FileFlow.Views
             if (props.IsRightButtonPressed)
             {
                 contextedElement = element;
-                contextControl.Open(element);
+                contextControl.Open(new ContextWorkspace()
+                {
+                    parent = new StorageElement(model.ActiveTab.FolderPath, fileSystem, iconExtractor),
+                    selected = element
+                });
             }
             else if (element != null && props.IsMiddleButtonPressed && element.IsFolder)
             {

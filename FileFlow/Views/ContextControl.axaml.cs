@@ -15,7 +15,7 @@ namespace FileFlow.Views
         [Inject] private ContextService contextService;
         [Inject] private DiContainer container;
 
-        private StorageElement selectedElement;
+        private ContextWorkspace workspace;
 
         public ContextControl()
         {
@@ -25,10 +25,10 @@ namespace FileFlow.Views
             newFolderButton.Click += (_, _) => explorer.ShowFileCreationView(false, FileCreationView.Action.Create);
         }
 
-        public void Open(StorageElement selectedElement)
+        public void Open(ContextWorkspace workspace)
         {
-            this.selectedElement = selectedElement;
-            Items = new(contextService.GetContextItems(container, this, selectedElement));
+            this.workspace = workspace;
+            Items = new(contextService.GetContextItems(container, this, workspace));
             this.RaisePropertyChanged(nameof(Items));
 
             contextMenu.PlacementMode = PlacementMode.Pointer;
@@ -40,7 +40,7 @@ namespace FileFlow.Views
         }
         public void OnClick(ContextItem item)
         {
-            item.Apply(selectedElement);
+            item.Apply(workspace);
             Close();
         }
     }

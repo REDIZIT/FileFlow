@@ -11,11 +11,11 @@ namespace FileFlow.ViewModels
 
         public override string IconPath => "Assets/Icons/archive.png";
 
-        public override void Apply(StorageElement target)
+        public override void Apply(ContextWorkspace workspace)
         {
-            string targetFolder = Path.GetDirectoryName(target.Path).CleanUp();
+            string targetFolder = Path.GetDirectoryName(workspace.selected.Path).CleanUp();
 
-            using (Stream stream = File.OpenRead(target.Path))
+            using (Stream stream = File.OpenRead(workspace.selected.Path))
             using (var reader = ReaderFactory.Open(stream))
             {
                 while (reader.MoveToNextEntry())
@@ -32,11 +32,11 @@ namespace FileFlow.ViewModels
             }
         }
 
-        public override bool CanBeApplied(StorageElement target)
+        public override bool CanBeApplied(ContextWorkspace workspace)
         {
-            if (target == null || target.IsFolder) return false;
+            if (workspace.selected == null || workspace.selected.IsFolder) return false;
 
-            string ext = Path.GetExtension(target.Path);
+            string ext = Path.GetExtension(workspace.selected.Path);
             return ext == ".rar";
         }
     }

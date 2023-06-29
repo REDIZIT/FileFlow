@@ -16,6 +16,7 @@
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
     <None Remove=".gitignore" />
+    <None Remove="Assets\Icons\cmd.png" />
     <None Remove="Assets\Icons\setting.png" />
     <None Remove="Assets\Icons\subfolder.png" />
     <None Remove="Assets\Icons\system_folder.png" />
