@@ -7,6 +7,7 @@ namespace FileFlow.ViewModels
     {
         public override string Text => "Переименовать";
         public override string IconPath => "Assets/Icons/rename.png";
+        public override int Order => 500;
 
         [Inject] private ExplorerControl explorer;
 

@@ -5,8 +5,8 @@ namespace FileFlow.ViewModels
     public class OpenCommandPromptContextItem : ContextItem
     {
         public override string Text => "Открыть cmd здесь";
-
         public override string IconPath => "Assets/Icons/cmd.png";
+        public override int Order => -10;
 
         public override void Apply(ContextWorkspace workspace)
         {

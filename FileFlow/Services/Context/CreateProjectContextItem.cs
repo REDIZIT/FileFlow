@@ -6,6 +6,7 @@ namespace FileFlow.ViewModels
     {
         public override string Text => "Создать проект";
         public override string IconPath => "Assets/Icons/setting.png";
+        public override int Order => 100;
 
         [Inject] private Settings settings;
 

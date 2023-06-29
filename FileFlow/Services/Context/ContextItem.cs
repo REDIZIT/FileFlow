@@ -1,7 +1,6 @@
 ﻿using Avalonia.Media.Imaging;
 using FileFlow.Services;
 using FileFlow.Views;
-using SharpCompress.Readers;
 using Zenject;
 
 namespace FileFlow.ViewModels
@@ -11,6 +10,7 @@ namespace FileFlow.ViewModels
         public abstract string Text { get; }
         public Bitmap Icon => IconExtractorService.GetAssetIcon(IconPath);
         public abstract string IconPath { get; }
+        public abstract int Order { get; }
 
 
         [Inject] private ContextControl control;

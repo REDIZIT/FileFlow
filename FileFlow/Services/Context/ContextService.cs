@@ -18,6 +18,7 @@ namespace FileFlow.ViewModels
             {
                 items.Add((ContextItem)Activator.CreateInstance(type));
             }
+            items = items.OrderByDescending(i => i.Order).ToList();
         }
 
         public IEnumerable<ContextItem> GetContextItems(DiContainer container, ContextControl control, ContextWorkspace workspace)

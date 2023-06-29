@@ -8,8 +8,8 @@ namespace FileFlow.ViewModels
     public class ExtractArchiveItem : ContextItem
     {
         public override string Text => "Распаковать здесь";
-
         public override string IconPath => "Assets/Icons/archive.png";
+        public override int Order => 50;
 
         public override void Apply(ContextWorkspace workspace)
         {
