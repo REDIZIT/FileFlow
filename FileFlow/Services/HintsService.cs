@@ -22,7 +22,7 @@ namespace FileFlow.Services
         public IEnumerable<IPathBarHint> UpdateHintItems(string text, TabViewModel activeTab)
         {
             IEnumerable<IPathBarHint> sortedHints =
-                staticHints.Union(EnumerateProjectHints(activeTab.FolderPath)/*GetSubFolderHints()).Union(EnumerateProjectHints()*/)
+                staticHints.Union(EnumerateProjectHints(activeTab.FolderPath)).Union(GetBookmarkHints())
                 .Select(h => new KeyValuePair<IPathBarHint, float>(h, h.GetMatchesCount(text)))
                 .Where(kv => kv.Value > 0)
                 .OrderByDescending(kv => kv.Value)
@@ -30,27 +30,6 @@ namespace FileFlow.Services
                 .Take(10);
 
             return sortedHints;
-
-            //int hintsCount = Math.Min(pool.Length, sortedHints.Count());
-
-            //if (Input.GetKeyDown(KeyCode.Tab))
-            //{
-            //    field.text = sortedHints.ElementAt(selectedHint).Key.GetFullPath();
-            //    field.caretPosition = field.text.Length;
-            //}
-
-            //if (Input.GetKeyDown(KeyCode.Return))
-            //{
-            //    if (hintsCount > 0)
-            //    {
-            //        OnClick(sortedHints.ElementAt(selectedHint).Key);
-            //    }
-            //    else
-            //    {
-            //        OnClick(null);
-            //    }
-            //    return;
-            //}
         }
 
         private IEnumerable<IPathBarHint> GetHints()
@@ -82,6 +61,13 @@ namespace FileFlow.Services
                 {
                     yield return new ProjectFolderHint(data);
                 }
+            }
+        }
+        private IEnumerable<IPathBarHint> GetBookmarkHints()
+        {
+            foreach (string folder in settings.Bookmarks)
+            {
+                yield return GetFolderHint(folder);
             }
         }
 

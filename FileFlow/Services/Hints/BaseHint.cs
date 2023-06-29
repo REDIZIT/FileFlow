@@ -59,7 +59,7 @@ namespace FileFlow.Services.Hints
         {
             this.path = path;
             DisplayText = displayText;
-            TypeText = "Системная папка";
+            TypeText = "Папка";
         }
         public override string GetFullPath()
         {
@@ -67,7 +67,7 @@ namespace FileFlow.Services.Hints
         }
         public override string GetIconPath()
         {
-            return "Assets/Icons/system_folder.png";
+            return "Assets/Icons/folder.png";
         }
     }
     public class ProjectHint : BaseHint
