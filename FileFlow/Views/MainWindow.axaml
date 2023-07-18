@@ -7,7 +7,7 @@
         x:Class="FileFlow.Views.MainWindow"
         xmlns:views="clr-namespace:FileFlow.Views"
         xmlns:l="clr-namespace:FileFlow.ViewModels"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/app.ico"
         Title="FileFlow"
         KeyboardNavigation.TabNavigation="None">
 

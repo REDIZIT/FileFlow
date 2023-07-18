@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <PackageIcon>icon.png</PackageIcon>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>portable</DebugType>
@@ -16,12 +18,17 @@
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
     <None Remove=".gitignore" />
+    <None Remove="Assets\app.ico" />
     <None Remove="Assets\Icons\cmd.png" />
     <None Remove="Assets\Icons\setting.png" />
     <None Remove="Assets\Icons\subfolder.png" />
     <None Remove="Assets\Icons\system_folder.png" />
     <None Remove="Assets\Icons\unity.png" />
     <None Remove="Assets\Icons\user_folder.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\app.ico" />
   </ItemGroup>
 
   <ItemGroup>

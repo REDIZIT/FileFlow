@@ -242,6 +242,7 @@
     
     <ContentControl Name="fileCreationView"/>
     <ContentControl Name="conflictResolveControl"/>
+    <ContentControl Name="goToPlaceholder"/>
     
   </Panel>
 

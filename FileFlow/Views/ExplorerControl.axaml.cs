@@ -7,6 +7,7 @@ using FileFlow.Misc;
 using FileFlow.Services;
 using FileFlow.Services.Hints;
 using FileFlow.ViewModels;
+using FileFlow.Views.Popups;
 using System;
 using System.Linq;
 using System.Reactive.Linq;
@@ -20,11 +21,13 @@ namespace FileFlow.Views
         private ConflictResolveControl ConflictResolveControl => (ConflictResolveControl)conflictResolveControl.Content;
 
         private MainWindow mainWindow;
+
         [Inject] private IFileSystemService fileSystem;
         [Inject] private IIconExtractorService iconExtractor;
 
         private ExplorerViewModel model;
         private StorageElement contextedElement;
+        private GoToControl goToControl;
         private int id;
 
         private Point leftClickPoint;
@@ -46,6 +49,7 @@ namespace FileFlow.Views
             model = container.Instantiate<ExplorerViewModel>();
             model.onFolderLoaded += OnFolderLoaded;
             DataContext = model;
+            sub.Bind<ExplorerViewModel>().FromInstance(model);
 
             InitializeComponent();
 
@@ -69,7 +73,11 @@ namespace FileFlow.Views
             AddHandler(DragDrop.DragLeaveEvent, DragExit);
             AddHandler(DragDrop.DropEvent, DropEvent);
 
+
             conflictResolveControl.Content = container.Instantiate<ConflictResolveControl>();
+
+            goToControl = sub.Instantiate<GoToControl>();
+            goToPlaceholder.Content = goToControl;
         }
 
         public void Open(StorageElement element)
@@ -197,9 +205,7 @@ namespace FileFlow.Views
                 }
                 else if (e.Key == Key.T)
                 {
-                    // Focus path bar
-                    pathText.Focus();
-                    pathText.SelectAll();
+                    goToControl.Show();
                 }
             }
         }
@@ -216,23 +222,6 @@ namespace FileFlow.Views
         private void OnPathBarKeyDown(object sender, KeyEventArgs e)
         {
             bool isAnyKeyPressed = false;
-
-            if (hintsListBox.ItemCount > 0)
-            {
-                if (e.Key == Key.Down)
-                {
-                    hintsListBox.SelectedIndex = Math.Clamp(hintsListBox.SelectedIndex + 1, -1, hintsListBox.ItemCount - 1);
-                }
-                else if (e.Key == Key.Up)
-                {
-                    hintsListBox.SelectedIndex = Math.Clamp(hintsListBox.SelectedIndex - 1, -1, hintsListBox.ItemCount - 1);
-                }
-                else if (e.Key == Key.Tab && hintsListBox.SelectedIndex != -1)
-                {
-                    SetPathText(((IPathBarHint)hintsListBox.SelectedItem).GetFullPath());
-                }
-            }
-
 
             if (e.Key == Key.Enter)
             {
@@ -251,33 +240,17 @@ namespace FileFlow.Views
                         SetPathText(model.ActiveTab.FolderPath);
                     }
                 }
-                else
-                {
-                    IPathBarHint hint = (IPathBarHint)hintsListBox.SelectedItem;
-                    model.Open(new(hint.GetFullPath(), fileSystem, iconExtractor));
-                }
 
                 isAnyKeyPressed = true;
             }
             else if (e.Key == Key.Escape)
             {
-                if (pathPopup.IsOpen && hintsListBox.SelectedIndex != -1)
-                {
-                    hintsListBox.SelectedIndex = -1;
-                }
-                else
-                {
-                    SetPathText(model.ActiveTab.FolderPath);
-                    isAnyKeyPressed = true;
-                }
+                SetPathText(model.ActiveTab.FolderPath);
+                isAnyKeyPressed = true;
             }
-
-            
-            
 
             if (isAnyKeyPressed)
             {
-                ClosePathPopup();
                 KeyboardDevice.Instance.SetFocusedElement(this, NavigationMethod.Unspecified, KeyModifiers.None);
             }
         }
@@ -289,16 +262,16 @@ namespace FileFlow.Views
                 return;
             }
 
-            model.UpdateHints(text);
-            hintsListBox.SelectedIndex = 0;
-            if (hintsListBox.ItemCount > 0)
-            {
-                pathPopup.Open();
-            }
-            else
-            {
-                ClosePathPopup();
-            }
+            //model.UpdateHints(text);
+            //hintsListBox.SelectedIndex = 0;
+            //if (hintsListBox.ItemCount > 0)
+            //{
+            //    pathPopup.Open();
+            //}
+            //else
+            //{
+            //    ClosePathPopup();
+            //}
         }
 
         private void OnPathBarClicked(object sender, PointerPressedEventArgs e)
