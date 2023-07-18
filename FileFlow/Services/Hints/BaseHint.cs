@@ -9,7 +9,6 @@ namespace FileFlow.Services.Hints
         string TypeText { get; }
         Bitmap Icon { get; }
         string GetFullPath();
-        float GetMatchesCount(string input);
         void LoadIcon();
     }
     public abstract class BaseHint : IPathBarHint
@@ -26,32 +25,6 @@ namespace FileFlow.Services.Hints
             {
                 Icon = IconExtractorService.GetAssetIcon(GetIconPath());
             }
-        }
-
-        public float GetMatchesCount(string input)
-        {
-            return GetTextMatches(DisplayText, input);
-        }
-
-        protected virtual float GetTextMatches(string text, string input)
-        {
-            int matches = 0;
-
-            input = input.ToLower();
-            string displayTextLowered = text.ToLower();
-
-            for (int i = 0; i < Math.Min(input.Length, text.Length); i++)
-            {
-                if (input[i] == displayTextLowered[i])
-                {
-                    matches++;
-                }
-                else
-                {
-                    return matches;
-                }
-            }
-            return matches;
         }
     }
     public class LocalFolderHint : BaseHint
@@ -124,7 +97,7 @@ namespace FileFlow.Services.Hints
             return "Assets/Icons/subfolder.png";
         }
 
-        protected override float GetTextMatches(string text, string input)
+        protected float GetTextMatches(string text, string input)
         {
             float matches = 0;
 

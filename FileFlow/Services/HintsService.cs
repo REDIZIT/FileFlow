@@ -29,7 +29,7 @@ namespace FileFlow.Services
                 .Union(EnumerateProjectHints(activeTab.FolderPath))
                 .Union(GetBookmarkHints())
                 .Union(EnumerateCurrentEntries(activeTab))
-                .Select(h => new KeyValuePair<IPathBarHint, float>(h, h.GetMatchesCount(text)))
+                .Select(h => new KeyValuePair<IPathBarHint, float>(h, GetSimilarityScore(h.DisplayText, text)))
                 .Where(kv => kv.Value > 0)
                 .OrderByDescending(kv => kv.Value)
                 .Select(kv => kv.Key)
@@ -43,6 +43,22 @@ namespace FileFlow.Services
             }
 
             return sortedHints;
+        }
+
+        public static int GetSimilarityScore(string text, string input)
+        {
+            string[] searchTerms = input.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            int score = 0;
+
+            foreach (string term in searchTerms)
+            {
+                if (text.Contains(term, StringComparison.OrdinalIgnoreCase))
+                {
+                    score++;
+                }
+            }
+
+            return score;
         }
 
         private IEnumerable<IPathBarHint> GetHints()

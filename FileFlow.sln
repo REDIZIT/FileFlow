@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileFlow.Tests", "FileFlow.Tests\FileFlow.Tests.csproj", "{906492FD-4488-48F2-9270-B25D41708CA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{C128F4C5-3EC8-4CF3-A308-AF470278FE20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C128F4C5-3EC8-4CF3-A308-AF470278FE20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C128F4C5-3EC8-4CF3-A308-AF470278FE20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{906492FD-4488-48F2-9270-B25D41708CA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{906492FD-4488-48F2-9270-B25D41708CA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{906492FD-4488-48F2-9270-B25D41708CA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{906492FD-4488-48F2-9270-B25D41708CA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
