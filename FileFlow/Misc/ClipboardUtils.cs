@@ -18,7 +18,8 @@ namespace FileFlow.Misc
         public static IEnumerable<string> GetFiles(out DragDropEffects effects)
         {
             effects = GetEffects();
-            return (IEnumerable<string>)Clip.GetDataAsync(DataFormats.FileNames).Result;
+            var data = Clip.GetDataAsync(DataFormats.FileNames).Result;
+            return (IEnumerable<string>)data;
         }
 
         public static async void CutOrCopyFiles(IEnumerable<string> files, bool copy)

@@ -1,4 +1,5 @@
-﻿using FileFlow.Services.Hints;
+﻿using FileFlow.Extensions;
+using FileFlow.Services.Hints;
 using FileFlow.ViewModels;
 using PostSharp.Extensibility;
 using System;
@@ -12,22 +13,34 @@ namespace FileFlow.Services
     {
         private List<IPathBarHint> staticHints = new List<IPathBarHint>();
         private Settings settings;
+        private IIconExtractorService icon;
 
-        public HintsService(Settings settings)
+        public HintsService(Settings settings, IIconExtractorService icon)
         {
             this.settings = settings;
+            this.icon = icon;
             staticHints = GetHints().ToList();
         }
 
-        public IEnumerable<IPathBarHint> UpdateHintItems(string text, TabViewModel activeTab)
+        public IPathBarHint[] UpdateHintItems(string text, TabViewModel activeTab)
         {
-            IEnumerable<IPathBarHint> sortedHints =
-                staticHints.Union(EnumerateProjectHints(activeTab.FolderPath)).Union(GetBookmarkHints())
+            IPathBarHint[] sortedHints =
+                staticHints
+                .Union(EnumerateProjectHints(activeTab.FolderPath))
+                .Union(GetBookmarkHints())
+                .Union(EnumerateCurrentEntries(activeTab))
                 .Select(h => new KeyValuePair<IPathBarHint, float>(h, h.GetMatchesCount(text)))
                 .Where(kv => kv.Value > 0)
                 .OrderByDescending(kv => kv.Value)
                 .Select(kv => kv.Key)
-                .Take(10);
+                .Take(10)
+                .ToArray();
+
+
+            foreach (IPathBarHint hint in sortedHints)
+            {
+                hint.LoadIcon();
+            }
 
             return sortedHints;
         }
@@ -35,15 +48,22 @@ namespace FileFlow.Services
         private IEnumerable<IPathBarHint> GetHints()
         {
             string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            yield return GetFolderHint(userFolder);
-            yield return GetFolderHint(userFolder + "/AppData");
-            yield return GetFolderHint(userFolder + "/AppData/Roaming");
-            yield return GetFolderHint(userFolder + "/AppData/LocalLow");
-            yield return GetFolderHint(userFolder + "/AppData/Local");
-            yield return GetFolderHint(userFolder + "/Downloads");
-            yield return GetFolderHint(userFolder + "/Videos");
-            yield return GetFolderHint(userFolder + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup");
-            yield return GetFolderHint(userFolder + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs");
+            yield return GetLocalHint(userFolder);
+            yield return GetLocalHint(userFolder + "/AppData");
+            yield return GetLocalHint(userFolder + "/AppData/Roaming");
+            yield return GetLocalHint(userFolder + "/AppData/LocalLow");
+            yield return GetLocalHint(userFolder + "/AppData/Local");
+            yield return GetLocalHint(userFolder + "/Downloads");
+            yield return GetLocalHint(userFolder + "/Videos");
+            yield return GetLocalHint(userFolder + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup");
+            yield return GetLocalHint(userFolder + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs");
+        }
+        private IEnumerable<IPathBarHint> EnumerateCurrentEntries(TabViewModel tab)
+        {
+            foreach (StorageElement element in tab.StorageElementsValues)
+            {
+                yield return GetLocalHint(element.Path);
+            }
         }
         private IEnumerable<IPathBarHint> EnumerateProjectHints(string activeFolder)
         {
@@ -67,14 +87,21 @@ namespace FileFlow.Services
         {
             foreach (string folder in settings.Bookmarks)
             {
-                yield return GetFolderHint(folder);
+                yield return GetLocalHint(folder);
             }
         }
 
-        private LocalFolderHint GetFolderHint(string folder)
+        private IPathBarHint GetLocalHint(string path)
         {
-            folder = folder.Replace(@"\", "/");
-            return new LocalFolderHint(folder, Path.GetFileName(folder));
+            path = path.CleanUp();
+            if (Directory.Exists(path))
+            {
+                return new LocalFolderHint(path, Path.GetFileName(path));
+            }
+            else
+            {
+                return new LocalFileHint(path, Path.GetFileName(path), icon);
+            }
         }
     }
 }

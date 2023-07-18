@@ -10,6 +10,7 @@ namespace FileFlow.Services.Hints
         Bitmap Icon { get; }
         string GetFullPath();
         float GetMatchesCount(string input);
+        void LoadIcon();
     }
     public abstract class BaseHint : IPathBarHint
     {
@@ -19,10 +20,12 @@ namespace FileFlow.Services.Hints
 
         public abstract string GetFullPath();
         public abstract string GetIconPath();
-
-        public BaseHint()
+        public void LoadIcon()
         {
-            Icon = IconExtractorService.GetAssetIcon(GetIconPath());
+            if (Icon == null)
+            {
+                Icon = IconExtractorService.GetAssetIcon(GetIconPath());
+            }
         }
 
         public float GetMatchesCount(string input)
@@ -68,6 +71,18 @@ namespace FileFlow.Services.Hints
         public override string GetIconPath()
         {
             return "Assets/Icons/folder.png";
+        }
+    }
+    public class LocalFileHint : LocalFolderHint
+    {
+        public LocalFileHint(string path, string displayText, IIconExtractorService icon) : base(path, displayText)
+        {
+            TypeText = "Файл";
+            Icon = icon.GetFileIcon(path);
+        }
+        public override string GetIconPath()
+        {
+            throw new NotImplementedException();
         }
     }
     public class ProjectHint : BaseHint

@@ -48,7 +48,7 @@
     <Setter Property="Padding" Value="0"/>
     <Setter Property="CornerRadius" Value="6"/>
     <Setter Property="Margin" Value="0, 1"/>
-    <Setter Property="Background" Value="#2f656565"/>
+    <Setter Property="Background" Value="#a333"/>
     <Setter Property="Opacity" Value="1"/>
     <Setter Property="Transitions">
       <Transitions>
@@ -64,7 +64,7 @@
     <Setter Property="RenderTransform" Value="scale(0.98)"/>
   </Style>
   <Style Selector="Button.Item:pressed /template/ ContentPresenter">
-    <Setter Property="Background" Value="#a555"/>
+    <Setter Property="Background" Value="#a222"/>
   </Style>  
   
   <!--Window-->

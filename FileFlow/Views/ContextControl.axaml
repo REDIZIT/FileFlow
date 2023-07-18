@@ -10,37 +10,52 @@
       StaysOpen="False"
       Width="200">
     <Border
-      Background="#2c2c2c" BorderBrush="#555" BorderThickness="1" Padding="6, 6"
-      CornerRadius="8">
-      <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" VerticalAlignment="Top">
+      Background="#2c2c2c" BorderBrush="#444" BorderThickness="1" Padding="4, 4"
+      CornerRadius="6">
+      <Grid ColumnDefinitions="*, Auto, *" RowDefinitions="Auto, Auto, Auto" VerticalAlignment="Top">
 
         <Grid.Styles>
           <Style Selector="Button">
-            <Setter Property="Background" Value="#555"/>
+            <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+          </Style>
+          <Style Selector="Button TextBlock">
+            <Setter Property="Foreground" Value="#cfff"/>
+          </Style>
+          <Style Selector="Button Image">
+            <Setter Property="Opacity" Value="0.5"/>
           </Style>
           <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="#666" />
+            <Setter Property="Background" Value="#444" />
+          </Style>
+          <Style Selector="Button:pointerover TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+          </Style>
+          <Style Selector="Button:pointerover Image">
+            <Setter Property="Opacity" Value="1"/>
           </Style>
         </Grid.Styles>
 
         <Button Name="newFolderButton" Grid.Column="0" Grid.Row="0"
-          CornerRadius="6, 0, 0, 6" Padding="6" HorizontalAlignment="Stretch"
-          BorderBrush="#666" BorderThickness="0, 0, 1, 0">
+          CornerRadius="4, 0, 0, 4" Padding="6" HorizontalAlignment="Stretch">
           <Image Source="/Assets/Icons/new_folder.png" Height="16" Width="16"/>
         </Button>
-        <Button Name="newFileButton" Grid.Column="1" Grid.Row="0"
-         CornerRadius="0, 6, 6, 0" Padding="6" HorizontalAlignment="Stretch"
-         BorderBrush="#666" BorderThickness="0">
+        <Panel Width="1" Background="#444" Grid.Column="1" Grid.Row="0" Margin="0"/>
+        <Button Name="newFileButton" Grid.Column="2" Grid.Row="0"
+         CornerRadius="0, 4, 4, 0" Padding="6" HorizontalAlignment="Stretch">
           <Image Source="/Assets/Icons/new_file.png" Height="16" Width="16"/>
         </Button>
-        <ItemsControl Items="{Binding Items}" Grid.Row="1" Grid.ColumnSpan="2" Margin="0, 6, 0, 0">
+        
+        <Panel Height="1" Background="#444" Grid.ColumnSpan="3" Grid.Column="0" Grid.Row="1" Margin="0, 4, 0, 0"/>
+        
+        <ItemsControl Items="{Binding Items}" Grid.Row="2" Grid.ColumnSpan="3" Margin="0, 4, 0, 0">
           <ItemsControl.ItemTemplate>
             <DataTemplate>
-              <Button CornerRadius="6" HorizontalAlignment="Stretch" Command="{Binding OnClick}">
+              <Button CornerRadius="4" HorizontalAlignment="Stretch" Command="{Binding OnClick}">
                 <Panel HorizontalAlignment="Left" Height="24">
-                  <Image Source="{Binding Icon}" HorizontalAlignment="Left" Width="16" Height="16" Margin="12, 0"/>
-                  <TextBlock Text="{Binding Text}" FontSize="11" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="34, 0"/>
+                  <Image Source="{Binding Icon}" HorizontalAlignment="Left" Width="16" Height="16" Margin="6, 0"/>
+                  <TextBlock Text="{Binding Text}" FontSize="11" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="28, 0"/>
                 </Panel>
               </Button>
             </DataTemplate>
