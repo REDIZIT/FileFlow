@@ -3,6 +3,7 @@ using FileFlow.Services.Hints;
 using FileFlow.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -23,18 +24,23 @@ namespace FileFlow.Services
 
         public IPathBarHint[] UpdateHintItems(string text, TabViewModel activeTab)
         {
-            IPathBarHint[] sortedHints =
-                staticHints
+            IPathBarHint[] sortedHints = staticHints
+                // Enumerate all hints
                 .Union(EnumerateProjectHints(activeTab.FolderPath))
                 .Union(GetBookmarkHints())
                 .Union(EnumerateCurrentEntries(activeTab))
+
+                // Remove hints which have same full path (but DisplayText may be different)
+                .GroupBy(h => h.GetFullPath())
+                .Select(g => g.First())
+
+                // Sort by user input text
                 .Select(h => new KeyValuePair<IPathBarHint, float>(h, GetSimilarityScore(h.DisplayText, text)))
                 .Where(kv => kv.Value > 0)
                 .OrderByDescending(kv => kv.Value)
                 .Select(kv => kv.Key)
                 .Take(30)
                 .ToArray();
-
 
             foreach (IPathBarHint hint in sortedHints)
             {
