@@ -174,6 +174,10 @@ namespace FileFlow.ViewModels
                 Project = projectProvider.Project;
                 projectService.IndexProject(Project);
             }
+            else
+            {
+                Project = null;
+            }
             this.RaisePropertyChanged(nameof(Project));
 
             FolderPath = path;
