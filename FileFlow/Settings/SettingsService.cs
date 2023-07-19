@@ -1,5 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using FileFlow.Enums;
+using FileFlow.Extensions;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Zenject;
 
@@ -31,10 +34,23 @@ namespace FileFlow
             {
                 settings = new()
                 {
-                    service = this
+                    service = this,
+                    SortData = new()
+                    {
+                        SortByFolder = new Dictionary<string, Sort>()
+                        {
+                            { Environment.GetFolderPath(Environment.SpecialFolder.UserProfile).CleanUp() + "/Downloads", Sort.CreationDate }
+                        }
+                    },
+                    Pathes = new()
+                    {
+                        ArchivesExtractionFolder = Environment.CurrentDirectory.CleanUp() + "/Temp/Archives"
+                    }
                 };
                 settings.Save();
             }
+
+            settings.Pathes.CleanAndCreateDirectories();
 
             container.Inject(settings);
             container.Bind<Settings>().FromInstance(settings).AsSingle();

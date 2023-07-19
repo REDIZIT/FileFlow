@@ -33,7 +33,7 @@
        KeyDown="OnPathBarKeyDown"/>
 
       <ListBox
-        Name="hintsListBox" MaxHeight="144" Background="Transparent"
+        Name="hintsListBox" MaxHeight="288" Background="Transparent"
         VirtualizationMode="None" Items="{Binding Items}" Margin="0">
 
         <ListBox.Styles>

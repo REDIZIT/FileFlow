@@ -1,7 +1,6 @@
 ﻿using FileFlow.Extensions;
 using FileFlow.Services.Hints;
 using FileFlow.ViewModels;
-using PostSharp.Extensibility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,7 +32,7 @@ namespace FileFlow.Services
                 .Where(kv => kv.Value > 0)
                 .OrderByDescending(kv => kv.Value)
                 .Select(kv => kv.Key)
-                .Take(10)
+                .Take(30)
                 .ToArray();
 
 

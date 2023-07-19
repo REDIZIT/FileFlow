@@ -20,7 +20,9 @@
     <None Remove=".gitignore" />
     <None Remove="Assets\app.ico" />
     <None Remove="Assets\Icons\cmd.png" />
+    <None Remove="Assets\Icons\filter.ico" />
     <None Remove="Assets\Icons\setting.png" />
+    <None Remove="Assets\Icons\sorting.png" />
     <None Remove="Assets\Icons\subfolder.png" />
     <None Remove="Assets\Icons\system_folder.png" />
     <None Remove="Assets\Icons\unity.png" />
@@ -123,9 +125,5 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Tests\" />
   </ItemGroup>
 </Project>

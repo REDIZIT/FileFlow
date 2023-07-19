@@ -1,4 +1,5 @@
 ﻿using Avalonia.Threading;
+using FileFlow.Enums;
 using FileFlow.Extensions;
 using FileFlow.Providers;
 using FileFlow.Services;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Zenject;
@@ -45,6 +47,7 @@ namespace FileFlow.ViewModels
         [Inject] private IIconExtractorService iconExtractor;
         [Inject] private ProjectService projectService;
         [Inject] private StorageProdiverFactory providerFactory;
+        [Inject] private Settings settings;
 
         private ExplorerViewModel explorer;
 
@@ -87,8 +90,10 @@ namespace FileFlow.ViewModels
 
         public void Open(StorageElement storageElement)
         {
+            Trace.WriteLine("Open " + storageElement.Path);
             if (storageElement.IsFolder || ArchiveProvider.IsArchive(storageElement.Path))
             {
+                Trace.WriteLine(" - set path");
                 history.Add(storageElement);
                 SetPath(storageElement.Path);
             }
@@ -203,17 +208,41 @@ namespace FileFlow.ViewModels
         private void ReloadElements()
         {
             StorageElements.Clear();
-            foreach (StorageElement element in provider.GetElements(null, out status))
+            foreach (StorageElement element in provider.GetElements(folderPath, out status))
             {
                 StorageElements.Add(element.Name, element);
             }
             SortElements();
             explorer.onFolderLoaded?.Invoke(status);
         }
-        private void SortElements()
+        public void SortElements()
         {
-            StorageElementsValues = new(StorageElements.Values.OrderBy(e => e.Name).OrderByDescending(e => e.IsFolder));
+            Sort type = settings.SortData.GetSort(FolderPath);
+            IEnumerable<StorageElement> sorted = EnumerateSortElements(StorageElements.Values, type);
+
+            if (type == Sort.CreationDate || type == Sort.CreationDataRev)
+            {
+                StorageElementsValues = new(sorted);
+            }
+            else
+            {
+                StorageElementsValues = new(sorted.OrderByDescending(e => e.IsFolder));
+            }
+
             this.RaisePropertyChanged(nameof(StorageElementsValues));
+        }
+        private IEnumerable<StorageElement> EnumerateSortElements(IEnumerable<StorageElement> source, Sort type)
+        {
+            return type switch
+            {
+                Sort.Name => source.OrderBy(e => e.Name),
+                Sort.NameRev => source.OrderByDescending(e => e.Name),
+                Sort.CreationDate => source.OrderByDescending(e => e.LastModifyTime),
+                Sort.CreationDataRev => source.OrderBy(e => e.LastModifyTime),
+                Sort.Size => source.OrderByDescending(e => e.Size),
+                Sort.SizeRev => source.OrderBy(e => e.Size),
+                _ => throw new NotImplementedException(),
+            };
         }
         private FileSystemWatcher SetupWatcher(string path)
         {

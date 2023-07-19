@@ -2,6 +2,7 @@
 using Avalonia.Media.Imaging;
 using FileFlow.Extensions;
 using FileFlow.Services;
+using System;
 using System.ComponentModel;
 using System.IO;
 
@@ -11,9 +12,12 @@ namespace FileFlow.ViewModels
     {
         public string Path { get; private set; }
         public string Name { get; private set; }
-        public string LastModifyTime { get; private set; }
-        public string Size { get; private set; }
+        public DateTime LastModifyTime { get; private set; }
+        public string LastModifyTimeString { get; private set; }
+        public long Size { get; private set; }
+        public string SizeString { get; private set; }
         public Bitmap Icon { get; private set; }
+
         public bool IsAdded
         {
             get { return _isAdded; }
@@ -35,7 +39,7 @@ namespace FileFlow.ViewModels
 
         private bool _isAdded, _isModified;
 
-        public bool IsFolder { get; private set; }
+        public bool IsFolder { get; set; }
 
         private IFileSystemService fileSystem;
         private IIconExtractorService iconExtractor;
@@ -69,15 +73,36 @@ namespace FileFlow.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private async void UpdateSize(IFileSystemService fileSystem)
+        private void UpdateSize(IFileSystemService fileSystem)
         {
             if (Directory.Exists(Path) == false && File.Exists(Path) == false) return;
 
-            Size = await fileSystem.GetElementWeight(Path);
-            LastModifyTime = await fileSystem.GetModifyTime(Path);
+            Size = fileSystem.GetElementWeight(Path);
 
-            this.RaisePropertyChanged(nameof(Size));
-            this.RaisePropertyChanged(nameof(LastModifyTime));
+            if (Size == -1)
+            {
+                SizeString = "Нет доступа";
+            }
+            else
+            {
+                if (IsFolder)
+                {
+                    SizeString = Size == 0 ? "Нет элементов" : Size + " элементов";
+                }
+                else
+                {
+                    SizeString = FileSizeUtil.BytesToString(Size);
+                }
+            }
+            
+            
+
+            LastModifyTime = fileSystem.GetModifyTime(Path);
+            LastModifyTimeString = FileSizeUtil.PrettyModifyDate(LastModifyTime);
+
+
+            this.RaisePropertyChanged(nameof(SizeString));
+            this.RaisePropertyChanged(nameof(LastModifyTimeString));
         }
     }
 }

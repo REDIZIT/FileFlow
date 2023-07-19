@@ -21,8 +21,8 @@ namespace FileFlow.Services
     public interface IFileSystemService
     {
         List<StorageElement> GetStorageElements(string folderPath, out LoadStatus status);
-        Task<string> GetElementWeight(string path);
-        Task<string> GetModifyTime(string path);
+        long GetElementWeight(string path);
+        DateTime GetModifyTime(string path);
         void Run(string filePath);
         void CreateFile(string filePath);
         void CreateFolder(string folderPath);
@@ -93,35 +93,29 @@ namespace FileFlow.Services
             }
         }
 
-        public async Task<string> GetElementWeight(string path)
+        public long GetElementWeight(string path)
         {
-            return await Task.Run(() =>
+            if (File.Exists(path))
             {
-                if (File.Exists(path))
+                return new FileInfo(path).Length;
+            }
+            else
+            {
+                try
                 {
-                    return FileSizeUtil.BytesToString(new FileInfo(path).Length);
+                    int foldersCount = Directory.GetFileSystemEntries(path).Length;
+                    return foldersCount;
                 }
-                else
+                catch (UnauthorizedAccessException)
                 {
-                    try
-                    {
-                        int foldersCount = Directory.GetFileSystemEntries(path).Length;
-                        return foldersCount > 0 ? foldersCount + " элементов" : "Нет элементов";
-                    }
-                    catch (System.UnauthorizedAccessException err)
-                    {
-                        return "Нет доступа";
-                    }
+                    return -1;
+                }
 
-                }
-            });
+            }
         }
-        public async Task<string> GetModifyTime(string path)
+        public DateTime GetModifyTime(string path)
         {
-            return await Task.Run(() =>
-            {
-                return FileSizeUtil.PrettyModifyDate(new FileInfo(path).LastWriteTime);
-            });
+            return new FileInfo(path).LastWriteTime;
         }
         public bool Exists(string path)
         {

@@ -1,5 +1,6 @@
 ﻿using FileFlow.Services;
 using System.IO;
+using System.Linq;
 using Zenject;
 
 namespace FileFlow.Providers
@@ -12,8 +13,9 @@ namespace FileFlow.Providers
         public override StorageProdiver Create(string absolutePath)
         {
             string ext = Path.GetExtension(absolutePath);
+            string[] split = absolutePath.Split('/');
 
-            if (ext == ".rar")
+            if (split.Any(ArchiveProvider.IsArchive))
             {
                 return container.Instantiate<ArchiveProvider>(new object[] {absolutePath, container.Resolve<IFileSystemService>(), container.Resolve<IIconExtractorService>() });
             }

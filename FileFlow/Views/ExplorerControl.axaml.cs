@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using FileFlow.Enums;
 using FileFlow.Extensions;
 using FileFlow.Misc;
 using FileFlow.Services;
@@ -24,6 +25,7 @@ namespace FileFlow.Views
 
         [Inject] private IFileSystemService fileSystem;
         [Inject] private IIconExtractorService iconExtractor;
+        private Settings settings;
 
         private ExplorerViewModel model;
         private StorageElement contextedElement;
@@ -38,10 +40,11 @@ namespace FileFlow.Views
             InitializeComponent();
         }
         [Inject]
-        public ExplorerControl(MainWindow mainWindow, DiContainer container, int id)
+        public ExplorerControl(MainWindow mainWindow, DiContainer container, int id, Settings settings)
         {
             this.mainWindow = mainWindow;
             this.id = id;
+            this.settings = settings;
 
             var sub = container.CreateSubContainer();
             sub.Bind<ExplorerControl>().FromInstance(this);
@@ -218,6 +221,8 @@ namespace FileFlow.Views
             messageText.IsVisible = hasElements == false;
 
             messageText.Text = status.ToMessageString();
+
+            sortingList.SelectedIndex = (int)settings.SortData.GetSort(model.ActiveTab.FolderPath);
         }
         private void OnPathBarKeyDown(object sender, KeyEventArgs e)
         {
@@ -259,19 +264,7 @@ namespace FileFlow.Views
             if (string.IsNullOrWhiteSpace(text) || isResettingTextBox)
             {
                 ClosePathPopup();
-                return;
             }
-
-            //model.UpdateHints(text);
-            //hintsListBox.SelectedIndex = 0;
-            //if (hintsListBox.ItemCount > 0)
-            //{
-            //    pathPopup.Open();
-            //}
-            //else
-            //{
-            //    ClosePathPopup();
-            //}
         }
 
         private void OnPathBarClicked(object sender, PointerPressedEventArgs e)
@@ -299,6 +292,22 @@ namespace FileFlow.Views
             ConflictResolveControl.Show(action);
             contextControl.Close();
         }
+
+
+        private void ShowSortingList(object sender, RoutedEventArgs args)
+        {
+            sortingPopup.IsOpen = true;
+        }
+        private void OnSortSelected(object sender, PointerReleasedEventArgs args)
+        {
+            Sort type = (Sort)sortingList.SelectedIndex;
+            settings.SortData.SetSort(model.ActiveTab.FolderPath, type);
+            settings.Save();
+
+            sortingPopup.Close();
+            model.ActiveTab.SortElements();
+        }
+
 
         private void SetPathText(string text)
         {
@@ -332,6 +341,8 @@ namespace FileFlow.Views
             pathPopup.Close();
             model.ClearHints();
         }
+
+
 
         private void DragEnter(object sender, DragEventArgs e)
         {
