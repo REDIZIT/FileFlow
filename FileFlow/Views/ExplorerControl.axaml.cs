@@ -158,6 +158,10 @@ namespace FileFlow.Views
         }
         private void OnExplorerKeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.F5)
+            {
+                model.ActiveTab.RefreshElements();
+            }
             if (e.Key == Key.Delete)
             {
                 foreach (StorageElement item in listBox.SelectedItems)

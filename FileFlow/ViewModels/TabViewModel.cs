@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Zenject;
+using static FileFlow.Views.FileCreationView;
 
 namespace FileFlow.ViewModels
 {
@@ -139,6 +140,7 @@ namespace FileFlow.ViewModels
                 StorageElement element = StorageElements[args.OldName];
                 element.SetPath(args.FullPath.CleanUp());
                 element.IsModified = true;
+                element.Refresh();
 
                 StorageElements.Remove(args.OldName);
                 StorageElements.Add(args.Name, element);
@@ -147,6 +149,12 @@ namespace FileFlow.ViewModels
             {
                 StorageElements.Remove(e.Name);
                 if (StorageElements.Count == 0) status = LoadStatus.Empty;
+            }
+            else if (e.ChangeType == WatcherChangeTypes.Changed)
+            {
+                StorageElement element = StorageElements[e.Name];
+                element.IsModified = true;
+                element.Refresh();
             }
 
             Dispatcher.UIThread.Post(() =>
@@ -231,6 +239,14 @@ namespace FileFlow.ViewModels
 
             this.RaisePropertyChanged(nameof(StorageElementsValues));
         }
+        public void RefreshElements()
+        {
+            foreach (StorageElement element in StorageElementsValues)
+            {
+                element.Refresh();
+            }
+        }
+
         private IEnumerable<StorageElement> EnumerateSortElements(IEnumerable<StorageElement> source, Sort type)
         {
             return type switch
@@ -248,10 +264,11 @@ namespace FileFlow.ViewModels
         {
             FileSystemWatcher watcher = new(path);
             watcher.Filter = "*.*";
-            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite;
             watcher.Created += OnFilesChanged;
             watcher.Deleted += OnFilesChanged;
             watcher.Renamed += OnFilesChanged;
+            watcher.Changed += OnFilesChanged;
             watcher.EnableRaisingEvents = true;
 
             return watcher;
@@ -260,9 +277,10 @@ namespace FileFlow.ViewModels
         {
             FileSystemWatcher watcher = new(path);
             watcher.Filter = "*.*";
-            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite;
             watcher.Created += OnFoldersChanged;
             watcher.Deleted += OnFoldersChanged;
+            watcher.Changed += OnFoldersChanged;
 
             // Check if we have access to the folder
             try
