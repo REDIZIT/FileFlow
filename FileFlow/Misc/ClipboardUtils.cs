@@ -26,6 +26,7 @@ namespace FileFlow.Misc
         {
             await Clip.ClearAsync();
             DataObject data = new DataObject();
+            data.Set(DataFormats.Text, string.Join('\n', files));
             data.Set(DataFormats.FileNames, files);
 
             DragDropEffects effects = copy ? DragDropEffects.Copy : DragDropEffects.Move;
