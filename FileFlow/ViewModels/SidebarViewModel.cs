@@ -14,25 +14,25 @@ namespace FileFlow.ViewModels
         public ObservableCollection<LogicDriveViewModel> LogicDrives { get; set; }
         public ObservableCollection<BookmarkViewModel> Bookmarks { get; set; }
 
-        public Settings Settings { get; private set; }
-        public DiContainer Kernel { get; private set; }
         public ContextControl ContextControl { get; set; }
+
+        private Settings settings;
+        private DiContainer container;
 
         private DiskConnectionWatcher watcher;
         private MainWindowViewModel mainWindow;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public SidebarViewModel(MainWindowViewModel mainWindow, DiContainer kernel)
+        public SidebarViewModel(MainWindowViewModel mainWindow, DiContainer container, Settings settings)
         {
             this.mainWindow = mainWindow;
-            this.Kernel = kernel;
-
-            Settings = kernel.Resolve<Settings>();
+            this.container = container;
+            this.settings = settings;
 
             watcher = new(OnDisksChanged);
 
-            Settings.onChanged += UpdateAll;
+            settings.onChanged += UpdateAll;
         }
 
         public void UpdateAll()
@@ -41,30 +41,36 @@ namespace FileFlow.ViewModels
             UpdateProjects();
             UpdateBookmarks();
         }
+        public void AddToBookmarks(string path)
+        {
+            settings.Bookmarks.Add(path);
+            settings.Save();
+        }
+
         private void OnDisksChanged()
         {
             LogicDrives = new();
             foreach (DriveInfo info in DriveInfo.GetDrives())
             {
-                LogicDrives.Add(new(info, mainWindow, Kernel, ContextControl));
+                LogicDrives.Add(new(info, mainWindow, container, ContextControl));
             }
             this.RaisePropertyChanged(nameof(LogicDrives));
         }
         private void UpdateProjects() 
         {
             Projects = new();
-            foreach (Project project in Settings.Projects.ProjectsList)
+            foreach (Project project in settings.Projects.ProjectsList)
             {
-                Projects.Add(new(project, mainWindow, Kernel, ContextControl));
+                Projects.Add(new(project, mainWindow, container, ContextControl));
             }
             this.RaisePropertyChanged(nameof(Projects));
         }
         private void UpdateBookmarks()
         {
             Bookmarks = new();
-            foreach (string path in Settings.Bookmarks)
+            foreach (string path in settings.Bookmarks)
             {
-                Bookmarks.Add(new(path, mainWindow, Kernel, ContextControl));
+                Bookmarks.Add(new(path, mainWindow, container, ContextControl));
             }
             this.RaisePropertyChanged(nameof(Bookmarks));
         }

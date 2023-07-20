@@ -38,7 +38,8 @@
         </Style>
       </Grid.Styles>
 
-      <views:Sidebar DataContext="{Binding SidebarModel}"/>
+      <!--<views:Sidebar DataContext="{Binding SidebarModel}"/>-->
+      <ContentControl Name="sidebarPlaceholder"/>
       <GridSplitter Grid.Column="1" ResizeDirection="Columns"/>
       <ContentControl Grid.Column="2" Name="explorerPlaceholder"/>
       <GridSplitter Grid.Column="3" ResizeDirection="Columns"/>
@@ -64,6 +65,8 @@
         </DataTemplate>
       </ItemsControl.ItemTemplate>
     </ItemsControl>
+
+    <views:ContextControl Name="contextControl"/>
 
   </Panel>
 

@@ -3,15 +3,26 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using FileFlow.ViewModels;
 using System.IO;
+using Zenject;
 
 namespace FileFlow.Views
 {
     public partial class Sidebar : UserControl
     {
-        private SidebarViewModel Model => (SidebarViewModel)DataContext;
+        private SidebarViewModel model;
 
         public Sidebar()
         {
+            InitializeComponent();
+        }
+        [Inject]
+        public Sidebar(SidebarViewModel model, ContextControl ctx)
+        {
+            this.model = model;
+            model.ContextControl = ctx;
+            model.UpdateAll();
+
+            DataContext = model;
             InitializeComponent();
 
             AddHandler(DragDrop.DragEnterEvent, DragEnter);
@@ -19,16 +30,6 @@ namespace FileFlow.Views
             AddHandler(DragDrop.DropEvent, DropEvent);
         }
 
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            Model.ContextControl = ContextControl;
-            Model.UpdateAll();
-        }
-
-        private void RebindButtons()
-        {
-        }
         private void DragEnter(object sender, DragEventArgs e)
         {
             object? obj = e.Data.Get(Constants.DRAG_SOURCE);
@@ -65,8 +66,7 @@ namespace FileFlow.Views
             {
                 if (Directory.Exists(path))
                 {
-                    Model.Settings.Bookmarks.Add(path);
-                    Model.Settings.Save();
+                    model.AddToBookmarks(path);
                 }
             }
         }

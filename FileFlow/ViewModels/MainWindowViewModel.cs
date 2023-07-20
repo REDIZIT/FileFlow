@@ -21,12 +21,14 @@ namespace FileFlow.ViewModels
         public IFileSystemService fileSystem;
         public IIconExtractorService iconExtractor;
 
-        public MainWindowViewModel(DiContainer kernel)
+        public MainWindowViewModel(DiContainer container)
         {
-            fileSystem = kernel.Resolve<IFileSystemService>();
-            iconExtractor = kernel.Resolve<IIconExtractorService>();
+            container.Bind<MainWindowViewModel>().FromInstance(this).AsSingle();
 
-            SidebarModel = new SidebarViewModel(this, kernel);
+            fileSystem = container.Resolve<IFileSystemService>();
+            iconExtractor = container.Resolve<IIconExtractorService>();
+
+            SidebarModel = container.Instantiate<SidebarViewModel>();
 
             UpdateDownloadsWatcher();
         }

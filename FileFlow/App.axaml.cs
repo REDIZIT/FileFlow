@@ -22,7 +22,7 @@ namespace FileFlow
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                container.Bind<MainWindowViewModel>().FromNew().AsSingle();
+                MainWindowViewModel model = new(container);
                 desktop.MainWindow = container.Instantiate<MainWindow>();
             }
 

@@ -37,6 +37,7 @@ namespace FileFlow.Views
 
             InitializeComponent();
 
+
             ExplorerControl control = container.Instantiate<ExplorerControl>(new object[] { this, 0 });
             ExplorerControl control2 = container.Instantiate<ExplorerControl>(new object[] { this, 1 });
 
@@ -45,6 +46,15 @@ namespace FileFlow.Views
 
             explorerPlaceholder.Content = control;
             explorerPlaceholder2.Content = control2;
+
+            var sub = container.CreateSubContainer();
+            sub.Bind<ExplorerControl>().FromInstance(control);
+            sub.Inject(contextControl);
+
+            container.Bind<ContextControl>().FromInstance(contextControl).AsSingle();
+
+            container.Bind<SidebarViewModel>().FromInstance(model.SidebarModel).AsSingle();
+            sidebarPlaceholder.Content = container.Instantiate<Sidebar>();
         }
 
         public void OnExplorerClicked(ExplorerControl explorer)
