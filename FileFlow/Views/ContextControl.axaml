@@ -53,9 +53,10 @@
           <ItemsControl.ItemTemplate>
             <DataTemplate>
               <Button CornerRadius="4" HorizontalAlignment="Stretch" Command="{Binding OnClick}">
-                <Panel HorizontalAlignment="Left" Height="24">
-                  <Image Source="{Binding Icon}" HorizontalAlignment="Left" Width="16" Height="16" Margin="6, 0"/>
-                  <TextBlock Text="{Binding Text}" FontSize="11" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="28, 0"/>
+                <Panel Height="24" Margin="6, 0">
+                  <Image Source="{Binding Icon}" HorizontalAlignment="Left" Width="16" Height="16"/>
+                  <TextBlock Text="{Binding Text}" FontSize="11" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="22, 0"/>
+                  <TextBlock Text="{Binding HotKey}" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="6, 0" TextAlignment="Right"/>
                 </Panel>
               </Button>
             </DataTemplate>

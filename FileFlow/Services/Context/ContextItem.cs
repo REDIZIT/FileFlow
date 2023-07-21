@@ -11,6 +11,7 @@ namespace FileFlow.ViewModels
         public Bitmap Icon => IconExtractorService.GetAssetIcon(IconPath);
         public abstract string IconPath { get; }
         public abstract int Order { get; }
+        public virtual string HotKey => string.Empty;
 
 
         [Inject] private ContextControl control;

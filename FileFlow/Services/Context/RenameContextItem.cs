@@ -1,4 +1,5 @@
-﻿using FileFlow.Views;
+﻿using Avalonia.Input;
+using FileFlow.Views;
 using Zenject;
 
 namespace FileFlow.ViewModels
@@ -8,6 +9,7 @@ namespace FileFlow.ViewModels
         public override string Text => "Переименовать";
         public override string IconPath => "Assets/Icons/rename.png";
         public override int Order => 500;
+        public override string HotKey => Key.F2.ToString();
 
         [Inject] private ExplorerControl explorer;
 
