@@ -26,6 +26,15 @@
 
 
     <SolidColorBrush x:Key="Error">#F35</SolidColorBrush>
+
+    <!--Combo box-->
+    <!--Default-->
+    <SolidColorBrush x:Key="ComboBoxBackground">#222</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxBorderBrush">#555</SolidColorBrush>
+    <!--Disabled-->
+    <SolidColorBrush x:Key="ComboBoxBackgroundDisabled">#a222</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxBorderBrushDisabled">#a444</SolidColorBrush>
+    
   </Application.Resources>
   
 </Application>

@@ -34,8 +34,6 @@ namespace FileFlow.Providers
                 }
             }
 
-            Trace.WriteLine("Archive.ctor at " + absPath);
-
             archiveAbsolutePath = string.Join('/', archiveSplit);
             string name = Path.GetFileNameWithoutExtension(archiveAbsolutePath);
             string hash = string.Format("{0:X}", archiveAbsolutePath.GetHashCode());

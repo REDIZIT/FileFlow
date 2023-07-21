@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using FileFlow.ViewModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using Zenject;
 
 namespace FileFlow.Views
@@ -28,6 +29,12 @@ namespace FileFlow.Views
         public void Open(ContextWorkspace workspace)
         {
             this.workspace = workspace;
+
+            if (workspace.mainSelected != null && workspace.selected.Any(e => e.Path == workspace.mainSelected.Path) == false)
+            {
+                workspace.selected.Add(workspace.mainSelected);
+            }
+
             Items = new(contextService.GetContextItems(container, this, workspace));
             this.RaisePropertyChanged(nameof(Items));
 

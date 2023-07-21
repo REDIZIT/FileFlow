@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="FileFlow.Views.Popups.CreateArchiveControl"
+             IsHitTestVisible="False">
+
+  <UserControl.Styles>
+    <StyleInclude Source="/Styles/FileFlowStyle.axaml"/>
+
+    <Style Selector="ComboBox">
+      <Setter Property="CornerRadius" Value="6"/>
+    </Style>
+    <Style Selector="ComboBox /template/ Border#Background">
+      <Setter Property="Background" Value="#222" />
+      <Setter Property="BorderBrush" Value="#555" />
+    </Style>
+    <Style Selector="ComboBox:pointerover /template/ Border#Background">
+      <Setter Property="Background" Value="#252525" />
+      <Setter Property="BorderBrush" Value="#767676" />
+    </Style>
+
+    <Style Selector="ComboBox /template/  TextBlock">
+      <Setter Property="FontSize" Value="12"/>
+    </Style>
+  </UserControl.Styles>
+
+
+  <Border Name="window" Classes="Window" Classes.showed="{Binding IsShowed}">
+    <StackPanel Margin="6">
+      <Grid ColumnDefinitions="*, Auto">
+        <TextBox Grid.Column="0" Name="nameField" Margin="0, 0, 6, 0" Classes.invalid="{Binding IsInvalid}"/>
+        <ComboBox Grid.Column="1" Width="70" Height="{Binding ElementName=nameField, Path=$self.Bounds.Height}" SelectedIndex="0" IsEnabled="False">
+          <ComboBoxItem MinHeight="0">
+            <TextBlock Text=".zip" Foreground="#accc"/>
+          </ComboBoxItem>
+        </ComboBox>
+      </Grid>
+
+      <Grid ColumnDefinitions="*, Auto, Auto" Margin="0, 6, 0, 0">
+        <StackPanel Margin="4, 4" Grid.Column="0">
+          <TextBlock Name="infoText" Foreground="#ccc"/>
+          <ProgressBar Name="progressBar" Margin="0, 4, 6, 0" Background="#222" Foreground="White" Height="2" MinHeight="0" MinWidth="0"/>
+        </StackPanel>
+
+        <Button Grid.Column="1" Classes="Item" HorizontalAlignment="Stretch" Width="70" Command="{Binding Hide}">
+          <TextBlock Text="Отменить" TextAlignment="Center" Padding="0, 6"/>
+        </Button>
+        <Button Grid.Column="2" Classes="Item" HorizontalAlignment="Stretch" Width="70" Command="{Binding OnCreateClicked}" Margin="6, 0, 0, 0" IsEnabled="{Binding IsValid}">
+          <TextBlock Text="Создать" TextAlignment="Center" Padding="0, 6"/>
+        </Button>
+      </Grid>
+      
+
+    </StackPanel>
+
+  </Border>
+
+</UserControl>

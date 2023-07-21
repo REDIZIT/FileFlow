@@ -97,7 +97,7 @@ namespace FileFlow.ViewModels
             contextControl.Open(new ContextWorkspace()
             {
                 parent = null,
-                selected = GetStorageElement()
+                mainSelected = GetStorageElement()
             });
         }
         public StorageElement GetStorageElement()

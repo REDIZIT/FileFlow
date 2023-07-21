@@ -15,20 +15,9 @@
   <Border
         Name="window" Classes="Window" Classes.showed="{Binding IsShowed}">
     <StackPanel Margin="6">
-
-      <StackPanel.Styles>
-        <Style Selector="TextBox:focus-within /template/ Border#PART_BorderElement">
-          <Setter Property="BorderThickness" Value="1"/>
-          <Setter Property="BorderBrush" Value="#444"/>
-        </Style>
-      </StackPanel.Styles>
       
       <TextBox
        Name="searchBox"
-       Padding="10, 6, 0, 4"
-       MinHeight="0"
-       CornerRadius="6"
-       FontSize="12"
        Margin="{Binding ListMargin}"
        KeyDown="OnPathBarKeyDown"/>
 

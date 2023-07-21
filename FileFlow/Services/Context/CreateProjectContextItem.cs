@@ -12,11 +12,11 @@ namespace FileFlow.ViewModels
 
         public override bool CanBeApplied(ContextWorkspace workspace)
         {
-            return workspace.selected != null && workspace.selected.IsFolder && settings.Projects.TryGetProjectAt(workspace.selected.Path) == null;
+            return workspace.mainSelected != null && workspace.mainSelected.IsFolder && settings.Projects.TryGetProjectAt(workspace.mainSelected.Path) == null;
         }
         public override void Apply(ContextWorkspace workspace)
         {
-            settings.Projects.CreateFromFolder(workspace.selected);
+            settings.Projects.CreateFromFolder(workspace.mainSelected);
             settings.Save();
         }
     }

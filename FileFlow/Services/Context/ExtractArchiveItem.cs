@@ -1,6 +1,7 @@
 ﻿using FileFlow.Extensions;
+using FileFlow.Providers;
+using SharpCompress.Archives;
 using SharpCompress.Common;
-using SharpCompress.Readers;
 using System.IO;
 
 namespace FileFlow.ViewModels
@@ -13,31 +14,26 @@ namespace FileFlow.ViewModels
 
         public override void Apply(ContextWorkspace workspace)
         {
-            string targetFolder = Path.GetDirectoryName(workspace.selected.Path).CleanUp();
+            string targetFolder = Path.GetDirectoryName(workspace.mainSelected.Path).CleanUp();
 
-            using (Stream stream = File.OpenRead(workspace.selected.Path))
-            using (var reader = ReaderFactory.Open(stream))
+            using (Stream stream = File.OpenRead(workspace.mainSelected.Path))
             {
-                while (reader.MoveToNextEntry())
+                using (IArchive archive = ArchiveFactory.Open(stream))
                 {
-                    if (!reader.Entry.IsDirectory)
+                    archive.WriteToDirectory(targetFolder, new ExtractionOptions()
                     {
-                        reader.WriteEntryToDirectory(targetFolder, new ExtractionOptions()
-                        {
-                            ExtractFullPath = true,
-                            Overwrite = true
-                        });
-                    }
+                        ExtractFullPath = true,
+                        Overwrite = true
+                    });
                 }
             }
         }
 
         public override bool CanBeApplied(ContextWorkspace workspace)
         {
-            if (workspace.selected == null || workspace.selected.IsFolder) return false;
+            if (workspace.mainSelected == null || workspace.mainSelected.IsFolder) return false;
 
-            string ext = Path.GetExtension(workspace.selected.Path);
-            return ext == ".rar";
+            return ArchiveProvider.IsArchive(workspace.mainSelected.Path);
         }
     }
 }

@@ -13,11 +13,11 @@ namespace FileFlow.ViewModels
 
         public override bool CanBeApplied(ContextWorkspace workspace)
         {
-            return workspace.selected != null;
+            return workspace.mainSelected != null;
         }
         public override void Apply(ContextWorkspace workspace)
         {
-            explorer.ShowFileCreationView(!workspace.selected.IsFolder, FileCreationView.Action.Rename);
+            explorer.ShowFileCreationView(!workspace.mainSelected.IsFolder, FileCreationView.Action.Rename);
         }
     }
 }

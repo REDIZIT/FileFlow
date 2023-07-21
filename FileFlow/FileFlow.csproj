@@ -7,6 +7,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <PackageIcon>icon.png</PackageIcon>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>portable</DebugType>
@@ -35,6 +36,7 @@
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
+    <None Include="Plugins\sharpcompress-0.33.0\src\SharpCompress\SharpCompress.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,7 +55,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="PostSharp.Redist" Version="2023.0.5" />
-    <PackageReference Include="SharpCompress" Version="0.33.0" />
     <PackageReference Include="System.Management" Version="7.0.1" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1" />
   </ItemGroup>

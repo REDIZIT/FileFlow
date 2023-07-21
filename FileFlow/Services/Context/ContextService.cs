@@ -40,6 +40,8 @@ namespace FileFlow.ViewModels
     public class ContextWorkspace
     {
         public StorageElement parent;
-        public StorageElement selected;
+        public StorageElement mainSelected;
+
+        public List<StorageElement> selected;
     }
 }

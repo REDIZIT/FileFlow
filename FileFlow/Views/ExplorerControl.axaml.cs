@@ -30,6 +30,8 @@ namespace FileFlow.Views
         private ExplorerViewModel model;
         private StorageElement contextedElement;
         private GoToControl goToControl;
+        private CreateArchiveControl createArchiveControl;
+
         private int id;
 
         private Point leftClickPoint;
@@ -68,7 +70,7 @@ namespace FileFlow.Views
             isResettingTextBox = false;
 
             AddHandler(PointerPressedEvent, OnExplorerPointerPressed, RoutingStrategies.Tunnel);
-            contextablePanel.AddHandler(PointerPressedEvent, OnContextablePanelPressed, RoutingStrategies.Tunnel);
+            contextablePanel.AddHandler(PointerReleasedEvent, OnContextablePanelPressed, RoutingStrategies.Tunnel);
             AddHandler(KeyDownEvent, OnExplorerKeyDown, RoutingStrategies.Tunnel);
             AddHandler(KeyDownEvent, OnExplorerKeyDown, RoutingStrategies.Direct);
 
@@ -81,6 +83,14 @@ namespace FileFlow.Views
 
             goToControl = sub.Instantiate<GoToControl>();
             goToPlaceholder.Content = goToControl;
+
+            ConstructAndBindWindows(sub);
+        }
+        private void ConstructAndBindWindows(DiContainer sub)
+        {
+            createArchiveControl = sub.Instantiate<CreateArchiveControl>();
+            sub.Bind<CreateArchiveControl>().FromInstance(createArchiveControl).AsSingle();
+            mainPanel.Children.Add(createArchiveControl);
         }
 
         public void Open(StorageElement element)
@@ -138,23 +148,25 @@ namespace FileFlow.Views
                 model.Next();
             }
         }
-        private void OnContextablePanelPressed(object sender, PointerPressedEventArgs e)
+        private void OnContextablePanelPressed(object sender, PointerReleasedEventArgs e)
         {
-            var props = e.GetCurrentPoint(this).Properties;
             StorageElement element = ((Control)e.Source).Tag as StorageElement;
-            if (props.IsRightButtonPressed)
+#pragma warning disable CS0618 // Disable warning because we can't use Propertices for PointerReleased args (but in PointerPressed we can)
+            if (e.MouseButton == MouseButton.Right)
             {
                 contextedElement = element;
                 contextControl.Open(new ContextWorkspace()
                 {
                     parent = new StorageElement(model.ActiveTab.FolderPath, fileSystem, iconExtractor),
-                    selected = element
+                    mainSelected = element,
+                    selected = listBox.SelectedItems.Cast<StorageElement>().ToList()
                 });
             }
-            else if (element != null && props.IsMiddleButtonPressed && element.IsFolder)
+            else if (element != null && e.MouseButton == MouseButton.Middle && element.IsFolder)
             {
                 model.CreateTab(element);
             }
+#pragma warning restore CS0618 // Тип или член устарел
         }
         private void OnExplorerKeyDown(object sender, KeyEventArgs e)
         {
@@ -162,6 +174,12 @@ namespace FileFlow.Views
             {
                 model.ActiveTab.RefreshElements();
             }
+            if (e.Key == Key.F2)
+            {
+                StorageElement element = (StorageElement)listBox.SelectedItem;
+                FileCreationView.Show(new FileCreationView.Args(model.ActiveTab.FolderPath, element.IsFolder == false, FileCreationView.Action.Rename, element));
+            }
+
             if (e.Key == Key.Delete)
             {
                 foreach (StorageElement item in listBox.SelectedItems)

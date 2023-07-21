@@ -76,7 +76,7 @@ namespace FileFlow.Services
 
                 if (isIgnored == false)
                 {
-                    cachedIcons.Add(ext, icon);
+                    cachedIcons.TryAdd(ext, icon);
                 }
 
                 return icon;
