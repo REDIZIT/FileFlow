@@ -109,4 +109,11 @@
   <Style Selector=":is(TextBlock)">
     <Setter Property="FontSize" Value="11"/>
   </Style>
+  
+  
+  <!--Explorer list box element--><!--
+  <Style Selector="Border.StorageItemSelected">
+    <Setter Property="Opacity" Value="0.1"/>
+  </Style>-->
+  
 </Styles>

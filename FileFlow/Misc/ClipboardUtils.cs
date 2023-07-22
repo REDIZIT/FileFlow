@@ -15,11 +15,23 @@ namespace FileFlow.Misc
         {
             return Clip.GetFormatsAsync().Result.Contains(DataFormats.FileNames);
         }
+
         public static IEnumerable<string> GetFiles(out DragDropEffects effects)
         {
             effects = GetEffects();
             var data = Clip.GetDataAsync(DataFormats.FileNames).Result;
             return (IEnumerable<string>)data;
+        }
+        public static IEnumerable<string> EnumerateFiles()
+        {
+            object data = Clip.GetDataAsync(DataFormats.FileNames).Result;
+            if (data is IEnumerable<string> files)
+            {
+                foreach (string file in files)
+                {
+                    yield return file;
+                }
+            }
         }
 
         public static async void CutOrCopyFiles(List<string> files, bool copy)
@@ -36,9 +48,18 @@ namespace FileFlow.Misc
             await Clip.SetDataObjectAsync(data);
         }
 
-        private static DragDropEffects GetEffects()
+        public static async void ClearIfFiles()
         {
-            Object objDropEffect = Clip.GetDataAsync("Preferred DropEffect").Result;
+            string[] formats = await Clip.GetFormatsAsync();
+            if (formats.Contains(DataFormats.FileNames))
+            {
+                await Clip.ClearAsync();
+            }
+        }
+
+        public static DragDropEffects GetEffects()
+        {
+            object objDropEffect = Clip.GetDataAsync("Preferred DropEffect").Result;
 
             if (objDropEffect is DragDropEffects effects)
             {
@@ -47,6 +68,7 @@ namespace FileFlow.Misc
             else
             {
                 byte[] bytes = (byte[])objDropEffect;
+                if (bytes == null) return DragDropEffects.None;
                 return (DragDropEffects)bytes[0];
             }
         }

@@ -277,7 +277,15 @@
                       <Border IsVisible="{Binding IsModified}" Height="5" Width="5" CornerRadius="100" Background="#FF9100"/>
                     </Panel>
                     <Image Grid.Column="3" Height="16" Source="{Binding Icon}"/>
-                    <TextBlock Grid.Column="5" Text="{Binding Name}" FontSize="11"/>
+                    <StackPanel Grid.Column="5" Orientation="Horizontal">
+                     <Border Background="#09e" Padding="5, 0, 5, 1" CornerRadius="6" Margin="0, 0, 6, 0" IsVisible="{Binding IsUnderCopyAction}">
+                        <TextBlock TextAlignment="Center" VerticalAlignment="Center" Text="To copy" FontSize="10" FontWeight="600" Foreground="#024"/>
+                      </Border>
+                      <Border Background="#fa0" Padding="5, 0, 5, 1" CornerRadius="6" Margin="0, 0, 6, 0" IsVisible="{Binding IsUnderCutAction}">
+                        <TextBlock TextAlignment="Center" VerticalAlignment="Center" Text="To cut" FontSize="10" FontWeight="600" Foreground="#024"/>
+                      </Border>
+                      <TextBlock Text="{Binding Name}" FontSize="11" VerticalAlignment="Center"/>
+                    </StackPanel>
                     <TextBlock Grid.Column="7" Text="{Binding LastModifyTimeString}" FontSize="11"/>
                     <TextBlock Grid.Column="9" Text="{Binding SizeString}" FontSize="11"/>
                   </Grid>

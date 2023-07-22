@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls.Shapes;
-using Avalonia.Media.Imaging;
+﻿using Avalonia.Media.Imaging;
 using FileFlow.Extensions;
 using FileFlow.Services;
 using System;
@@ -17,6 +16,8 @@ namespace FileFlow.ViewModels
         public long Size { get; private set; }
         public string SizeString { get; private set; }
         public Bitmap Icon { get; private set; }
+        public bool IsUnderCopyAction { get; private set; }
+        public bool IsUnderCutAction { get; private set; }
 
         public bool IsAdded
         {
@@ -69,6 +70,14 @@ namespace FileFlow.ViewModels
             this.RaisePropertyChanged(nameof(Icon));
 
             UpdateSize(fileSystem);
+        }
+        public void SetUnderAction(bool underCopy, bool underCut)
+        {
+            IsUnderCopyAction = underCopy;
+            IsUnderCutAction = underCut;
+
+            this.RaisePropertyChanged(nameof(IsUnderCopyAction));
+            this.RaisePropertyChanged(nameof(IsUnderCutAction));
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

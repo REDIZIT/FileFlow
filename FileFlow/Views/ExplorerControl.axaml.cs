@@ -8,6 +8,7 @@ using FileFlow.Misc;
 using FileFlow.Services;
 using FileFlow.ViewModels;
 using FileFlow.Views.Popups;
+using NUnit.Framework.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -232,6 +233,16 @@ namespace FileFlow.Views
                 lastShiftClickedDate = DateTime.Now;
             }
 
+            if (e.Key == Key.Escape)
+            {
+                ClipboardUtils.ClearIfFiles();
+
+                foreach (StorageElement item in listBox.Items.Cast<StorageElement>())
+                {
+                    item.SetUnderAction(false, false);
+                }
+            }
+
             if (e.Modifiers.HasAnyFlag(InputModifiers.Control))
             {
                 if (e.Key == Key.V)
@@ -263,9 +274,20 @@ namespace FileFlow.Views
                 }
                 else if (e.Key is Key.C or Key.X)
                 {
+                    bool isCopy = e.Key == Key.C;
+
                     // Copy or cut selected files to clipboard
-                    var items = listBox.SelectedItems.Cast<StorageElement>();
-                    ClipboardUtils.CutOrCopyFiles(items.Select(e => e.Path).ToList(), e.Key == Key.C);
+                    IEnumerable<StorageElement> items = listBox.SelectedItems.Cast<StorageElement>();
+                    ClipboardUtils.CutOrCopyFiles(items.Select(e => e.Path).ToList(), isCopy);
+
+                    foreach (StorageElement item in listBox.Items.Cast<StorageElement>())
+                    {
+                        item.SetUnderAction(false, false);
+                    }
+                    foreach (StorageElement item in items)
+                    {
+                        item.SetUnderAction(isCopy, !isCopy);
+                    }
                 }
                 else if (e.Key == Key.D)
                 {

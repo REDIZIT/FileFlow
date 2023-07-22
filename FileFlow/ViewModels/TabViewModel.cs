@@ -1,6 +1,8 @@
-﻿using Avalonia.Threading;
+﻿using Avalonia.Input;
+using Avalonia.Threading;
 using FileFlow.Enums;
 using FileFlow.Extensions;
+using FileFlow.Misc;
 using FileFlow.Providers;
 using FileFlow.Services;
 using FileFlow.Views;
@@ -91,10 +93,8 @@ namespace FileFlow.ViewModels
 
         public void Open(StorageElement storageElement)
         {
-            Trace.WriteLine("Open " + storageElement.Path);
             if (storageElement.IsFolder || ArchiveProvider.IsArchive(storageElement.Path))
             {
-                Trace.WriteLine(" - set path");
                 history.Add(storageElement);
                 SetPath(storageElement.Path);
             }
@@ -219,10 +219,18 @@ namespace FileFlow.ViewModels
         }
         private void ReloadElements()
         {
+            DragDropEffects effects = ClipboardUtils.GetEffects();
+            IEnumerable<string> copiedFiles = ClipboardUtils.EnumerateFiles();
+
             StorageElements.Clear();
             foreach (StorageElement element in provider.GetElements(folderPath, out status))
             {
                 StorageElements.Add(element.Name, element);
+
+                if (copiedFiles != null && copiedFiles.Any(c => c == element.Path))
+                {
+                    element.SetUnderAction(effects == DragDropEffects.Copy, effects == DragDropEffects.Move);
+                }
             }
             SortElements();
             explorer.onFolderLoaded?.Invoke(status);
