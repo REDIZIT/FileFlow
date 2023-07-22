@@ -10,6 +10,8 @@ namespace FileFlow
 
         public void CleanAndCreateDirectories()
         {
+            if (string.IsNullOrWhiteSpace(ArchivesExtractionFolder)) return;
+
             Directory.Delete(ArchivesExtractionFolder, true);
             Directory.CreateDirectory(ArchivesExtractionFolder);
         }

@@ -14,6 +14,7 @@ namespace FileFlow
         public List<string> Bookmarks { get; set; } = new();
         public SortData SortData { get; set; } = new();
         public Pathes Pathes { get; set; } = new();
+        public Appearance Appearance { get; set; } = new();
 
 
         [JsonIgnore] public Action onChanged;

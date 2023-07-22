@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Media;
 using FileFlow.Services;
 using FileFlow.ViewModels;
 using System;

@@ -1,5 +1,8 @@
-﻿using FileFlow.Services;
+﻿using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using FileFlow.Services;
 using FileFlow.Views;
+using SharpCompress;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -13,6 +16,11 @@ namespace FileFlow.ViewModels
         public ObservableCollection<StorageElement> DownloadItems { get; set; } = new();
         public SidebarViewModel SidebarModel { get; private set; }
 
+        public float WallpaperOpacity => settings.Appearance.wallpaperOpacity;
+        public Brush WallpaperDimmerColor { get; private set; }
+        public Bitmap WallpaperImage { get; private set; }
+
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private FileSystemWatcher watcher;
@@ -21,9 +29,15 @@ namespace FileFlow.ViewModels
         public IFileSystemService fileSystem;
         public IIconExtractorService iconExtractor;
 
+        private Settings settings;
+
         public MainWindowViewModel(DiContainer container)
         {
             container.Bind<MainWindowViewModel>().FromInstance(this).AsSingle();
+
+            settings = container.Resolve<Settings>();
+            settings.onChanged += OnSettingsChange;
+            OnSettingsChange();
 
             fileSystem = container.Resolve<IFileSystemService>();
             iconExtractor = container.Resolve<IIconExtractorService>();
@@ -41,6 +55,29 @@ namespace FileFlow.ViewModels
         {
             activeExplorer = explorer;
         }
+
+
+        private void OnSettingsChange()
+        {
+            //WallpaperImage = IconExtractorService.GetAssetIcon("Assets/wallpaper.jpg");
+            if (File.Exists(settings.Appearance.wallpaperPath))
+            {
+                WallpaperImage = new Bitmap(settings.Appearance.wallpaperPath);
+            }
+            else
+            {
+                WallpaperImage = null;
+            }
+
+            byte dim = (byte)(settings.Appearance.wallpaperDimmerOpacity * 255);
+            WallpaperDimmerColor = new SolidColorBrush(new Color(255, dim, dim, dim));
+            
+            this.RaisePropertyChanged(nameof(WallpaperImage));
+            this.RaisePropertyChanged(nameof(WallpaperOpacity));
+            this.RaisePropertyChanged(nameof(WallpaperDimmerColor));
+        }
+
+
         private void UpdateDownloadsWatcher()
         {
             string path = KnownFolders.GetPath(KnownFolder.Downloads);

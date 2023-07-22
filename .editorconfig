@@ -23,3 +23,12 @@ dotnet_diagnostic.CS8622.severity = none
 
 # CS8603: Возможно, возврат ссылки, допускающей значение NULL.
 dotnet_diagnostic.CS8603.severity = none
+
+# CS3001: Тип аргумента несовместим с CLS
+dotnet_diagnostic.CS3001.severity = none
+
+# CS3003: Тип несовместим с CLS
+dotnet_diagnostic.CS3003.severity = none
+
+# CS3009: Базовый тип несовместим с CLS
+dotnet_diagnostic.CS3009.severity = none

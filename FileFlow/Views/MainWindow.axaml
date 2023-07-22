@@ -13,7 +13,7 @@
 
   <Window.Background>
     <ImageBrush 
-      Source="/Assets/wallpaper.jpg" 
+      Source="{Binding WallpaperImage}" 
       Stretch="UniformToFill"
       Opacity="1"
       BitmapInterpolationMode="HighQuality"/>
@@ -30,7 +30,8 @@
   </Window.Styles>
 
   <Panel>
-    <Grid Name="explorerGrid" ColumnDefinitions="200, 2, *, 2, *" Grid.Row="0" Background="#EE141414">
+    <Panel Background="{Binding WallpaperDimmerColor}" Opacity="{Binding WallpaperOpacity}"/>
+    <Grid Name="explorerGrid" ColumnDefinitions="200, 2, *, 2, *" Grid.Row="0">
       <Grid.Styles>
         <Style Selector="GridSplitter">
           <Setter Property="Background" Value="#a333"/>

@@ -15,6 +15,18 @@
     <Style Selector=":is(TextBlock)">
       <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
+
+    <Style Selector="Border.Group">
+      <Setter Property="Background" Value="#222"/>
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="BorderBrush" Value="#333"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding" Value="12, 6"/>
+    </Style>
+
+    <Style Selector="Thumb Border">
+      <Setter Property="Height" Value="12"/>
+    </Style>
     
   </Window.Styles>
 
@@ -25,7 +37,7 @@
           <TextBlock FontSize="14" Text="Проекты" VerticalAlignment="Center" Margin="16, 0, 16, 2"/>
         </Border>
       </ListBox>
-      <StackPanel Grid.Column="1" Margin="12">
+      <StackPanel Grid.Column="1" Margin="12" Spacing="12">
         <Border
           Background="#222" CornerRadius="8"
           BorderBrush="#333" BorderThickness="1" Padding="12, 6">
@@ -65,10 +77,49 @@
             </StackPanel>
           </StackPanel>
         </Border>
+
+
+        <Border Classes="Group">
+          <StackPanel Spacing="6">
+
+            <Panel>
+              <TextBlock Text="Использовать задний фон"/>
+              <ToggleSwitch HorizontalAlignment="Right"/>
+            </Panel>
+
+            <Panel>
+              <TextBlock Text="Задний фон"/>
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="6">
+                <Button Padding="12, 6" Command="{Binding OnWallpaperPickClicked}">
+                  <TextBlock Text="Выбрать файл"/>
+                </Button>
+              </StackPanel>
+            </Panel>
+
+            <Panel>
+              <TextBlock Text="Непрозрачность фона"/>
+              <!--<Slider Width="152" HorizontalAlignment="Right" Margin="36, 0"/>-->
+              <!--<TextBlock Text="100%" HorizontalAlignment="Right"/>-->
+              <Slider Name="wallpaperOpacity" HorizontalAlignment="Right" Width="96"/>
+            </Panel>
+
+            <Panel>
+              <TextBlock Text="Яркость затемнителя"/>
+              <!--<Slider Width="152" HorizontalAlignment="Right" Margin="36, 0"/>-->
+              <!--<TextBlock Text="100%" HorizontalAlignment="Right"/>-->
+              <Slider Name="wallpaperDimmer" HorizontalAlignment="Right" Width="96"/>
+            </Panel>
+            
+          </StackPanel>
+
+        </Border>
+        
+        
       </StackPanel>
     </Grid>
+    
 
-    <Border Classes="Window showed" Width="300" Height="200" Margin="128, 64">
+    <!--<Border Classes="Window showed" Width="300" Height="200" Margin="128, 64">
       <StackPanel Margin="16, 8">
         <TextBlock Height="25"
                 Text="Создание нового проекта" FontSize="11" Foreground="#999"
@@ -92,7 +143,7 @@
         
       </StackPanel>
       
-    </Border>
+    </Border>-->
     
   </Panel>
   
