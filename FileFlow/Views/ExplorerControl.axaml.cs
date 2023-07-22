@@ -6,7 +6,6 @@ using FileFlow.Enums;
 using FileFlow.Extensions;
 using FileFlow.Misc;
 using FileFlow.Services;
-using FileFlow.Services.Hints;
 using FileFlow.ViewModels;
 using FileFlow.Views.Popups;
 using System;
@@ -170,6 +169,8 @@ namespace FileFlow.Views
         }
         private void OnExplorerKeyDown(object sender, KeyEventArgs e)
         {
+            if (FocusManager.Instance.Current is TextBox) return;
+
             if (e.Key == Key.F5)
             {
                 model.ActiveTab.RefreshElements();
