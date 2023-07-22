@@ -90,8 +90,28 @@
     </StackPanel>
 
     <Panel VerticalAlignment="Bottom">
+
+      <Panel.Styles>
+        <Style Selector="Button">
+          <Setter Property="Background" Value="#ee1e1e1e"/>
+          <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="Button Image">
+          <Setter Property="Opacity" Value="0.5"/>
+        </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+          <Setter Property="Background" Value="#333" />
+        </Style>
+        <Style Selector="Button:pointerover Image">
+          <Setter Property="Opacity" Value="1"/>
+        </Style>
+        <Style Selector="Button:pressed">
+          <Setter Property="RenderTransform" Value="scale(0.92)"/>
+        </Style>
+      </Panel.Styles>
+      
       <Button Margin="4, 4" Padding="8" Command="{Binding OnSettingsButtonClicked}">
-        <Image Source="/Assets/Icons/settings.png" Width="15" Height="15" Opacity="0.75"/>
+        <Image Source="/Assets/Icons/settings.png" Width="15" Height="15"/>
       </Button>
     </Panel>
   </Panel>

@@ -6,6 +6,7 @@
         Width="700" Height="400"
         x:Class="FileFlow.Views.SettingsWindow"
         Title="Настройки"
+        Icon="/Assets/app.ico"
         Background="#1c1c1c">
  
   

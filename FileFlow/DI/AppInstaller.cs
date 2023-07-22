@@ -24,7 +24,6 @@ namespace FileFlow.DI
             Container.BindFactory<string, StorageProdiver, StorageProdiverFactory>().FromFactory<StorageProdiverFactory>();
 
 
-
             Container.Bind<SettingsWindow>().FromNew().AsSingle();
         }
     }

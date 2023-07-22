@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using FileFlow.Extensions;
 using System;
 using System.Reactive.Linq;
 using Zenject;
@@ -36,6 +37,12 @@ namespace FileFlow.Views
             wallpaperDimmer.GetObservable(Slider.ValueProperty).Subscribe(OnAnySliderChange);
 
             isSettingsValues = false;
+
+            Closing += (s, e) =>
+            {
+                ((Window)s).Hide();
+                e.Cancel = true;
+            };
         }
 
         private void OnAnySliderChange(double value)
@@ -56,7 +63,7 @@ namespace FileFlow.Views
             };
             string[] files = await dialog.ShowAsync(this);
 
-            settings.Appearance.wallpaperPath = files[0];
+            settings.Appearance.wallpaperPath = files[0].CleanUp();
             settings.Save();
         }
     }
