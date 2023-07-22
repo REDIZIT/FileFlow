@@ -246,11 +246,11 @@ namespace FileFlow.Views
                             MoveAction moveAction = null;
                             if (effects.HasFlag(DragDropEffects.Move))
                             {
-                                moveAction = new MoveAction(fileSystem, files, model.ActiveTab.FolderPath);
+                                moveAction = MoveAction.TryCreate(fileSystem, files, model.ActiveTab.FolderPath);
                             }
                             else if (effects.HasFlag(DragDropEffects.Copy))
                             {
-                                moveAction = new CopyAction(fileSystem, files, model.ActiveTab.FolderPath);
+                                moveAction = CopyAction.TryCreate(fileSystem, files, model.ActiveTab.FolderPath);
                             }
 
                             if (moveAction != null && moveAction.TryPerform() == false)
@@ -466,31 +466,9 @@ namespace FileFlow.Views
 
             var filepathes = e.Data.GetFileNames();
 
-            foreach (string path in filepathes)
-            {
-                string parentFolder = Path.GetDirectoryName(path).CleanUp();
-                if (parentFolder == targetFolderPath)
-                {
-                    // Prevent moving file from it's parent folder to same folder (another Explorer window)
-                    // Ignoring this check will show Conflict resolve window
 
-                    // Example:
-                    // C:/Test/abc.txt drag to C:/Test
-                    // or
-                    // C:/Test/1 drag to C:/Test
-                    return;
-                }
-            }
-            if (filepathes.Any(p => p == targetFolderPath))
-            {
-                // Prevent moving folder into it self (same Explorer window)
-                // Ignoring this check will delete folder
-                // Example: C:/Test drag to C:/Test
-                return;
-            }
-
-            MoveAction moveAction = new MoveAction(fileSystem, filepathes, targetFolderPath);
-            if (moveAction.TryPerform() == false)
+            MoveAction moveAction = MoveAction.TryCreate(fileSystem, filepathes, targetFolderPath);
+            if (moveAction != null && moveAction.TryPerform() == false)
             {
                 ShowConflictResolve(moveAction);
             }

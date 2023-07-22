@@ -105,6 +105,8 @@ namespace FileFlow.Views
                 Files.Add(new Record(iconExtractor, action.sourceFolder, action.targetFolder, localPath));
             }
 
+            Focus();
+
             this.RaisePropertyChanged(nameof(IsShowed));
             this.RaisePropertyChanged(nameof(Files));
         }
@@ -115,6 +117,27 @@ namespace FileFlow.Views
 
             this.RaisePropertyChanged(nameof(IsShowed));
         }
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                RewriteButton_Click(null, null);
+            }
+            else if (e.Key == Key.R)
+            {
+                RenameButton_Click(null, null);
+            }
+            else if (e.Key == Key.S)
+            {
+                SkipButton_Click(null, null);
+            }
+            else if (e.Key == Key.Escape)
+            {
+                CancelButton_Click(null, null);
+            }
+        }
+
         private void OnRenamePointerEnter(object sender, PointerEventArgs e)
         {
             newNames.Clear();

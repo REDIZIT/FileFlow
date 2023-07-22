@@ -48,7 +48,7 @@
   </Style>
 
 
-  <Style Selector="Button.Item">
+  <Style Selector="Button">
     <Setter Property="Padding" Value="0"/>
     <Setter Property="CornerRadius" Value="6"/>
     <Setter Property="Margin" Value="0, 1"/>
@@ -62,16 +62,16 @@
       </Transitions>
     </Setter>
   </Style>
-  <Style Selector="Button.Item:pointerover">
+  <Style Selector="Button:pointerover">
     <Setter Property="Background" Value="#aa555555"/>
   </Style>
-  <Style Selector="Button.Item:pressed">
+  <Style Selector="Button:pressed">
     <Setter Property="RenderTransform" Value="scale(0.98)"/>
   </Style>
-  <Style Selector="Button.Item:pressed /template/ ContentPresenter">
+  <Style Selector="Button:pressed /template/ ContentPresenter">
     <Setter Property="Background" Value="#aa444444"/>
   </Style>
-  <Style Selector="Button.Item:disabled /template/ ContentPresenter">
+  <Style Selector="Button:disabled /template/ ContentPresenter">
     <Setter Property="Background" Value="#a222"/>
   </Style>
 

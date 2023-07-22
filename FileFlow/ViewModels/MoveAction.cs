@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls.Shapes;
-using FileFlow.Extensions;
+﻿using FileFlow.Extensions;
 using FileFlow.Services;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +14,15 @@ namespace FileFlow.ViewModels
     }
     public class CopyAction : MoveAction
     {
-        public CopyAction(IFileSystemService fileSystem, IEnumerable<string> sourceFiles, string targetFolder) : base(fileSystem, sourceFiles, targetFolder)
+        public new static CopyAction TryCreate(IFileSystemService fileSystem, IEnumerable<string> sourceFiles, string targetFolder)
+        {
+            if (CanBeCreated(sourceFiles, targetFolder))
+            {
+                return new(fileSystem, sourceFiles, targetFolder);
+            }
+            return null;
+        }
+        protected CopyAction(IFileSystemService fileSystem, IEnumerable<string> sourceFiles, string targetFolder) : base(fileSystem, sourceFiles, targetFolder)
         {
         }
 
@@ -34,14 +41,47 @@ namespace FileFlow.ViewModels
 
         protected IFileSystemService fileSystem;
 
-        public MoveAction(IFileSystemService fileSystem, IEnumerable<string> sourceFiles, string targetFolder)
+        public static MoveAction TryCreate(IFileSystemService fileSystem, IEnumerable<string> sourceFiles, string targetFolder)
         {
-            this.fileSystem = fileSystem;
-
+            if (CanBeCreated(sourceFiles, targetFolder))
+            {
+                return new(fileSystem, sourceFiles, targetFolder);
+            }
+            return null;
+        }
+        public static bool CanBeCreated(IEnumerable<string> sourceFiles, string targetFolder)
+        {
             if (sourceFiles == null)
             {
                 throw new System.ArgumentException($"You tried to move files to '{targetFolder}' but sourceFiles are null");
             }
+            foreach (string path in sourceFiles)
+            {
+                string parentFolder = Path.GetDirectoryName(path).CleanUp();
+                if (parentFolder == targetFolder)
+                {
+                    // Prevent moving file from it's parent folder to same folder (another Explorer window)
+                    // Ignoring this check will show Conflict resolve window
+
+                    // Example:
+                    // C:/Test/abc.txt drag to C:/Test
+                    // or
+                    // C:/Test/1 drag to C:/Test
+                    return false;
+                }
+            }
+            if (sourceFiles.Any(p => p == targetFolder))
+            {
+                // Prevent moving folder into it self (same Explorer window)
+                // Ignoring this check will delete folder
+                // Example: C:/Test drag to C:/Test
+                return false;
+            }
+            return true;
+        }
+        protected MoveAction(IFileSystemService fileSystem, IEnumerable<string> sourceFiles, string targetFolder)
+        {
+            this.fileSystem = fileSystem;
 
             sourceFolder = GetCommonParentPath(sourceFiles).CleanUp();
             this.targetFolder = targetFolder.CleanUp();
