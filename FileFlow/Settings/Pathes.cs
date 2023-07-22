@@ -12,7 +12,10 @@ namespace FileFlow
         {
             if (string.IsNullOrWhiteSpace(ArchivesExtractionFolder)) return;
 
-            Directory.Delete(ArchivesExtractionFolder, true);
+            if (Directory.Exists(ArchivesExtractionFolder))
+            {
+                Directory.Delete(ArchivesExtractionFolder, true);
+            }
             Directory.CreateDirectory(ArchivesExtractionFolder);
         }
     }
