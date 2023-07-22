@@ -8,7 +8,10 @@ using FileFlow.Misc;
 using FileFlow.Services;
 using FileFlow.ViewModels;
 using FileFlow.Views.Popups;
+using SharpCompress.Common.Rar.Headers;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using Zenject;
@@ -35,6 +38,8 @@ namespace FileFlow.Views
 
         private Point leftClickPoint;
         private bool isResettingTextBox;
+
+        private IEnumerable<StorageElement> prevSelectedElements;
 
         public ExplorerControl()
         {
@@ -106,10 +111,32 @@ namespace FileFlow.Views
 
             if (point.Properties.IsLeftButtonPressed && magnitude > 12)
             {
-                StorageElement storageElement = (StorageElement)((Control)e.Source).Tag;
-
                 DataObject data = new();
-                data.Set(DataFormats.FileNames, new string[] { storageElement.Path });
+
+                StorageElement actualDraggedElement = listBox.SelectedItem as StorageElement;
+
+                bool isSelectedDragged = prevSelectedElements.Any(e => e.Path == actualDraggedElement.Path);
+
+                string[] filenames;
+                if (isSelectedDragged)
+                {
+                    listBox.SelectedItems.Clear();
+
+                    foreach (StorageElement element in prevSelectedElements)
+                    {
+                        listBox.SelectedItems.Add(element);
+                    }
+
+                    filenames = prevSelectedElements.Select(e => e.Path).ToArray();
+                }
+                else
+                {
+                    filenames = listBox.SelectedItems.Cast<StorageElement>().Select(e => e.Path).ToArray();
+                }
+                
+
+                data.Set(DataFormats.FileNames, filenames);
+                data.Set(DataFormats.Text, string.Join('\n', filenames));
                 data.Set(Constants.DRAG_SOURCE, id);
 
                 DragDrop.DoDragDrop(e, data, DragDropEffects.Move);
@@ -131,6 +158,10 @@ namespace FileFlow.Views
             {
                 model.Open(storageElement);
                 e.Handled = true;
+            }
+            else
+            {
+                prevSelectedElements = listBox.SelectedItems.Cast<StorageElement>().ToArray();
             }
         }
         private void OnExplorerPointerPressed(object sender, PointerPressedEventArgs e)
@@ -419,9 +450,34 @@ namespace FileFlow.Views
 
 
             DragExit(sender, e);
-            var names = e.Data.GetFileNames();
 
-            MoveAction moveAction = new MoveAction(fileSystem, names, targetFolderPath);
+
+            var filepathes = e.Data.GetFileNames();
+
+            foreach (string path in filepathes)
+            {
+                string parentFolder = Path.GetDirectoryName(path).CleanUp();
+                if (parentFolder == targetFolderPath)
+                {
+                    // Prevent moving file from it's parent folder to same folder (another Explorer window)
+                    // Ignoring this check will show Conflict resolve window
+
+                    // Example:
+                    // C:/Test/abc.txt drag to C:/Test
+                    // or
+                    // C:/Test/1 drag to C:/Test
+                    return;
+                }
+            }
+            if (filepathes.Any(p => p == targetFolderPath))
+            {
+                // Prevent moving folder into it self (same Explorer window)
+                // Ignoring this check will delete folder
+                // Example: C:/Test drag to C:/Test
+                return;
+            }
+
+            MoveAction moveAction = new MoveAction(fileSystem, filepathes, targetFolderPath);
             if (moveAction.TryPerform() == false)
             {
                 ShowConflictResolve(moveAction);

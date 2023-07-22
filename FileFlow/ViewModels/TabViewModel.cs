@@ -248,6 +248,8 @@ namespace FileFlow.ViewModels
             foreach (StorageElement element in StorageElementsValues)
             {
                 element.Refresh();
+                element.IsAdded = false;
+                element.IsModified = false;
             }
         }
 
