@@ -38,6 +38,11 @@ namespace FileFlow.ViewModels
         {
             this.fileSystem = fileSystem;
 
+            if (sourceFiles == null)
+            {
+                throw new System.ArgumentException($"You tried to move files to '{targetFolder}' but sourceFiles are null");
+            }
+
             sourceFolder = GetCommonParentPath(sourceFiles).CleanUp();
             this.targetFolder = targetFolder.CleanUp();
 

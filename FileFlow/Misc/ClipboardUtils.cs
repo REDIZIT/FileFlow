@@ -22,7 +22,7 @@ namespace FileFlow.Misc
             return (IEnumerable<string>)data;
         }
 
-        public static async void CutOrCopyFiles(IEnumerable<string> files, bool copy)
+        public static async void CutOrCopyFiles(List<string> files, bool copy)
         {
             await Clip.ClearAsync();
             DataObject data = new DataObject();

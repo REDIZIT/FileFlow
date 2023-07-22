@@ -8,7 +8,6 @@ using FileFlow.Misc;
 using FileFlow.Services;
 using FileFlow.ViewModels;
 using FileFlow.Views.Popups;
-using SharpCompress.Common.Rar.Headers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -240,21 +239,24 @@ namespace FileFlow.Views
                     if (ClipboardUtils.IsFiles())
                     {
                         // Paste files from clipboard
-                        var files = ClipboardUtils.GetFiles(out DragDropEffects effects);
+                        IEnumerable<string> files = ClipboardUtils.GetFiles(out DragDropEffects effects);
 
-                        MoveAction moveAction = null;
-                        if (effects.HasFlag(DragDropEffects.Move))
+                        if (files != null)
                         {
-                            moveAction = new MoveAction(fileSystem, files, model.ActiveTab.FolderPath);
-                        }
-                        else if (effects.HasFlag(DragDropEffects.Copy))
-                        {
-                            moveAction = new CopyAction(fileSystem, files, model.ActiveTab.FolderPath);
-                        }
+                            MoveAction moveAction = null;
+                            if (effects.HasFlag(DragDropEffects.Move))
+                            {
+                                moveAction = new MoveAction(fileSystem, files, model.ActiveTab.FolderPath);
+                            }
+                            else if (effects.HasFlag(DragDropEffects.Copy))
+                            {
+                                moveAction = new CopyAction(fileSystem, files, model.ActiveTab.FolderPath);
+                            }
 
-                        if (moveAction != null && moveAction.TryPerform() == false)
-                        {
-                            ShowConflictResolve(moveAction);
+                            if (moveAction != null && moveAction.TryPerform() == false)
+                            {
+                                ShowConflictResolve(moveAction);
+                            }
                         }
                     }
                     
@@ -263,7 +265,7 @@ namespace FileFlow.Views
                 {
                     // Copy or cut selected files to clipboard
                     var items = listBox.SelectedItems.Cast<StorageElement>();
-                    ClipboardUtils.CutOrCopyFiles(items.Select(e => e.Path), e.Key == Key.C);
+                    ClipboardUtils.CutOrCopyFiles(items.Select(e => e.Path).ToList(), e.Key == Key.C);
                 }
                 else if (e.Key == Key.D)
                 {
@@ -492,6 +494,8 @@ namespace FileFlow.Views
             {
                 ShowConflictResolve(moveAction);
             }
+
+            mainWindow.OnExplorerClicked(this);
         }
     }
 }
