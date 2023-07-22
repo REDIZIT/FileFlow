@@ -63,8 +63,11 @@ namespace FileFlow.Views
             };
             string[] files = await dialog.ShowAsync(this);
 
-            settings.Appearance.wallpaperPath = files[0].CleanUp();
-            settings.Save();
+            if (files.Length > 0)
+            {
+                settings.Appearance.wallpaperPath = files[0].CleanUp();
+                settings.Save();
+            }
         }
     }
 }
