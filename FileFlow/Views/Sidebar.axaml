@@ -88,6 +88,12 @@
 
       </ItemsControl>
     </StackPanel>
+
+    <Panel VerticalAlignment="Bottom">
+      <Button Margin="4, 4" Padding="8" Command="{Binding OnSettingsButtonClicked}">
+        <Image Source="/Assets/Icons/settings.png" Width="15" Height="15" Opacity="0.75"/>
+      </Button>
+    </Panel>
   </Panel>
  
 </UserControl>

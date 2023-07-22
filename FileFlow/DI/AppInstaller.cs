@@ -1,6 +1,7 @@
 ﻿using FileFlow.Providers;
 using FileFlow.Services;
 using FileFlow.ViewModels;
+using FileFlow.Views;
 using Zenject;
 
 namespace FileFlow.DI
@@ -21,6 +22,10 @@ namespace FileFlow.DI
             Container.Bind<HintsService>().To<HintsService>().AsSingle();
 
             Container.BindFactory<string, StorageProdiver, StorageProdiverFactory>().FromFactory<StorageProdiverFactory>();
+
+
+
+            Container.Bind<SettingsWindow>().FromNew().AsSingle();
         }
     }
 }

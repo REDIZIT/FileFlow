@@ -24,9 +24,6 @@ namespace FileFlow
             {
                 MainWindowViewModel model = new(container);
                 desktop.MainWindow = container.Instantiate<MainWindow>();
-
-                var settings = container.Instantiate<SettingsWindow>();
-                settings.Show();
             }
 
             base.OnFrameworkInitializationCompleted();

@@ -23,6 +23,7 @@
     <None Remove="Assets\Icons\cmd.png" />
     <None Remove="Assets\Icons\filter.ico" />
     <None Remove="Assets\Icons\setting.png" />
+    <None Remove="Assets\Icons\settings.png" />
     <None Remove="Assets\Icons\sorting.png" />
     <None Remove="Assets\Icons\subfolder.png" />
     <None Remove="Assets\Icons\system_folder.png" />

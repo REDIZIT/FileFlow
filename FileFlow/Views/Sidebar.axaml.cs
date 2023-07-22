@@ -19,6 +19,7 @@ namespace FileFlow.Views
         public Sidebar(SidebarViewModel model, ContextControl ctx)
         {
             this.model = model;
+
             model.ContextControl = ctx;
             model.UpdateAll();
 
