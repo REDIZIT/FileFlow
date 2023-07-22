@@ -38,6 +38,7 @@ namespace FileFlow.Views
 
         private Point leftClickPoint;
         private bool isResettingTextBox;
+        private DateTime lastShiftClickedDate;
 
         private IEnumerable<StorageElement> prevSelectedElements;
 
@@ -219,6 +220,19 @@ namespace FileFlow.Views
                     fileSystem.Delete(item.Path);
                 }
             }
+
+            if (e.Key == Key.LeftShift)
+            {
+                double msPassed = (DateTime.Now - lastShiftClickedDate).TotalMilliseconds;
+
+                if (msPassed <= 250)
+                {
+                    goToControl.Show();
+                }
+
+                lastShiftClickedDate = DateTime.Now;
+            }
+
             if (e.Modifiers.HasAnyFlag(InputModifiers.Control))
             {
                 if (e.Key == Key.V)
@@ -259,10 +273,6 @@ namespace FileFlow.Views
                         string newPath = FileSystemExtensions.GetRenamedPath(element.Path);
                         fileSystem.Copy(element.Path, newPath, ActionType.Rename);
                     }
-                }
-                else if (e.Key == Key.T)
-                {
-                    goToControl.Show();
                 }
             }
         }
