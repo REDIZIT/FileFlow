@@ -2,6 +2,7 @@
 using FileFlow.Views;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using Zenject;
 
@@ -78,6 +79,10 @@ namespace FileFlow.ViewModels
             SettingsWindow window = container.Resolve<SettingsWindow>();
             window.Show();
             window.Activate();
+        }
+        private void OnTerminateButtonClicked()
+        {
+            Process.GetCurrentProcess().Kill();
         }
     }
 }

@@ -109,10 +109,15 @@
           <Setter Property="RenderTransform" Value="scale(0.92)"/>
         </Style>
       </Panel.Styles>
-      
-      <Button Margin="4, 4" Padding="8" Command="{Binding OnSettingsButtonClicked}">
-        <Image Source="/Assets/Icons/settings.png" Width="15" Height="15"/>
-      </Button>
+
+      <StackPanel Margin="4, 4" Orientation="Horizontal" Spacing="6">
+        <Button Padding="8" Command="{Binding OnSettingsButtonClicked}">
+          <Image Source="/Assets/Icons/settings.png" Width="15" Height="15"/>
+        </Button>
+        <Button Padding="8" Command="{Binding OnTerminateButtonClicked}">
+          <Image Source="/Assets/Icons/terminate.png" Width="15" Height="15"/>
+        </Button>
+      </StackPanel>      
     </Panel>
   </Panel>
  

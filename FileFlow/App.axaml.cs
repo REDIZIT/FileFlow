@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using FileFlow.DI;
 using FileFlow.ViewModels;
 using FileFlow.Views;
+using System.IO.Pipes;
 using Zenject;
 
 namespace FileFlow
@@ -27,6 +28,27 @@ namespace FileFlow
             }
 
             base.OnFrameworkInitializationCompleted();
+
+            StartFastLaunchListening();
+        }
+
+        private async void StartFastLaunchListening()
+        {
+            while (true)
+            {
+                using (var pipe = new NamedPipeServerStream(Program.pipeName))
+                {
+                    // Wait until user will launch second instance of FileFlow
+                    // Second instance will connect to this instance
+                    await pipe.WaitForConnectionAsync();
+
+                    // Right after connect, just show main window
+                    if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                    {
+                        desktop.MainWindow.Show();
+                    }
+                }
+            }
         }
     }
 }

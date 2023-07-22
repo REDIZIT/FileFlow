@@ -56,6 +56,12 @@ namespace FileFlow.Views
 
             container.Bind<SidebarViewModel>().FromInstance(model.SidebarModel).AsSingle();
             sidebarPlaceholder.Content = container.Instantiate<Sidebar>();
+
+            Closing += (s, e) =>
+            {
+                ((Window)s).Hide();
+                e.Cancel = true;
+            };
         }
 
         public void OnExplorerClicked(ExplorerControl explorer)
