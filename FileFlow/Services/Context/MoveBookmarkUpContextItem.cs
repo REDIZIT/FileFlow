@@ -14,7 +14,7 @@ namespace FileFlow.ViewModels
 
         public override bool CanBeApplied(ContextWorkspace workspace)
         {
-            if (workspace.mainSelected == null) return true;
+            if (workspace.mainSelected == null) return false;
 
             string path = workspace.mainSelected.Path;
             int index = settings.Bookmarks.IndexOf(path);
