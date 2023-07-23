@@ -7,6 +7,7 @@ using FileFlow.ViewModels;
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Threading.Tasks;
 using Zenject;
 
 namespace FileFlow.Views
@@ -26,8 +27,9 @@ namespace FileFlow.Views
         [Inject] private IFileSystemService fileSystem;
 
         private Args args;
+        private TaskCompletionSource<string> _completionSource;
 
-        public record Args(string ParentFolder, bool IsFile, Action Action, StorageElement SelectedElement);
+        public record Args(string ParentFolder, StorageElement SelectedElement, Action Action, bool IsFile);
 
         public enum Action
         {
@@ -47,8 +49,10 @@ namespace FileFlow.Views
             newFileBox.GetObservable(TextBox.TextProperty).Subscribe(OnTextChanged);
         }
 
-        public void Show(Args args)
+        public async Task<string> Show(Args args)
         {
+            _completionSource = new();
+
             this.args = args;
             newFileBox.Text = string.Empty;
 
@@ -74,6 +78,8 @@ namespace FileFlow.Views
             OnPropertyChanged(nameof(IsShowed));
             OnPropertyChanged(nameof(Title));
             OnPropertyChanged(nameof(ButtonTitle));
+
+            return await _completionSource.Task;
         }
         public void Hide()
         {
@@ -154,6 +160,8 @@ namespace FileFlow.Views
                 fileSystem.Rename(args.SelectedElement.Path, path);
             }
             Hide();
+
+            _completionSource.SetResult(path);
         }
         private void OnKeyDown(object sender, KeyEventArgs e)
         {

@@ -22,8 +22,8 @@ namespace FileFlow.Views
         {
             DataContext = this;
             InitializeComponent();
-            newFileButton.Click += (_, _) => explorer.ShowFileCreationView(true, FileCreationView.Action.Create);
-            newFolderButton.Click += (_, _) => explorer.ShowFileCreationView(false, FileCreationView.Action.Create);
+            newFileButton.Click += (_, _) => explorer.ShowFileCreationWindow(true);
+            newFolderButton.Click += (_, _) => explorer.ShowFileCreationWindow(false);
         }
 
         public void Open(ContextWorkspace workspace)

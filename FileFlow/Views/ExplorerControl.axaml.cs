@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 using Zenject;
 
 namespace FileFlow.Views
@@ -209,7 +211,7 @@ namespace FileFlow.Views
             if (e.Key == Key.F2)
             {
                 StorageElement element = (StorageElement)listBox.SelectedItem;
-                FileCreationView.Show(new FileCreationView.Args(model.ActiveTab.FolderPath, element.IsFolder == false, FileCreationView.Action.Rename, element));
+                FileCreationView.Show(new FileCreationView.Args(model.ActiveTab.FolderPath, element, FileCreationView.Action.Rename, element.IsFolder == false));
             }
 
             if (e.Key == Key.Delete)
@@ -369,10 +371,15 @@ namespace FileFlow.Views
             }
         }
     
-        public void ShowFileCreationView(bool isFile, FileCreationView.Action action)
+        public void ShowFileCreationWindow(bool isFile)
         {
-            FileCreationView.Show(new FileCreationView.Args(model.ActiveTab.FolderPath, isFile, action, contextedElement));
             contextControl.Close();
+            FileCreationView.Show(new FileCreationView.Args(model.ActiveTab.FolderPath, null, FileCreationView.Action.Create, isFile));
+        }
+        public async Task<string> ShowFileRenameWindow(StorageElement element)
+        {
+            contextControl.Close();
+            return await FileCreationView.Show(new FileCreationView.Args(Path.GetDirectoryName(element.Path).CleanUp(), element, FileCreationView.Action.Rename, element.IsFolder == false));
         }
         private void ShowConflictResolve(MoveAction action)
         {
