@@ -8,7 +8,6 @@
 
     <Application.Styles>
         <FluentTheme Mode="Dark"/>
-        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Default.xaml"/>
         <Style Selector="TextBlock">
           <Setter Property="TextBlock.FontFamily" Value="Segoe UI"/>
         </Style>

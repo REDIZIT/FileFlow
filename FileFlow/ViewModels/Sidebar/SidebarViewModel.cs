@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using FileFlow.Views;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -52,7 +53,10 @@ namespace FileFlow.ViewModels
             LogicDrives = new();
             foreach (DriveInfo info in DriveInfo.GetDrives())
             {
-                LogicDrives.Add(new(info, mainWindow, container, ContextControl));
+                if (info.IsReady)
+                {
+                    LogicDrives.Add(new(info, mainWindow, container, ContextControl));
+                }
             }
             this.RaisePropertyChanged(nameof(LogicDrives));
         }
