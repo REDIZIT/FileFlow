@@ -117,6 +117,24 @@
 
           </Border>
 
+          
+          <Border Classes="Group">
+            <StackPanel Spacing="6">
+
+              <Panel>
+                <TextBlock Text="Начальный путь для левого проводника"/>
+                <TextBox Name="leftExplorerField" HorizontalAlignment="Right" Width="220"/>
+              </Panel>
+
+              <Panel>
+                <TextBlock Text="Начальный путь для правого проводника"/>
+                <TextBox Name="rightExplorerField" HorizontalAlignment="Right" Width="220"/>
+              </Panel>
+
+            </StackPanel>
+
+          </Border>
+
 
         </StackPanel>
       </ScrollViewer>

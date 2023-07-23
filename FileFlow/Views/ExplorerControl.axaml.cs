@@ -61,7 +61,9 @@ namespace FileFlow.Views
 
             InitializeComponent();
 
-            model.Initialize();
+
+            string startPath = id == 0 ? settings.Pathes.LeftExplorerStartPath : settings.Pathes.RightExplorerStartPath;
+            model.Initialize(startPath);
 
 
             fileCreationView.Content = container.Instantiate<FileCreationView>();

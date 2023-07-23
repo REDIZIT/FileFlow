@@ -29,9 +29,9 @@ namespace FileFlow.Views
         [Inject] private ExplorerControl explorer;
 
 
-        public void Initialize()
+        public void Initialize(string startPath)
         {
-            var tab = container.Instantiate<TabViewModel>(new object[] { this, "C:/Tests" });
+            var tab = container.Instantiate<TabViewModel>(new object[] { this, startPath });
             Tabs.Add(tab);
 
             OnTabClicked(Tabs[0]);

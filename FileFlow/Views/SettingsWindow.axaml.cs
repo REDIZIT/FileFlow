@@ -39,6 +39,12 @@ namespace FileFlow.Views
             useWallpaperToggle.IsChecked = settings.Appearance.useWallpaper;
             useWallpaperToggle.GetObservable(ToggleSwitch.IsCheckedProperty).Subscribe(OnToggleChange);
 
+            leftExplorerField.Text = settings.Pathes.LeftExplorerStartPath;
+            leftExplorerField.GetObservable(TextBox.TextProperty).Subscribe(OnTextChange);
+
+            rightExplorerField.Text = settings.Pathes.RightExplorerStartPath;
+            rightExplorerField.GetObservable(TextBox.TextProperty).Subscribe(OnTextChange);
+
             isSettingsValues = false;
 
             Closing += (s, e) =>
@@ -56,6 +62,10 @@ namespace FileFlow.Views
         {
             OnAnyValueChange();
         }
+        private void OnTextChange(string value)
+        {
+            OnAnyValueChange();
+        }
         private void OnAnyValueChange()
         {
             if (isSettingsValues) return;
@@ -63,6 +73,10 @@ namespace FileFlow.Views
             settings.Appearance.wallpaperOpacity = (float)(wallpaperOpacity.Value / 100f);
             settings.Appearance.wallpaperDimmerOpacity = (float)(wallpaperDimmer.Value / 100f);
             settings.Appearance.useWallpaper = useWallpaperToggle.IsChecked.Value;
+
+            settings.Pathes.LeftExplorerStartPath = leftExplorerField.Text;
+            settings.Pathes.RightExplorerStartPath = rightExplorerField.Text;
+
             settings.Save();
         }
 
