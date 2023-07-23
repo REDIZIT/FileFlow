@@ -16,6 +16,12 @@
       <Image 
         Name="image"
         Source="{Binding FileImage}" RenderOptions.BitmapInterpolationMode="Default"/>
+      <Panel Name="audioGroup">
+        <Image 
+          Source="/Assets/Icons/note.png" Width="16" Height="16" 
+          Opacity="0.5" HorizontalAlignment="Left"/>
+        <ProgressBar Name="audioProgressBar" Value="66" Margin="22, 0, 6, 0"/>
+      </Panel>
       <Panel>
         <TextBlock Name="resolutionText" Foreground="#accc" HorizontalAlignment="Left"/>
         <TextBlock Name="nameText" Foreground="#accc" HorizontalAlignment="Center"/>

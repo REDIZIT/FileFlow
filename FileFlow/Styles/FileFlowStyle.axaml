@@ -112,9 +112,13 @@
   </Style>
   
   
-  <!--Explorer list box element--><!--
-  <Style Selector="Border.StorageItemSelected">
-    <Setter Property="Opacity" Value="0.1"/>
-  </Style>-->
+  <!--ProgressBar-->
+  <Style Selector="ProgressBar">
+    <Setter Property="Background" Value="#222"/>
+    <Setter Property="Foreground" Value="White"/>
+    <Setter Property="Height" Value="2"/>
+    <Setter Property="MinHeight" Value="0"/>
+    <Setter Property="MinWidth" Value="0"/>
+  </Style>
   
 </Styles>

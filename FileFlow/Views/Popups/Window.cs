@@ -24,8 +24,11 @@ namespace FileFlow.Views.Popups
             IsShowed = false;
 
             this.RaisePropertyChanged(nameof(IsShowed));
+
+            OnHidden();
         }
 
         protected virtual void OnShowed() { }
+        protected virtual void OnHidden() { }
     }
 }
