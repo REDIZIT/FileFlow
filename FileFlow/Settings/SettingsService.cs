@@ -19,7 +19,7 @@ namespace FileFlow
         }
         public void LoadAndBind(DiContainer container)
         {
-            folder = Environment.CurrentDirectory;
+            folder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/FileFlow";
             string filepath = folder + "/" + FILE_NAME;
 
             Settings settings;
