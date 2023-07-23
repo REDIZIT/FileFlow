@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="FileFlow.Views.Popups.PreviewControl"
+             IsHitTestVisible="False">
+  
+  <UserControl.Styles>
+    <StyleInclude Source="/Styles/FileFlowStyle.axaml"/>
+  </UserControl.Styles>
+
+  <Border
+        Name="window" Classes="Window" Classes.showed="{Binding IsShowed}">
+    <StackPanel Margin="6" Spacing="6">
+      <Image 
+        Name="image"
+        Source="{Binding FileImage}" RenderOptions.BitmapInterpolationMode="Default"/>
+      <Panel>
+        <TextBlock Name="resolutionText" Foreground="#accc" HorizontalAlignment="Left"/>
+        <TextBlock Name="nameText" Foreground="#accc" HorizontalAlignment="Center"/>
+        <TextBlock Name="sizeText" Foreground="#accc" HorizontalAlignment="Right"/>
+      </Panel>
+    </StackPanel>
+  </Border>
+  
+</UserControl>

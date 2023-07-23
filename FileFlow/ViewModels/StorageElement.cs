@@ -4,6 +4,7 @@ using FileFlow.Services;
 using System;
 using System.ComponentModel;
 using System.IO;
+using Zenject;
 
 namespace FileFlow.ViewModels
 {
@@ -45,6 +46,13 @@ namespace FileFlow.ViewModels
         private IFileSystemService fileSystem;
         private IIconExtractorService iconExtractor;
 
+        public StorageElement(string path, DiContainer container)
+        {
+            fileSystem = container.Resolve<IFileSystemService>();
+            iconExtractor = container.Resolve<IIconExtractorService>();
+
+            SetPath(path);
+        }
         public StorageElement(string path, IFileSystemService fileSystem, IIconExtractorService iconExtractor)
         {
             this.fileSystem = fileSystem;

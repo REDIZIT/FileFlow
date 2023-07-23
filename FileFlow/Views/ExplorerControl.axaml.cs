@@ -8,14 +8,12 @@ using FileFlow.Misc;
 using FileFlow.Services;
 using FileFlow.ViewModels;
 using FileFlow.Views.Popups;
-using NUnit.Framework.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using Zenject;
 
 namespace FileFlow.Views
@@ -32,9 +30,8 @@ namespace FileFlow.Views
         private Settings settings;
 
         private ExplorerViewModel model;
-        private StorageElement contextedElement;
         private GoToControl goToControl;
-        private CreateArchiveControl createArchiveControl;
+        private PreviewControl previewControl;
 
         private int id;
 
@@ -91,12 +88,19 @@ namespace FileFlow.Views
             goToPlaceholder.Content = goToControl;
 
             ConstructAndBindWindows(container);
+
         }
         private void ConstructAndBindWindows(DiContainer sub)
         {
-            createArchiveControl = sub.Instantiate<CreateArchiveControl>();
-            sub.Bind<CreateArchiveControl>().FromInstance(createArchiveControl).AsSingle();
-            mainPanel.Children.Add(createArchiveControl);
+            AppendControl<CreateArchiveControl>(sub);
+            previewControl = AppendControl<PreviewControl>(sub);
+        }
+        private T AppendControl<T>(DiContainer container) where T : Control
+        {
+            T inst = container.Instantiate<T>();
+            container.Bind<T>().FromInstance(inst).AsSingle();
+            mainPanel.Children.Add(inst);
+            return inst;
         }
 
         public void Open(StorageElement element)
@@ -155,7 +159,7 @@ namespace FileFlow.Views
             // e.ClickCount does not resetting on listbox refresh (path change)
             // If it would, then we easily use >= 2 or even == 2
             // But due to reset missing, use % 2 == 0
-            StorageElement storageElement = (StorageElement)((Control)e.Source).Tag;
+            StorageElement storageElement = sender.GetTag<StorageElement>();
             if (e.ClickCount % 2 == 0 && point.Properties.IsLeftButtonPressed)
             {
                 model.Open(storageElement);
@@ -186,7 +190,6 @@ namespace FileFlow.Views
 #pragma warning disable CS0618 // Disable warning because we can't use Propertices for PointerReleased args (but in PointerPressed we can)
             if (e.MouseButton == MouseButton.Right)
             {
-                contextedElement = element;
                 contextControl.Open(new ContextWorkspace()
                 {
                     parent = new StorageElement(model.ActiveTab.FolderPath, fileSystem, iconExtractor),
@@ -437,7 +440,7 @@ namespace FileFlow.Views
         }
 
 
-
+        #region DragDrop
         private void DragEnter(object sender, DragEventArgs e)
         {
             object? obj = e.Data.Get(Constants.DRAG_SOURCE);
@@ -503,5 +506,18 @@ namespace FileFlow.Views
 
             mainWindow.OnExplorerClicked(this);
         }
+        #endregion
+
+        #region Preview
+        private void OnPreviewEnter(object sender, PointerEventArgs e)
+        {
+            StorageElement element = sender.GetTag<StorageElement>();
+            previewControl.Show(element);
+        }
+        private void OnPreviewLeave(object sender, PointerEventArgs e)
+        {
+            previewControl.Hide();
+        }
+        #endregion
     }
 }

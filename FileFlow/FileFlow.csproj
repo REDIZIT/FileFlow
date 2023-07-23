@@ -114,6 +114,9 @@
     <Compile Update="Views\CustomTabControl.axaml.cs">
       <DependentUpon>CustomTabControl.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Popups\PreviewControl.axaml.cs">
+      <DependentUpon>PreviewControl.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
