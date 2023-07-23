@@ -65,10 +65,7 @@ namespace FileFlow.Views
             var names = e.Data.GetFileNames();
             foreach (string path in names)
             {
-                if (Directory.Exists(path))
-                {
-                    model.AddToBookmarks(path);
-                }
+                model.AddToBookmarks(path);
             }
         }
     }

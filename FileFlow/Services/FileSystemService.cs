@@ -66,7 +66,8 @@ namespace FileFlow.Services
 
                 EnumerationOptions options = new()
                 {
-                    IgnoreInaccessible = true
+                    IgnoreInaccessible = true,
+                    AttributesToSkip = FileAttributes.System
                 };
                 foreach (string entryPath in Directory.EnumerateDirectories(folderPath, "*", options))
                 {
