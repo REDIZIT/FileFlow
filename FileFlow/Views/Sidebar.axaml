@@ -36,7 +36,7 @@
               <DataTemplate>
                 <Button Height="32" Classes="Item" HorizontalAlignment="Stretch" Command="{Binding OnClick}" Tag="{Binding}">
                   <Panel>
-                    <Image VerticalAlignment="Center" Source="/Assets/avalonia-logo.ico" Height="16" Width="16" HorizontalAlignment="Left" Margin="12, 0"/>
+                    <Image VerticalAlignment="Center" Source="/Assets/Icons/folder.png" Height="16" Width="16" HorizontalAlignment="Left" Margin="12, 0"/>
                     <TextBlock VerticalAlignment="Center" Text="{Binding Name}" FontSize="11" Margin="34, 0, 0, 1"/>
                   </Panel>
                 </Button>

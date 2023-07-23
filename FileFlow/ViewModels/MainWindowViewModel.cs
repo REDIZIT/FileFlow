@@ -59,8 +59,7 @@ namespace FileFlow.ViewModels
 
         private void OnSettingsChange()
         {
-            //WallpaperImage = IconExtractorService.GetAssetIcon("Assets/wallpaper.jpg");
-            if (File.Exists(settings.Appearance.wallpaperPath))
+            if (settings.Appearance.useWallpaper && File.Exists(settings.Appearance.wallpaperPath))
             {
                 WallpaperImage = new Bitmap(settings.Appearance.wallpaperPath);
             }

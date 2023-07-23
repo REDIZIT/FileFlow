@@ -30,11 +30,14 @@ namespace FileFlow.Views
             isSettingsValues = true;
 
             wallpaperOpacity.Value = settings.Appearance.wallpaperOpacity * 100;
-            wallpaperOpacity.GetObservable(Slider.ValueProperty).Subscribe(OnAnySliderChange);
+            wallpaperOpacity.GetObservable(Slider.ValueProperty).Subscribe(OnSliderChange);
 
             wallpaperDimmer.Maximum = 20;
             wallpaperDimmer.Value = settings.Appearance.wallpaperDimmerOpacity * 100;
-            wallpaperDimmer.GetObservable(Slider.ValueProperty).Subscribe(OnAnySliderChange);
+            wallpaperDimmer.GetObservable(Slider.ValueProperty).Subscribe(OnSliderChange);
+
+            useWallpaperToggle.IsChecked = settings.Appearance.useWallpaper;
+            useWallpaperToggle.GetObservable(ToggleSwitch.IsCheckedProperty).Subscribe(OnToggleChange);
 
             isSettingsValues = false;
 
@@ -45,12 +48,21 @@ namespace FileFlow.Views
             };
         }
 
-        private void OnAnySliderChange(double value)
+        private void OnSliderChange(double value)
+        {
+            OnAnyValueChange();
+        }
+        private void OnToggleChange(bool? value)
+        {
+            OnAnyValueChange();
+        }
+        private void OnAnyValueChange()
         {
             if (isSettingsValues) return;
 
             settings.Appearance.wallpaperOpacity = (float)(wallpaperOpacity.Value / 100f);
             settings.Appearance.wallpaperDimmerOpacity = (float)(wallpaperDimmer.Value / 100f);
+            settings.Appearance.useWallpaper = useWallpaperToggle.IsChecked.Value;
             settings.Save();
         }
 

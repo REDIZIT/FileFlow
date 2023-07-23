@@ -42,6 +42,6 @@ namespace FileFlow.ViewModels
         public StorageElement parent;
         public StorageElement mainSelected;
 
-        public List<StorageElement> selected;
+        public List<StorageElement> selected = new();
     }
 }

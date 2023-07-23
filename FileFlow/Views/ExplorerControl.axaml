@@ -52,8 +52,8 @@
                     Grid.Column="0" Background="#09F"
                     CornerRadius="{Binding ProjectCorners}">
                   <StackPanel Height="32" Orientation="Horizontal">
-                    <Image Source="/Assets/Icons/unity.png" Width="16" Height="16" HorizontalAlignment="Left" Margin="8, 0, 0, 0"/>
-                    <TextBlock Text="{Binding ActiveTab.Project.Name}" VerticalAlignment="Center" Foreground="#d000" FontSize="11" FontWeight="Bold" Margin="8, 0, 12, 0"/>
+                    <!--<Image Source="/Assets/Icons/folder.png" Width="16" Height="16" HorizontalAlignment="Left" Margin="8, 0, 0, 0"/>-->
+                    <TextBlock Text="{Binding ActiveTab.Project.Name}" VerticalAlignment="Center" Foreground="#d000" FontSize="11" FontWeight="Bold" Margin="12, 0, 12, 0"/>
                   </StackPanel>
                 </Border>
 

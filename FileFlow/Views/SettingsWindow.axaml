@@ -2,8 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="400"
-        Width="700" Height="400"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="400"
+        Width="500" Height="400"
         x:Class="FileFlow.Views.SettingsWindow"
         Title="Настройки"
         Icon="/Assets/app.ico"
@@ -25,98 +25,102 @@
       <Setter Property="Padding" Value="12, 6"/>
     </Style>
 
-    <Style Selector="Thumb Border">
+    <Style Selector="Slider Thumb Border">
       <Setter Property="Height" Value="12"/>
     </Style>
     
   </Window.Styles>
 
   <Panel>
-    <Grid ColumnDefinitions="140, *">
-      <ListBox Grid.Column="0" Background="Transparent" BorderBrush="#c333" BorderThickness="0, 0, 2, 0">
+    <Grid ColumnDefinitions="0, *">
+      <!--<ListBox Grid.Column="0" Background="Transparent" BorderBrush="#c333" BorderThickness="0, 0, 2, 0">
         <Border Height="32">
           <TextBlock FontSize="14" Text="Проекты" VerticalAlignment="Center" Margin="16, 0, 16, 2"/>
         </Border>
-      </ListBox>
-      <StackPanel Grid.Column="1" Margin="12" Spacing="12">
-        <Border
-          Background="#222" CornerRadius="8"
-          BorderBrush="#333" BorderThickness="1" Padding="12, 6">
-          <StackPanel>
-            <Panel>
-              <TextBlock Text="Проекты" VerticalAlignment="Top" FontSize="14" Margin="4, 0"/>
-              <TextBlock Text="Быстрый переход к индексированным папкам, запуск последнего билда и так далее." Foreground="#accc" VerticalAlignment="Bottom" FontSize="9" Margin="4, 1"/>
-              <Button Classes="Item" HorizontalAlignment="Right" Padding="12, 6">
-                <TextBlock Text="Создать"/>
-              </Button>
-            </Panel>
-            <StackPanel Background="Transparent" Margin="0, 6, 0, 0">
-              <Button Height="32" Classes="Item" Background="#c333" Padding="16, 0" HorizontalAlignment="Stretch">
-                <Panel>
-                  <TextBlock Grid.Column="0" FontSize="12" Text="Make It Yours"/>
-                  <TextBlock Grid.Column="1" FontSize="12" Text="Unity" Foreground="#999" HorizontalAlignment="Right"/>
-                </Panel>
-              </Button>
-              <Button Height="32" Classes="Item" Background="#c333" Padding="16, 0" HorizontalAlignment="Stretch">
-                <Panel>
-                  <TextBlock Grid.Column="0" FontSize="12" Text="Make It Yours"/>
-                  <TextBlock Grid.Column="1" FontSize="12" Text="Unity" Foreground="#999" HorizontalAlignment="Right"/>
-                </Panel>
-              </Button>
-              <Button Height="32" Classes="Item" Background="#c333" Padding="16, 0" HorizontalAlignment="Stretch">
-                <Panel>
-                  <TextBlock Grid.Column="0" FontSize="12" Text="Make It Yours"/>
-                  <TextBlock Grid.Column="1" FontSize="12" Text="Unity" Foreground="#999" HorizontalAlignment="Right"/>
-                </Panel>
-              </Button>
-              <Button Height="32" Classes="Item" Background="#c333" Padding="16, 0" HorizontalAlignment="Stretch">
-                <Panel>
-                  <TextBlock Grid.Column="0" FontSize="12" Text="Make It Yours"/>
-                  <TextBlock Grid.Column="1" FontSize="12" Text="Unity" Foreground="#999" HorizontalAlignment="Right"/>
-                </Panel>
-              </Button>
-            </StackPanel>
-          </StackPanel>
-        </Border>
-
-
-        <Border Classes="Group">
-          <StackPanel Spacing="6">
-
-            <Panel>
-              <TextBlock Text="Использовать задний фон"/>
-              <ToggleSwitch HorizontalAlignment="Right"/>
-            </Panel>
-
-            <Panel>
-              <TextBlock Text="Задний фон"/>
-              <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="6">
-                <Button Padding="12, 6" Command="{Binding OnWallpaperPickClicked}">
-                  <TextBlock Text="Выбрать файл"/>
+      </ListBox>-->
+      
+      <ScrollViewer Grid.Column="1">
+        <StackPanel Margin="12" Spacing="12">
+          <!--<Border
+            Background="#222" CornerRadius="8"
+            BorderBrush="#333" BorderThickness="1" Padding="12, 6">
+            <StackPanel>
+              <Panel>
+                <TextBlock Text="Проекты" VerticalAlignment="Top" FontSize="14" Margin="4, 0"/>
+                <TextBlock Text="Быстрый переход к индексированным папкам, запуск последнего билда и так далее." Foreground="#accc" VerticalAlignment="Bottom" FontSize="9" Margin="4, 1"/>
+                <Button Classes="Item" HorizontalAlignment="Right" Padding="12, 6">
+                  <TextBlock Text="Создать"/>
+                </Button>
+              </Panel>
+              <StackPanel Background="Transparent" Margin="0, 6, 0, 0">
+                <Button Height="32" Classes="Item" Background="#c333" Padding="16, 0" HorizontalAlignment="Stretch">
+                  <Panel>
+                    <TextBlock Grid.Column="0" FontSize="12" Text="Make It Yours"/>
+                    <TextBlock Grid.Column="1" FontSize="12" Text="Unity" Foreground="#999" HorizontalAlignment="Right"/>
+                  </Panel>
+                </Button>
+                <Button Height="32" Classes="Item" Background="#c333" Padding="16, 0" HorizontalAlignment="Stretch">
+                  <Panel>
+                    <TextBlock Grid.Column="0" FontSize="12" Text="Make It Yours"/>
+                    <TextBlock Grid.Column="1" FontSize="12" Text="Unity" Foreground="#999" HorizontalAlignment="Right"/>
+                  </Panel>
+                </Button>
+                <Button Height="32" Classes="Item" Background="#c333" Padding="16, 0" HorizontalAlignment="Stretch">
+                  <Panel>
+                    <TextBlock Grid.Column="0" FontSize="12" Text="Make It Yours"/>
+                    <TextBlock Grid.Column="1" FontSize="12" Text="Unity" Foreground="#999" HorizontalAlignment="Right"/>
+                  </Panel>
+                </Button>
+                <Button Height="32" Classes="Item" Background="#c333" Padding="16, 0" HorizontalAlignment="Stretch">
+                  <Panel>
+                    <TextBlock Grid.Column="0" FontSize="12" Text="Make It Yours"/>
+                    <TextBlock Grid.Column="1" FontSize="12" Text="Unity" Foreground="#999" HorizontalAlignment="Right"/>
+                  </Panel>
                 </Button>
               </StackPanel>
-            </Panel>
+            </StackPanel>
+          </Border>-->
 
-            <Panel>
-              <TextBlock Text="Непрозрачность фона"/>
-              <!--<Slider Width="152" HorizontalAlignment="Right" Margin="36, 0"/>-->
-              <!--<TextBlock Text="100%" HorizontalAlignment="Right"/>-->
-              <Slider Name="wallpaperOpacity" HorizontalAlignment="Right" Width="96"/>
-            </Panel>
 
-            <Panel>
-              <TextBlock Text="Яркость затемнителя"/>
-              <!--<Slider Width="152" HorizontalAlignment="Right" Margin="36, 0"/>-->
-              <!--<TextBlock Text="100%" HorizontalAlignment="Right"/>-->
-              <Slider Name="wallpaperDimmer" HorizontalAlignment="Right" Width="96"/>
-            </Panel>
-            
-          </StackPanel>
+          <Border Classes="Group">
+            <StackPanel Spacing="6">
 
-        </Border>
-        
-        
-      </StackPanel>
+              <Panel>
+                <TextBlock Text="Использовать задний фон"/>
+                <ToggleSwitch Name="useWallpaperToggle" HorizontalAlignment="Right"/>
+              </Panel>
+
+              <Panel>
+                <TextBlock Text="Задний фон"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="6">
+                  <Button Padding="12, 6" Command="{Binding OnWallpaperPickClicked}">
+                    <TextBlock Text="Выбрать файл"/>
+                  </Button>
+                </StackPanel>
+              </Panel>
+
+              <Panel>
+                <TextBlock Text="Непрозрачность фона"/>
+                <!--<Slider Width="152" HorizontalAlignment="Right" Margin="36, 0"/>-->
+                <!--<TextBlock Text="100%" HorizontalAlignment="Right"/>-->
+                <Slider Name="wallpaperOpacity" HorizontalAlignment="Right" Width="96"/>
+              </Panel>
+
+              <Panel>
+                <TextBlock Text="Яркость затемнителя"/>
+                <!--<Slider Width="152" HorizontalAlignment="Right" Margin="36, 0"/>-->
+                <!--<TextBlock Text="100%" HorizontalAlignment="Right"/>-->
+                <Slider Name="wallpaperDimmer" HorizontalAlignment="Right" Width="96"/>
+              </Panel>
+
+            </StackPanel>
+
+          </Border>
+
+
+        </StackPanel>
+      </ScrollViewer>
+
     </Grid>
     
 
