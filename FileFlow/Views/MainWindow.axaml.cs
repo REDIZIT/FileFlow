@@ -4,13 +4,14 @@ using Avalonia.Input;
 using Avalonia.Media;
 using FileFlow.Services;
 using FileFlow.ViewModels;
+using FileFlow.Views.Popups;
 using System;
 using System.Collections.Generic;
 using Zenject;
 
 namespace FileFlow.Views
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Avalonia.Controls.Window
     {
         private ExplorerControl activeExplorer;
         private List<ExplorerControl> explorers = new();
@@ -39,27 +40,32 @@ namespace FileFlow.Views
             InitializeComponent();
 
 
-            ExplorerControl control = container.Instantiate<ExplorerControl>(new object[] { this, 0 });
-            ExplorerControl control2 = container.Instantiate<ExplorerControl>(new object[] { this, 1 });
 
+            DiContainer explorerSub = container.CreateSubContainer();
+            ExplorerControl control = explorerSub.Instantiate<ExplorerControl>(new object[] { this, 0 });
             explorers.Add(control);
-            explorers.Add(control2);
-
             explorerPlaceholder.Content = control;
+
+            DiContainer explorerSub2 = container.CreateSubContainer();
+            ExplorerControl control2 = explorerSub2.Instantiate<ExplorerControl>(new object[] { this, 1 });
+            explorers.Add(control2);
             explorerPlaceholder2.Content = control2;
 
-            var sub = container.CreateSubContainer();
+
+
+            var sub = explorerSub.CreateSubContainer();
             sub.Bind<ExplorerControl>().FromInstance(control);
             sub.Inject(contextControl);
 
-            container.Bind<ContextControl>().FromInstance(contextControl).AsSingle();
+            explorerSub.Bind<ContextControl>().FromInstance(contextControl).AsSingle();
 
-            container.Bind<SidebarViewModel>().FromInstance(model.SidebarModel).AsSingle();
-            sidebarPlaceholder.Content = container.Instantiate<Sidebar>();
+            explorerSub.Inject(model.SidebarModel);
+            explorerSub.Bind<SidebarViewModel>().FromInstance(model.SidebarModel).AsSingle();
+            sidebarPlaceholder.Content = explorerSub.Instantiate<Sidebar>();
 
             Closing += (s, e) =>
             {
-                ((Window)s).Hide();
+                ((Avalonia.Controls.Window)s).Hide();
                 e.Cancel = true;
             };
         }

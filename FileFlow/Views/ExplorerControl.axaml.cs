@@ -53,21 +53,20 @@ namespace FileFlow.Views
             this.id = id;
             this.settings = settings;
 
-            var sub = container.CreateSubContainer();
-            sub.Bind<ExplorerControl>().FromInstance(this);
+            container.Bind<ExplorerControl>().FromInstance(this);
 
             model = container.Instantiate<ExplorerViewModel>();
             model.onFolderLoaded += OnFolderLoaded;
             DataContext = model;
-            sub.Bind<ExplorerViewModel>().FromInstance(model);
+            container.Bind<ExplorerViewModel>().FromInstance(model);
 
             InitializeComponent();
 
             model.Initialize();
 
 
-            fileCreationView.Content = sub.Instantiate<FileCreationView>();
-            sub.Inject(contextControl);
+            fileCreationView.Content = container.Instantiate<FileCreationView>();
+            container.Inject(contextControl);
 
 
             isResettingTextBox = true;
@@ -86,10 +85,10 @@ namespace FileFlow.Views
 
             conflictResolveControl.Content = container.Instantiate<ConflictResolveControl>();
 
-            goToControl = sub.Instantiate<GoToControl>();
+            goToControl = container.Instantiate<GoToControl>();
             goToPlaceholder.Content = goToControl;
 
-            ConstructAndBindWindows(sub);
+            ConstructAndBindWindows(container);
         }
         private void ConstructAndBindWindows(DiContainer sub)
         {
