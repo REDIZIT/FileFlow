@@ -91,12 +91,24 @@ namespace FileFlow.ViewModels
             }
         }
 
-        public void Open(StorageElement storageElement)
+        public void Open(StorageElement storageElement, string nameToSelect = null)
         {
             if (storageElement.IsFolder || ArchiveProvider.IsArchive(storageElement.Path))
             {
                 history.Add(storageElement);
                 SetPath(storageElement.Path);
+
+                if (string.IsNullOrWhiteSpace(nameToSelect) == false)
+                {
+                    foreach (StorageElement e in StorageElementsValues)
+                    {
+                        if (e.Name == nameToSelect)
+                        {
+                            explorer.SelectElement(e);
+                            break;
+                        }
+                    }
+                }
             }
             else
             {

@@ -26,6 +26,7 @@ namespace FileFlow.Views
 
         [Inject] private HintsService hintsService;
         [Inject] private DiContainer container;
+        [Inject] private ExplorerControl explorer;
 
 
         public void Initialize()
@@ -98,6 +99,12 @@ namespace FileFlow.Views
             this.RaisePropertyChanged(nameof(PathBarHints));
             UpdateCorners();
         }
+
+        public void SelectElement(StorageElement element)
+        {
+            explorer.listBox.SelectedItem = element;
+        }
+
         private void OnMoveUpClicked()
         {
             ActiveTab.MoveUp();
