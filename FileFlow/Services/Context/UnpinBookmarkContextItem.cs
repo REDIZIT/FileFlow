@@ -6,7 +6,7 @@ namespace FileFlow.ViewModels
     {
         public override string Text => "Убрать из закладок";
         public override string IconPath => "Assets/Icons/pin.png";
-        public override int Order => 5;
+        public override int Order => 6;
 
         [Inject] private Settings settings;
 

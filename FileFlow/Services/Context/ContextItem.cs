@@ -10,6 +10,10 @@ namespace FileFlow.ViewModels
         public abstract string Text { get; }
         public Bitmap Icon => IconExtractorService.GetAssetIcon(IconPath);
         public abstract string IconPath { get; }
+
+        /// <summary>
+        /// Then greater Order, then higher in ContextMenu Item will be
+        /// </summary>
         public abstract int Order { get; }
         public virtual string HotKey => string.Empty;
 
