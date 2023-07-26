@@ -263,14 +263,14 @@ namespace FileFlow.Views
                             MoveAction moveAction = null;
                             if (effects.HasFlag(DragDropEffects.Move))
                             {
-                                moveAction = MoveAction.TryCreate(fileSystem, files, model.ActiveTab.FolderPath);
+                                moveAction = new MoveAction(files, model.ActiveTab.FolderPath);
                             }
                             else if (effects.HasFlag(DragDropEffects.Copy))
                             {
-                                moveAction = CopyAction.TryCreate(fileSystem, files, model.ActiveTab.FolderPath);
+                                moveAction = new CopyAction(files, model.ActiveTab.FolderPath);
                             }
 
-                            if (moveAction != null && moveAction.TryPerform() == false)
+                            if (fileSystem.TryPerform(moveAction) == PerformResult.PerformFailed)
                             {
                                 ShowConflictResolve(moveAction);
                             }
@@ -294,6 +294,14 @@ namespace FileFlow.Views
                     {
                         item.SetUnderAction(isCopy, !isCopy);
                     }
+                }
+                else if (e.Key == Key.Z)
+                {
+                    fileSystem.Undo();
+                }
+                else if (e.Key == Key.Y)
+                {
+                    fileSystem.Redo();
                 }
                 else if (e.Key == Key.D)
                 {
@@ -500,7 +508,7 @@ namespace FileFlow.Views
             var filepathes = e.Data.GetFileNames();
 
 
-            MoveAction moveAction = MoveAction.TryCreate(fileSystem, filepathes, targetFolderPath);
+            MoveAction moveAction = new MoveAction(filepathes, targetFolderPath);
             if (moveAction != null && moveAction.TryPerform() == false)
             {
                 ShowConflictResolve(moveAction);

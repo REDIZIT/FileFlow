@@ -1,13 +1,11 @@
 ﻿using FileFlow.Extensions;
 using FileFlow.ViewModels;
-using FileFlow.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
+using Zenject;
 
 namespace FileFlow.Services
 {
@@ -18,29 +16,62 @@ namespace FileFlow.Services
         NoAuth,
         NotFound
     }
-    public interface IFileSystemService
+    public enum PerformResult
     {
-        List<StorageElement> GetStorageElements(string folderPath, out LoadStatus status);
-        long GetElementWeight(string path);
-        DateTime GetModifyTime(string path);
-        void Run(string filePath);
-        void CreateFile(string filePath);
-        void CreateFolder(string folderPath);
-        void Move(string oldPath, string newPath, ActionType type);
-        void Copy(string oldPath, string newPath, ActionType type);
-        void Rename(string oldPath, string newPath);
-        bool Exists(string path);
-        void Delete(string filePath);
+        EmptyAction,
+        PerformFailed,
+        ActionInvalid,
+        Success
     }
     public class FileSystemService : IFileSystemService
     {
-        private readonly IIconExtractorService iconExtractor;
+        private History<Action> history = new(HistoryPointerType.CurrentFrame);
 
-        public FileSystemService(IIconExtractorService iconExtractor)
+        private readonly IIconExtractorService iconExtractor;
+        private readonly DiContainer container;
+
+        public FileSystemService(DiContainer container)
         {
-            this.iconExtractor = iconExtractor;
+            this.container = container;
+            iconExtractor = container.Resolve<IIconExtractorService>();
         }
 
+        public PerformResult TryPerform(Action action)
+        {
+            if (action == null) return PerformResult.EmptyAction;
+
+            container.Inject(action);
+            if (action.IsValid())
+            {
+                if (action.TryPerform())
+                {
+                    history.Add(action);
+                    return PerformResult.Success;
+                }
+                else
+                {
+                    return PerformResult.PerformFailed;
+                }
+            }
+            else
+            {
+                return PerformResult.ActionInvalid;
+            }
+        }
+        public void Undo()
+        {
+            if (history.TryUndo(out Action action))
+            {
+                action.TryUndo();
+            }
+        }
+        public void Redo()
+        {
+            if (history.TryRedo(out Action action))
+            {
+                action.TryPerform();
+            }
+        }
         public void Run(string filePath)
         {
             var p = new Process();
@@ -50,6 +81,7 @@ namespace FileFlow.Services
             };
             p.Start();
         }
+
         public List<StorageElement> GetStorageElements(string folderPath, out LoadStatus status)
         {
             List<StorageElement> ls = new();
@@ -62,8 +94,6 @@ namespace FileFlow.Services
 
             try
             {
-                Stopwatch w = Stopwatch.StartNew();
-
                 EnumerationOptions options = new()
                 {
                     IgnoreInaccessible = true,
@@ -81,9 +111,6 @@ namespace FileFlow.Services
                 }
 
                 status = ls.Count > 0 ? LoadStatus.Ok : LoadStatus.Empty;
-
-                w.Stop();
-                Trace.WriteLine("Got storage elements in " + w.ElapsedMilliseconds + "ms");
 
                 return ls;
             }
@@ -217,21 +244,6 @@ namespace FileFlow.Services
         }
 
 
-
-        public void Move(IEnumerable<string> sourceFiles, string targetFolder)
-        {
-            throw new NotImplementedException();
-            //foreach (string path in sourceFiles)
-            //{
-            //    string name = Path.GetFileName(path);
-            //    string targetFilePath = targetFolder + "/" + name;
-            //    Move(path, targetFilePath)
-            //}
-        }
-        public void Copy(IEnumerable<string> sourceFiles, string targetFolder)
-        {
-            throw new NotImplementedException();
-        }
         public void Rename(string oldPath, string newPath)
         {
             if (Directory.Exists(oldPath))

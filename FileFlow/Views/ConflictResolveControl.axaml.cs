@@ -3,7 +3,6 @@ using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using FileFlow.Extensions;
 using FileFlow.Services;
-using FileFlow.ViewModels;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;

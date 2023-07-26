@@ -157,7 +157,8 @@ namespace FileFlow.Views
             }
             else
             {
-                fileSystem.Rename(args.SelectedElement.Path, path);
+                RenameAction action = new(args.SelectedElement.Path, path);
+                fileSystem.TryPerform(action);
             }
             Hide();
 
