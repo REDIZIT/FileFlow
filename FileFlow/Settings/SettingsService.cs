@@ -22,31 +22,29 @@ namespace FileFlow
             folder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/FileFlow";
             string filepath = folder + "/" + FILE_NAME;
 
-            Settings settings;
+            Settings settings = new()
+            {
+                service = this,
+                SortData = new()
+                {
+                    SortByFolder = new Dictionary<string, Sort>()
+                    {
+                        { Environment.GetFolderPath(Environment.SpecialFolder.UserProfile).CleanUp() + "/Downloads", Sort.CreationDate }
+                    }
+                },
+                Pathes = new()
+                {
+                    ArchivesExtractionFolder = Environment.CurrentDirectory.CleanUp() + "/Temp/Archives"
+                }
+            };
 
             if (File.Exists(filepath))
             {
                 string json = File.ReadAllText(filepath);
-                settings = JsonConvert.DeserializeObject<Settings>(json);
-                settings.service = this;
+                JsonConvert.PopulateObject(json, settings);
             }
             else
             {
-                settings = new()
-                {
-                    service = this,
-                    SortData = new()
-                    {
-                        SortByFolder = new Dictionary<string, Sort>()
-                        {
-                            { Environment.GetFolderPath(Environment.SpecialFolder.UserProfile).CleanUp() + "/Downloads", Sort.CreationDate }
-                        }
-                    },
-                    Pathes = new()
-                    {
-                        ArchivesExtractionFolder = Environment.CurrentDirectory.CleanUp() + "/Temp/Archives"
-                    }
-                };
                 settings.Save();
             }
 

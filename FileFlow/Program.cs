@@ -1,6 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.ReactiveUI;
+using FileFlow.Extensions;
 using System;
+using System.IO;
 using System.IO.Pipes;
 using System.Threading;
 
@@ -26,7 +28,21 @@ namespace FileFlow
                 return;
             }
 
-            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+            try
+            {
+                BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+            }
+            catch(Exception err)
+            {
+                string folder = Environment.CurrentDirectory.CleanUp() + "/CrashLogs";
+                Directory.CreateDirectory(folder);
+                int count = Directory.GetFiles(folder).Length;
+                string path = folder + "/crash_" + count + ".log";
+
+                File.AppendAllText(path, err.Message + "\n\n");
+                File.AppendAllText(path, err.StackTrace + "\n\n");
+                File.AppendAllText(path, err.Source + "\n\n");
+            }
         }
 
         // Avalonia configuration, don't remove; also used by visual designer.
