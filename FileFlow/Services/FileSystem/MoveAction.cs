@@ -240,7 +240,7 @@ namespace FileFlow.Services
                 PerformFileAction(sourcePath, targetPath);
             }
         }
-        private string GetCommonParentPath(IEnumerable<string> paths)
+        public static string GetCommonParentPath(IEnumerable<string> paths)
         {
             string commonPath = Path.GetDirectoryName(paths.First()).CleanUp();
 

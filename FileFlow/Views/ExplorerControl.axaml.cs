@@ -221,10 +221,13 @@ namespace FileFlow.Views
 
             if (e.Key == Key.Delete)
             {
+                List<string> filesPathes = new();
                 foreach (StorageElement item in listBox.SelectedItems)
                 {
-                    fileSystem.Delete(item.Path);
+                    filesPathes.Add(item.Path);
                 }
+                DeleteAction action = new(filesPathes, e.KeyModifiers.HasFlag(KeyModifiers.Shift) == false);
+                fileSystem.TryPerform(action);
             }
 
             if (e.Key == Key.LeftShift)
