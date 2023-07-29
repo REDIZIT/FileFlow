@@ -12,7 +12,7 @@ namespace FileFlow.Services
         List<StorageElement> GetStorageElements(string folderPath, out LoadStatus status);
         long GetElementWeight(string path);
         DateTime GetModifyTime(string path);
-        void Run(string filePath);
+        void Run(string filePath, bool runAsAdmin = false);
         void CreateFile(string filePath);
         void CreateFolder(string folderPath);
         void Move(string oldPath, string newPath, ActionType type);

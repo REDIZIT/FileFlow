@@ -234,7 +234,7 @@ namespace FileFlow.Views
             {
                 double msPassed = (DateTime.Now - lastShiftClickedDate).TotalMilliseconds;
 
-                if (msPassed <= 250)
+                if (msPassed <= 400)
                 {
                     goToControl.Show();
                 }

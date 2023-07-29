@@ -20,6 +20,8 @@ namespace FileFlow
         [STAThread]
         public static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             if (!mutex.WaitOne(TimeSpan.Zero, true))
             {
                 WakeUpAnotherInstance();
@@ -28,21 +30,7 @@ namespace FileFlow
                 return;
             }
 
-            try
-            {
-                BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
-            }
-            catch(Exception err)
-            {
-                string folder = Environment.CurrentDirectory.CleanUp() + "/CrashLogs";
-                Directory.CreateDirectory(folder);
-                int count = Directory.GetFiles(folder).Length;
-                string path = folder + "/crash_" + count + ".log";
-
-                File.AppendAllText(path, err.Message + "\n\n");
-                File.AppendAllText(path, err.StackTrace + "\n\n");
-                File.AppendAllText(path, err.Source + "\n\n");
-            }
+            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
         }
 
         // Avalonia configuration, don't remove; also used by visual designer.
@@ -59,6 +47,26 @@ namespace FileFlow
                 // Right after connect, another instance will appear
                 // No data transfer needed to do this
                 pipe.Connect(100);
+            }
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            string folder = Environment.CurrentDirectory.CleanUp() + "/CrashLogs";
+            Directory.CreateDirectory(folder);
+            int count = Directory.GetFiles(folder).Length;
+            string path = folder + "/crash_" + count + ".log";
+
+            if (e.ExceptionObject is Exception err)
+            {
+                File.AppendAllText(path, err.Message + "\n\n");
+                File.AppendAllText(path, err.StackTrace + "\n\n");
+                File.AppendAllText(path, err.Source + "\n\n");
+            }
+            else
+            {
+                File.AppendAllText(path, "Not exception happened, but app crashed ?_? ... why?" + "\n\n");
+                File.AppendAllText(path, e.ToString() + "\n\n");
             }
         }
     }

@@ -72,13 +72,19 @@ namespace FileFlow.Services
                 action.TryPerform();
             }
         }
-        public void Run(string filePath)
+        public void Run(string filePath, bool runAsAdmin = false)
         {
             var p = new Process();
             p.StartInfo = new ProcessStartInfo(filePath)
             {
-                UseShellExecute = true
+                UseShellExecute = true,
             };
+
+            if (runAsAdmin)
+            {
+                p.StartInfo.Verb = "runas";
+            }
+
             p.Start();
         }
 
