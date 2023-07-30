@@ -117,11 +117,9 @@ namespace FileFlow.Views
             Point delta = point.Position - leftClickPoint;
             double magnitude = Math.Abs(delta.X) + Math.Abs(delta.Y);
 
-            if (point.Properties.IsLeftButtonPressed && magnitude > 12)
+            if (point.Properties.IsLeftButtonPressed && magnitude > 12 && listBox.SelectedItem is StorageElement actualDraggedElement)
             {
                 DataObject data = new();
-
-                StorageElement actualDraggedElement = listBox.SelectedItem as StorageElement;
 
                 bool isSelectedDragged = prevSelectedElements.Any(e => e.Path == actualDraggedElement.Path);
 

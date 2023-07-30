@@ -1,0 +1,92 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="100"
+             x:Class="FileFlow.Views.WindowsTitleBar"
+             DockPanel.Dock="Top">
+
+  <UserControl.Styles>
+    <Style Selector="Button">
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Transitions">
+        <Transitions>
+          <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.05"/>
+        </Transitions>
+      </Setter>
+    </Style>
+    
+    <Style Selector="Button /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    
+    <Style Selector="Button:not(:pointerover) Border">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    <Style Selector="Button:pointerover Border">
+      <Setter Property="Background" Value="#a444"/>
+    </Style>
+    <Style Selector=".CloseButton:pointerover Border">
+      <Setter Property="Background" Value="#ccff4d4d"/>
+    </Style>
+    
+    <Style Selector="Button:not(:pointerover) Image">
+      <Setter Property="Opacity" Value="0.4"/>
+    </Style>
+    <Style Selector="Button:pointerover Image">
+      <Setter Property="Opacity" Value="1"/>
+    </Style>
+
+    <Style Selector="Button:pressed">
+      <Setter Property="RenderTransform" Value="scale(0.9)"/>
+    </Style>
+
+  </UserControl.Styles>
+
+  <Panel Height="32">
+
+    <Border BorderBrush="#111" BorderThickness="0, 0, 0, 1">
+      <Panel>
+        
+        <StackPanel Orientation="Horizontal" Background="#f222" IsHitTestVisible="False">
+          <Image Source="/Assets/Icons/titlebar_icon.png" Height="16" Margin="16, 3, 6, 0" Opacity="0.75"/>
+          <TextBlock Text="FileFlow" VerticalAlignment="Center" Margin="0, 2, 0, 0" Opacity="0.6"/>
+        </StackPanel>
+
+        <StackPanel
+            Orientation="Horizontal" IsHitTestVisible="True"
+            HorizontalAlignment="Right" VerticalAlignment="Stretch">
+
+          <Button Height="32" Width="38" Command="{Binding OnHideClicked}">
+            <Border CornerRadius="6" Height="24" Width="24">
+              <Image Source="/Assets/Icons/titlebar_hide.png" Height="15" Width="15" Margin="0, 1, 0, 0"/>
+            </Border>
+          </Button>
+
+          <Button Height="32" Width="38" Command="{Binding OnFullscreenClicked}">
+            <Border CornerRadius="6" Height="24" Width="24">
+              <Image Source="/Assets/Icons/titlebar_fullscreen.png" Height="15" Width="15" Margin="0, 1, 0, 0"/>
+            </Border>
+          </Button>
+
+          <Button Height="32" Width="38" Classes="CloseButton" Command="{Binding OnCloseClicked}">
+            <Border CornerRadius="6" Height="24" Width="24">
+              <Image Source="/Assets/Icons/titlebar_close.png" Height="15" Width="15" Margin="0, 1, 0, 0"/>
+            </Border>
+          </Button>
+
+        </StackPanel>
+
+        <NativeMenuBar HorizontalAlignment="Left" MinHeight="0"></NativeMenuBar>
+
+      </Panel>
+
+    </Border>
+    
+   </Panel>
+</UserControl>
