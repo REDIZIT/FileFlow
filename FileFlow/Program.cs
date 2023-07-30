@@ -22,7 +22,7 @@ namespace FileFlow
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            if (!mutex.WaitOne(TimeSpan.Zero, true))
+            if (!mutex.WaitOne(TimeSpan.FromMilliseconds(100), true))
             {
                 WakeUpAnotherInstance();
 
