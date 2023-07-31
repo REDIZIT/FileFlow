@@ -258,9 +258,10 @@
                   PointerPressed="Click"
                   PointerMoved="ListItemPointerMove"
                   Tag="{Binding}"
-                  DragDrop.AllowDrop="True">
+                  DragDrop.AllowDrop="True"
+                  IsHitTestVisible="True">
                   <Grid
-                    IsHitTestVisible="True">
+                    IsHitTestVisible="False">
                     <Grid.ColumnDefinitions>
                       <ColumnDefinition Width="8"/>
                       <ColumnDefinition Width="4"/>

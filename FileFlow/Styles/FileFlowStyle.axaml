@@ -82,7 +82,7 @@
     <Setter Property="RenderTransform" Value="translateY(10px)"/>
     <Setter Property="Background" Value="#2c2c2c"/>
     <Setter Property="VerticalAlignment" Value="Top"/>
-    <Setter Property="Margin" Value="60, 160"/>
+    <Setter Property="Margin" Value="60, 160, 60, 0"/>
     <Setter Property="BorderBrush" Value="#444"/>
     <Setter Property="BoxShadow" Value="0 4 30 1 #c000"/>
     <Setter Property="BorderThickness" Value="1"/>

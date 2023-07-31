@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using FileFlow.Enums;
 using FileFlow.Extensions;
 using FileFlow.Misc;
+using FileFlow.Providers;
 using FileFlow.Services;
 using FileFlow.ViewModels;
 using FileFlow.Views.Popups;
@@ -109,6 +110,10 @@ namespace FileFlow.Views
         {
             model.Open(element);
         }
+        public void OpenInNewTab(StorageElement element)
+        {
+            model.CreateTab(element);
+        }
 
         private void ListItemPointerMove(object sender, PointerEventArgs e)
         {
@@ -197,7 +202,7 @@ namespace FileFlow.Views
                     selected = listBox.SelectedItems.Cast<StorageElement>().ToList()
                 });
             }
-            else if (element != null && e.MouseButton == MouseButton.Middle && element.IsFolder)
+            else if (element != null && e.MouseButton == MouseButton.Middle && (element.IsFolder || ArchiveProvider.IsArchive(element.Path)))
             {
                 model.CreateTab(element);
             }

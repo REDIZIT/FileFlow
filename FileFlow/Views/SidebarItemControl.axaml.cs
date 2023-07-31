@@ -18,7 +18,13 @@ namespace FileFlow.Views
                     SidebarItemViewModel itemModel = (SidebarItemViewModel)DataContext;
                     itemModel.OnRightClick();
                 }
-            }, RoutingStrategies.Tunnel | RoutingStrategies.Bubble);
+                else if (e.GetCurrentPoint(button).Properties.PointerUpdateKind == PointerUpdateKind.MiddleButtonPressed)
+                {
+                    SidebarItemViewModel itemModel = (SidebarItemViewModel)DataContext;
+                    itemModel.OnMiddleClick();
+                }
+
+            }, RoutingStrategies.Tunnel);
         }
     }
 }

@@ -29,6 +29,10 @@ namespace FileFlow.ViewModels
                 mainSelected = GetStorageElement()
             });
         }
+        public void OnMiddleClick()
+        {
+            mainWindow.activeExplorer.OpenInNewTab(GetStorageElement());
+        }
         public StorageElement GetStorageElement()
         {
             return new StorageElement(GetPath(), kernel.Resolve<IFileSystemService>(), kernel.Resolve<IIconExtractorService>());
