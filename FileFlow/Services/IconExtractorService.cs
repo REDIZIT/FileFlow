@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Zenject;
 
 namespace FileFlow.Services
 {
@@ -15,6 +16,7 @@ namespace FileFlow.Services
         Avalonia.Media.Imaging.Bitmap EmptyFolder { get; }
         Avalonia.Media.Imaging.Bitmap GetFolderIcon(string folderPath);
         Avalonia.Media.Imaging.Bitmap GetFileIcon(string filePath);
+        void ClearCache(string extension);
     }
     public class IconExtractorService : IIconExtractorService
     {
@@ -25,8 +27,11 @@ namespace FileFlow.Services
         private Dictionary<string, Avalonia.Media.Imaging.Bitmap> cachedIcons = new();
         private HashSet<string> ignoredExtensions = new()
         {
-            ".exe", ".lnk", ".url"
+            ".exe", ".EXE", ".lnk", ".url"
         };
+
+        [Inject] private Settings settings;
+
 
         public IconExtractorService()
         {
@@ -64,6 +69,12 @@ namespace FileFlow.Services
         public Avalonia.Media.Imaging.Bitmap GetFileIcon(string filePath)
         {
             string ext = Path.GetExtension(filePath);
+
+            if (settings.DefaultApplications.HasOverrideFor(ext))
+            {
+                filePath = settings.DefaultApplications.GetExePath(ext);
+            }
+
             bool isIgnored = ignoredExtensions.Contains(ext);
 
             if (isIgnored == false && cachedIcons.TryGetValue(ext, out Avalonia.Media.Imaging.Bitmap value))
@@ -81,6 +92,11 @@ namespace FileFlow.Services
 
                 return icon;
             }
+        }
+
+        public void ClearCache(string extension)
+        {
+            cachedIcons.Remove(extension);
         }
 
         /// <summary>

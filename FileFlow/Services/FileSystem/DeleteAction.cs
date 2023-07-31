@@ -1,5 +1,4 @@
-﻿using FileFlow.Extensions;
-using Shell32;
+﻿using Shell32;
 using System;
 using System.Collections.Generic;
 using System.IO;

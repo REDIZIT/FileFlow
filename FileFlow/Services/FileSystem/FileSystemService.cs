@@ -29,11 +29,13 @@ namespace FileFlow.Services
 
         private readonly IIconExtractorService iconExtractor;
         private readonly DiContainer container;
+        private readonly Settings settings;
 
         public FileSystemService(DiContainer container)
         {
             this.container = container;
             iconExtractor = container.Resolve<IIconExtractorService>();
+            settings = container.Resolve<Settings>();
         }
 
         public PerformResult TryPerform(Action action)
@@ -74,18 +76,7 @@ namespace FileFlow.Services
         }
         public void Run(string filePath, bool runAsAdmin = false)
         {
-            var p = new Process();
-            p.StartInfo = new ProcessStartInfo(filePath)
-            {
-                UseShellExecute = true,
-            };
-
-            if (runAsAdmin)
-            {
-                p.StartInfo.Verb = "runas";
-            }
-
-            p.Start();
+            settings.DefaultApplications.Run(filePath);
         }
 
         public List<StorageElement> GetStorageElements(string folderPath, out LoadStatus status)

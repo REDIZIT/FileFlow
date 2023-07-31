@@ -1,5 +1,4 @@
 ﻿using Avalonia.Media.Imaging;
-using FileFlow.Extensions;
 using FileFlow.Services;
 using System;
 using System.ComponentModel;
@@ -74,10 +73,13 @@ namespace FileFlow.ViewModels
         }
         public void Refresh()
         {
+            RefreshIcon();
+            UpdateSize(fileSystem);
+        }
+        public void RefreshIcon()
+        {
             Icon = IsFolder ? iconExtractor.GetFolderIcon(Path) : iconExtractor.GetFileIcon(Path);
             this.RaisePropertyChanged(nameof(Icon));
-
-            UpdateSize(fileSystem);
         }
         public void SetUnderAction(bool underCopy, bool underCut)
         {

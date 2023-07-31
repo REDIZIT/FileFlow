@@ -1,0 +1,91 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="FileFlow.Views.Popups.OpenWithControl"
+             IsHitTestVisible="False">
+
+  <UserControl.Styles>
+    <StyleInclude Source="/Styles/FileFlowStyle.axaml"/>
+  </UserControl.Styles>
+
+
+  <Border Name="window" Classes="Window" Classes.showed="{Binding IsShowed}">
+    <StackPanel Margin="6">
+      <TextBlock Text="Открыть с помощью" Opacity="0.5" HorizontalAlignment="Center"/>
+      
+      <ListBox
+        Name="appsListBox" MaxHeight="288" Background="Transparent"
+        VirtualizationMode="None" Items="{Binding Items}" Margin="0, 6, 0, 0" SelectionChanged="OnItemClicked">
+
+        <ListBox.Styles>
+
+          <Style Selector="ListBoxItem TextBlock">
+            <Setter Property="Opacity" Value="0.5"/>
+          </Style>
+          <Style Selector="ListBoxItem:pointerover TextBlock">
+            <Setter Property="Opacity" Value="1"/>
+          </Style>
+          <Style Selector="ListBoxItem:selected TextBlock">
+            <Setter Property="Opacity" Value="1"/>
+          </Style>
+
+          <Style Selector="ListBoxItem Image">
+            <Setter Property="Opacity" Value="0.75"/>
+          </Style>
+          <Style Selector="ListBoxItem:pointerover Image">
+            <Setter Property="Opacity" Value="1"/>
+          </Style>
+          <Style Selector="ListBoxItem:selected Image">
+            <Setter Property="Opacity" Value="1"/>
+          </Style>
+
+          <Style Selector="ListBoxItem">
+            <Setter Property="CornerRadius" Value="4"/>
+          </Style>
+          
+        </ListBox.Styles>
+
+        <!--<ListBox.Resources>
+          <GridLength x:Key="ToggleSwitchPostContentMargin">0</GridLength>
+          <x:Double x:Key="ToggleSwitchThemeMinWidth">0</x:Double>
+        </ListBox.Resources>-->
+
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Border Height="24">
+              <Panel>
+                <Image Source="{Binding Icon}" Width="16" Height="16" HorizontalAlignment="Left" Margin="8, 0"/>
+                <TextBlock Margin="30, 1, 0, 0" Text="{Binding Name}" FontSize="11" Foreground="White" VerticalAlignment="Center"/>
+                <TextBlock Margin="0, 1, 16, 0" Text="{Binding InternalName}" FontSize="11" Foreground="#ccc" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+              </Panel>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+
+      </ListBox>
+
+      <StackPanel Margin="6, 0">
+        <Panel>
+          <TextBlock Text="Запомнить выбор" VerticalAlignment="Center" Opacity="0.5"/>
+          
+          <ToggleSwitch 
+            Name="rememberToggle"
+            HorizontalAlignment="Right"
+            OnContent=""
+            OffContent=""/>
+        </Panel>
+        <Panel>
+          <TextBlock Text="Использовать другое приложение" VerticalAlignment="Center" Opacity="0.5"/>
+          <Button HorizontalAlignment="Right" Padding="12, 6" Command="{Binding OnCustomAppClicked}">
+            <TextBlock Text="Выбрать файл"/>
+          </Button>
+        </Panel>
+      </StackPanel>
+      
+    </StackPanel>
+
+  </Border>
+
+</UserControl>

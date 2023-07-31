@@ -1,5 +1,4 @@
-﻿using FileFlow.Extensions;
-using FileFlow.Services;
+﻿using FileFlow.Services;
 using FileFlow.Views;
 using System.IO;
 using Zenject;

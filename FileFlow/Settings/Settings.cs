@@ -15,6 +15,7 @@ namespace FileFlow
         public SortData SortData { get; set; } = new();
         public Pathes Pathes { get; set; } = new();
         public Appearance Appearance { get; set; } = new();
+        public DefaultApplications DefaultApplications { get; set; } = new();
 
 
         [JsonIgnore] public Action onChanged;

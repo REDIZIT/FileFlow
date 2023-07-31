@@ -28,6 +28,9 @@ namespace FileFlow.Views
         public MainWindow(MainWindowViewModel model, DiContainer container)
         {
             this.model = model;
+
+            container.Bind<MainWindow>().FromInstance(this).AsSingle();
+
             fileSystem = container.Resolve<IFileSystemService>();
 
             DataContext = model;
@@ -85,6 +88,14 @@ namespace FileFlow.Views
         public ExplorerControl GetActiveExplorer()
         {
             return activeExplorer;
+        }
+
+        public void RefreshIcons()
+        {
+            foreach (ExplorerControl explorer in explorers)
+            {
+                explorer.RefreshIcons();
+            }
         }
         
         

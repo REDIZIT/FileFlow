@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
-using FileFlow.Extensions;
 using FileFlow.ViewModels;
 using JetBrains.Annotations;
 using PostSharp.Extensibility;

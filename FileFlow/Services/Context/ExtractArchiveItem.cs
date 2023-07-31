@@ -1,5 +1,4 @@
-﻿using FileFlow.Extensions;
-using FileFlow.Providers;
+﻿using FileFlow.Providers;
 using SharpCompress.Archives;
 using SharpCompress.Common;
 using System.IO;

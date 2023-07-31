@@ -1,5 +1,4 @@
-﻿using FileFlow.Extensions;
-using FileFlow.ViewModels;
+﻿using FileFlow.ViewModels;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

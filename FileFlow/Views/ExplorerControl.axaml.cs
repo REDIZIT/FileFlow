@@ -33,6 +33,7 @@ namespace FileFlow.Views
         private ExplorerViewModel model;
         private GoToControl goToControl;
         private PreviewControl previewControl;
+        private OpenWithControl openWithControl;
 
         private int id;
 
@@ -93,10 +94,19 @@ namespace FileFlow.Views
             ConstructAndBindWindows(container);
 
         }
+        public void RefreshIcons()
+        {
+            foreach (TabViewModel tab in model.Tabs)
+            {
+                tab.RefreshIcons();
+            }
+        }
+
         private void ConstructAndBindWindows(DiContainer sub)
         {
             AppendControl<CreateArchiveControl>(sub);
             previewControl = AppendControl<PreviewControl>(sub);
+            openWithControl = AppendControl<OpenWithControl>(sub);
         }
         private T AppendControl<T>(DiContainer container) where T : Control
         {

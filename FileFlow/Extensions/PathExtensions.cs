@@ -1,4 +1,4 @@
-﻿namespace FileFlow.Extensions
+﻿namespace FileFlow
 {
     public static class PathExtensions
     {

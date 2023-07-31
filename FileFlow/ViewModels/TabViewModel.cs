@@ -1,7 +1,6 @@
 ﻿using Avalonia.Input;
 using Avalonia.Threading;
 using FileFlow.Enums;
-using FileFlow.Extensions;
 using FileFlow.Misc;
 using FileFlow.Providers;
 using FileFlow.Services;
@@ -270,6 +269,13 @@ namespace FileFlow.ViewModels
                 element.Refresh();
                 element.IsAdded = false;
                 element.IsModified = false;
+            }
+        }
+        public void RefreshIcons()
+        {
+            foreach (StorageElement element in StorageElementsValues)
+            {
+                element.RefreshIcon();
             }
         }
 

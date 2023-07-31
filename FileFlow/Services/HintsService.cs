@@ -1,5 +1,4 @@
-﻿using FileFlow.Extensions;
-using FileFlow.Services.Hints;
+﻿using FileFlow.Services.Hints;
 using FileFlow.ViewModels;
 using System;
 using System.Collections.Generic;

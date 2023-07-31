@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
-using FileFlow.Extensions;
 using System;
 using System.Reactive.Linq;
 using Zenject;

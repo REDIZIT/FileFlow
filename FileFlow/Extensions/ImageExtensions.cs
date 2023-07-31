@@ -7,15 +7,21 @@ public static class ImageExtensions
     {
         if (bitmap == null) return null;
 
-        System.Drawing.Bitmap bitmapTmp = new System.Drawing.Bitmap(bitmap);
-        var bitmapdata = bitmapTmp.LockBits(new Rectangle(0, 0, bitmapTmp.Width, bitmapTmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-        Avalonia.Media.Imaging.Bitmap bitmap1 = new(Avalonia.Platform.PixelFormat.Bgra8888, Avalonia.Platform.AlphaFormat.Premul,
+        Bitmap bitmapTmp = new Bitmap(bitmap);
+
+        BitmapData bitmapdata = bitmapTmp.LockBits(new Rectangle(0, 0, bitmapTmp.Width, bitmapTmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+        Avalonia.Media.Imaging.Bitmap bitmap1 = new(
+            Avalonia.Platform.PixelFormat.Bgra8888, 
+            Avalonia.Platform.AlphaFormat.Unpremul,
             bitmapdata.Scan0,
             new Avalonia.PixelSize(bitmapdata.Width, bitmapdata.Height),
             new Avalonia.Vector(96, 96),
             bitmapdata.Stride);
+
         bitmapTmp.UnlockBits(bitmapdata);
         bitmapTmp.Dispose();
+
         return bitmap1;
     }
 }

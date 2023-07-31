@@ -15,6 +15,8 @@ namespace FileFlow.Views.Popups
             IsHitTestVisible = true;
             IsShowed = true;
 
+            Focus();
+
             this.RaisePropertyChanged(nameof(IsShowed));
             OnShowed();
         }
