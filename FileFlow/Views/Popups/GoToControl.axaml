@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="FileFlow.Views.Popups.GoToControl"
-             IsHitTestVisible="False"
-             LostFocus="OnLostFocus">
+             IsHitTestVisible="False">
 
   <UserControl.Styles>
     <StyleInclude Source="/Styles/FileFlowStyle.axaml"/>
@@ -55,7 +54,7 @@
 
         <ListBox.ItemTemplate>
           <DataTemplate>
-            <Border Height="24">
+            <Border Height="24" Tag="{Binding}">
               <Panel>
                 <Image Source="{Binding Icon}" Width="16" Height="16" HorizontalAlignment="Left" Margin="8, 0"/>
                 <TextBlock Margin="30, 1, 0, 0" Text="{Binding DisplayText}" FontSize="11" Foreground="White" VerticalAlignment="Center"/>

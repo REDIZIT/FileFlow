@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -35,7 +36,7 @@ namespace FileFlow.Views.Popups
 
             this.GetObservable(KeyDownEvent, RoutingStrategies.Tunnel).Subscribe(OnWindowKeyDown);
         }
-
+        
 
         public void Show(StorageElement element)
         {
@@ -64,7 +65,7 @@ namespace FileFlow.Views.Popups
             };
             string[] selected = await dialog.ShowAsync((Avalonia.Controls.Window)VisualRoot);
 
-            if (selected.Length > 0)
+            if (selected != null && selected.Length > 0)
             {
                 string path = selected[0];
                 Run(new OpenWithItem()

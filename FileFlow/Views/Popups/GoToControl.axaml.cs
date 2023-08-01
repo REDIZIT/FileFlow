@@ -2,13 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using FileFlow.Extensions;
 using FileFlow.Services;
 using FileFlow.Services.Hints;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using Zenject;
 
 namespace FileFlow.Views.Popups
@@ -25,7 +23,7 @@ namespace FileFlow.Views.Popups
         [Inject] private IFileSystemService fileSystem;
         [Inject] private IIconExtractorService iconExtractor;
 
-        private bool isResettingTextBox, isSettingFocus;
+        private bool isResettingTextBox;
 
         public GoToControl()
         {
@@ -42,10 +40,7 @@ namespace FileFlow.Views.Popups
             base.OnShowed();
 
             searchBox.Text = string.Empty;
-
-            isSettingFocus = true;
             searchBox.Focus();
-            isSettingFocus = false;
         }
 
         private void OnPathBarKeyDown(object sender, KeyEventArgs e)
@@ -65,14 +60,13 @@ namespace FileFlow.Views.Popups
                 else if (e.Key == Key.Tab && hintsListBox.SelectedIndex != -1)
                 {
                     SetsearchBox(((IPathBarHint)hintsListBox.SelectedItem).GetFullPath());
-                }
+                };
             }
 
 
             if (e.Key == Key.Enter)
             {
-                IPathBarHint hint = (IPathBarHint)hintsListBox.SelectedItem;
-                explorer.Open(new(hint.GetFullPath(), fileSystem, iconExtractor));
+                Open((IPathBarHint)hintsListBox.SelectedItem);
 
                 isAnyKeyPressed = true;
             }
@@ -84,8 +78,7 @@ namespace FileFlow.Views.Popups
 
             if (isAnyKeyPressed)
             {
-                Hide();
-                KeyboardDevice.Instance.SetFocusedElement(this, NavigationMethod.Unspecified, KeyModifiers.None);
+                HideWithRefocus();
             }
         }
         private void OnTextInput(string text)
@@ -97,14 +90,16 @@ namespace FileFlow.Views.Popups
             this.RaisePropertyChanged(nameof(ListMargin));
 
             hintsListBox.SelectedIndex = 0;
-        }
-        private void OnLostFocus(object sender, RoutedEventArgs args)
-        {
-            if (isSettingFocus) return;
 
-            Hide();
+            foreach (var item in hintsListBox.ItemContainerGenerator.Containers)
+            {
+                item.ContainerControl.PointerPressed += (_, _) =>
+                {
+                    Open(Items[item.Index]);
+                    HideWithRefocus();
+                };
+            }
         }
-
 
         private void SetsearchBox(string text)
         {
@@ -120,6 +115,16 @@ namespace FileFlow.Views.Popups
             }
 
             isResettingTextBox = false;
+        }
+
+        private void Open(IPathBarHint hint)
+        {
+            explorer.Open(new(hint.GetFullPath(), fileSystem, iconExtractor));
+        }
+        private void HideWithRefocus()
+        {
+            Hide();
+            KeyboardDevice.Instance.SetFocusedElement(this, NavigationMethod.Unspecified, KeyModifiers.None);
         }
     }
 }

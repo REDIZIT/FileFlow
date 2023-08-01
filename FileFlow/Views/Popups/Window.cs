@@ -1,4 +1,9 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.VisualTree;
+using System;
 using System.ComponentModel;
 
 namespace FileFlow.Views.Popups
@@ -30,7 +35,32 @@ namespace FileFlow.Views.Popups
             OnHidden();
         }
 
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            Control root = (Control)this.GetVisualRoot();
+            root.GetObservable(PointerPressedEvent, RoutingStrategies.Tunnel).Subscribe(OnPointerPressedGlobal);
+        }
+
         protected virtual void OnShowed() { }
         protected virtual void OnHidden() { }
+
+
+        private void OnPointerPressedGlobal(PointerPressedEventArgs e)
+        {
+            if (IsShowed && IsPointerInsideControl(e) == false)
+            {
+                Hide();
+            }
+        }
+
+        private bool IsPointerInsideControl(PointerEventArgs e)
+        {
+            var pos = e.GetCurrentPoint(this).Position;
+            var bounds = this.FindNameScope().Find<Border>("window").Bounds;
+            bool contains = bounds.Contains(pos);
+            return contains;
+        }
     }
 }
