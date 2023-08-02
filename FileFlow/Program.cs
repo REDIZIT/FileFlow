@@ -21,15 +21,14 @@ namespace FileFlow
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            if (!mutex.WaitOne(TimeSpan.FromMilliseconds(100), true))
+            if (WakeUpAnotherInstance())
             {
-                WakeUpAnotherInstance();
-
-                // Don't continue building this instance because this instance is the second one
                 return;
             }
 
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+
+            mutex.ReleaseMutex();
         }
 
         // Avalonia configuration, don't remove; also used by visual designer.
@@ -38,14 +37,22 @@ namespace FileFlow
                 .UsePlatformDetect()
                 .UseReactiveUI();
 
-        private static void WakeUpAnotherInstance()
+        private static bool WakeUpAnotherInstance()
         {
             using (var pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.Out))
             {
                 // Just connect to another instance
                 // Right after connect, another instance will appear
                 // No data transfer needed to do this
-                pipe.Connect(100);
+                try
+                {
+                    pipe.Connect(100);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
             }
         }
 

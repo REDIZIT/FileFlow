@@ -8,44 +8,64 @@
 
   <UserControl.Styles>
     <StyleInclude Source="/Styles/FileFlowStyle.axaml"/>
+
+    <Style Selector="ListBoxItem TextBlock">
+      <Setter Property="Opacity" Value="0.5"/>
+    </Style>
+    <Style Selector="ListBoxItem:pointerover TextBlock">
+      <Setter Property="Opacity" Value="1"/>
+    </Style>
+    <Style Selector="ListBoxItem:selected TextBlock">
+      <Setter Property="Opacity" Value="1"/>
+    </Style>
+
+    <Style Selector="ListBoxItem Image">
+      <Setter Property="Opacity" Value="0.75"/>
+    </Style>
+    <Style Selector="ListBoxItem:pointerover Image">
+      <Setter Property="Opacity" Value="1"/>
+    </Style>
+    <Style Selector="ListBoxItem:selected Image">
+      <Setter Property="Opacity" Value="1"/>
+    </Style>
+
+    <Style Selector="ListBoxItem">
+      <Setter Property="CornerRadius" Value="4"/>
+    </Style>
+    
   </UserControl.Styles>
 
 
   <Border Name="window" Classes="Window" Classes.showed="{Binding IsShowed}">
     <StackPanel Margin="6">
-      <TextBlock Text="Открыть с помощью" Opacity="0.5" HorizontalAlignment="Center"/>
+      <!--<TextBlock Text="Открыть с помощью" Opacity="0.5" HorizontalAlignment="Center"/>-->
       
+      <TextBlock Text="Приложение по умолчанию" Opacity="0.5" Margin="6, 4, 0, 0"/>
+
       <ListBox
-        Name="appsListBox" MaxHeight="288" Background="Transparent"
-        VirtualizationMode="None" Items="{Binding Items}" Margin="0, 6, 0, 0" SelectionChanged="OnItemClicked">
+        Name="defaultAppList" MaxHeight="24" Background="Transparent"
+        VirtualizationMode="None" Items="{Binding DefaultItems}" Margin="0, 2, 0, 0" SelectionChanged="OnItemClicked">
 
-        <ListBox.Styles>
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Border Height="24">
+              <Panel>
+                <Image Source="{Binding Icon}" Width="16" Height="16" HorizontalAlignment="Left" Margin="8, 0"/>
+                <TextBlock Margin="30, 1, 0, 0" Text="{Binding Name}" FontSize="11" Foreground="White" VerticalAlignment="Center"/>
+                <TextBlock Margin="0, 1, 16, 0" Text="{Binding InternalName}" FontSize="11" Foreground="#ccc" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+              </Panel>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
 
-          <Style Selector="ListBoxItem TextBlock">
-            <Setter Property="Opacity" Value="0.5"/>
-          </Style>
-          <Style Selector="ListBoxItem:pointerover TextBlock">
-            <Setter Property="Opacity" Value="1"/>
-          </Style>
-          <Style Selector="ListBoxItem:selected TextBlock">
-            <Setter Property="Opacity" Value="1"/>
-          </Style>
+      </ListBox>
 
-          <Style Selector="ListBoxItem Image">
-            <Setter Property="Opacity" Value="0.75"/>
-          </Style>
-          <Style Selector="ListBoxItem:pointerover Image">
-            <Setter Property="Opacity" Value="1"/>
-          </Style>
-          <Style Selector="ListBoxItem:selected Image">
-            <Setter Property="Opacity" Value="1"/>
-          </Style>
 
-          <Style Selector="ListBoxItem">
-            <Setter Property="CornerRadius" Value="4"/>
-          </Style>
-          
-        </ListBox.Styles>
+      <TextBlock Text="Другие приложения" Opacity="0.5" Margin="6, 10, 0, 0"/>
+
+      <ListBox
+        Name="appsListBox" MaxHeight="240" Background="Transparent"
+        VirtualizationMode="None" Items="{Binding Items}" Margin="0, 4, 0, 0" SelectionChanged="OnItemClicked">
 
         <!--<ListBox.Resources>
           <GridLength x:Key="ToggleSwitchPostContentMargin">0</GridLength>

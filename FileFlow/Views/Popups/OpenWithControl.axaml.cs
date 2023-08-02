@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Zenject;
 
 namespace FileFlow.Views.Popups
@@ -20,6 +21,7 @@ namespace FileFlow.Views.Popups
     public partial class OpenWithControl : Window, INotifyPropertyChanged
     {
         public ObservableCollection<OpenWithItem> Items { get; set; } = new();
+        public ObservableCollection<OpenWithItem> DefaultItems { get; set; } = new();
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -47,6 +49,9 @@ namespace FileFlow.Views.Popups
 
             Items.Clear();
             Items.AddRange(EnumeratePrograms());
+
+            DefaultItems.Clear();
+            DefaultItems.Add(GetDefaultApp(Path.GetExtension(element.Path)));
         }
 
         private void OnItemClicked(object sender, SelectionChangedEventArgs args)
@@ -108,66 +113,110 @@ namespace FileFlow.Views.Popups
             }    
         }
 
+        private OpenWithItem GetDefaultApp(string extension)
+        {
+            // Компьютер\HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.txt\UserChoice
+            // Компьютер\HKEY_CLASSES_ROOT\txtfile\shell\open\command
+
+            string progId = null;
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@$"Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\{extension}\UserChoice"))
+            {
+                if (key != null)
+                {
+                    progId = key.GetValue("ProgId").ToString();
+                }
+            }
+            using (RegistryKey key = Registry.ClassesRoot.OpenSubKey($"{progId}\\shell\\open\\command"))
+            {
+                if (key != null)
+                {
+                    return CreateItemFromKey(key);
+                }
+            }
+
+            return null;
+        }
+
         private IEnumerable<OpenWithItem> EnumeratePrograms()
         {
-            foreach (OpenWithItem item in EnumerateProgramsInReg(Registry.LocalMachine))
-            {
-                yield return item;
-            }
-            foreach (OpenWithItem item in EnumerateProgramsInReg(Registry.CurrentUser))
+            foreach (OpenWithItem item in EnumerateProgramsInReg(Registry.LocalMachine, Registry.CurrentUser))
             {
                 yield return item;
             }
         }
-        private IEnumerable<OpenWithItem> EnumerateProgramsInReg(RegistryKey rootKey)
+        private IEnumerable<OpenWithItem> EnumerateProgramsInReg(params RegistryKey[] rootKeys)
         {
             string appsKey = @"Software\Classes\Applications";
 
-            using (RegistryKey key = rootKey.OpenSubKey(appsKey))
+            foreach (var rootKey in rootKeys)
             {
-                foreach (string subKeyName in key.GetSubKeyNames())
+                using (RegistryKey key = rootKey.OpenSubKey(appsKey))
                 {
-                    using (RegistryKey appKey = key.OpenSubKey(subKeyName + @"\shell\open\command"))
+                    foreach (string subKeyName in key.GetSubKeyNames())
                     {
-                        if (appKey != null)
+                        OpenWithItem item = TryGetItem(key, subKeyName + @"\shell\open\command");
+                        if (item != null)
                         {
-                            string fullPath = appKey.GetValue("").ToString();
-                            string exePath;
-
-                            if (fullPath.StartsWith('"'))
-                            {
-                                int closeIndex = fullPath.IndexOf('"', 1);
-                                exePath = fullPath.Substring(1, closeIndex - 1);
-                            }
-                            else
-                            {
-                                int closeIndex = fullPath.ToLower().IndexOf(".exe");
-                                exePath = fullPath.Substring(0, closeIndex + 4);
-                            }
-
-                            FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(exePath);
-                            string name;
-                            if (versionInfo != null && string.IsNullOrWhiteSpace(versionInfo.FileDescription) == false)
-                            {
-                                name = versionInfo.FileDescription;
-                            }
-                            else
-                            {
-                                name = appKey.Name.Replace(key.Name + @"\", "").Split(@"\")[0];
-                            }
-
-                            yield return new()
-                            {
-                                Name = name,
-                                ExePath = exePath,
-                                FormatPath = fullPath,
-                                InternalName = Path.GetFileName(exePath),
-                                Icon = iconExtractor.GetFileIcon(exePath)
-                            };
+                            yield return item;
                         }
+                        else
+                        {
+                            item = TryGetItem(key, subKeyName + @"\shell\edit\command");
+                            if (item != null)
+                            {
+                                yield return item;
+                            }
+                        }   
                     }
                 }
             }
+        }
+        private OpenWithItem TryGetItem(RegistryKey key, string path)
+        {
+            using (RegistryKey appKey = key.OpenSubKey(path))
+            {
+                if (appKey != null)
+                {
+                    return CreateItemFromKey(appKey);
+                }
+            }
+            return null;
+        }
+        private OpenWithItem CreateItemFromKey(RegistryKey appKey)
+        {
+            string fullPath = appKey.GetValue("").ToString();
+            string exePath;
+
+            if (fullPath.StartsWith('"'))
+            {
+                int closeIndex = fullPath.IndexOf('"', 1);
+                exePath = fullPath.Substring(1, closeIndex - 1);
+            }
+            else
+            {
+                int closeIndex = fullPath.ToLower().IndexOf(".exe");
+                exePath = fullPath.Substring(0, closeIndex + 4);
+            }
+
+            FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(exePath);
+            string name;
+            if (versionInfo != null && string.IsNullOrWhiteSpace(versionInfo.FileDescription) == false)
+            {
+                name = versionInfo.FileDescription;
+            }
+            else
+            {
+                name = Path.GetFileNameWithoutExtension(exePath);
+            }
+
+            return new()
+            {
+                Name = name,
+                ExePath = exePath,
+                FormatPath = fullPath,
+                InternalName = Path.GetFileName(exePath),
+                Icon = iconExtractor.GetFileIcon(exePath)
+            };
         }
     }
     public class OpenWithItem
