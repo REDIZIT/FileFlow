@@ -12,6 +12,8 @@ namespace FileFlow.Services
 
         public void IndexProject(Project project)
         {
+            if (Directory.Exists(project.Folder) == false) return;
+
             projectToIndex = project;
             indexThread = new Thread(ReindexProject);
             indexThread.Start();

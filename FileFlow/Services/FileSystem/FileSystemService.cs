@@ -120,22 +120,33 @@ namespace FileFlow.Services
 
         public long GetElementWeight(string path)
         {
-            if (File.Exists(path))
+            try
             {
-                return new FileInfo(path).Length;
-            }
-            else
-            {
-                try
+                if (File.Exists(path))
+                {
+                    return new FileInfo(path).Length;
+                }
+                else if (Directory.Exists(path))
                 {
                     int foldersCount = Directory.GetFileSystemEntries(path).Length;
                     return foldersCount;
                 }
-                catch (UnauthorizedAccessException)
+                else
                 {
-                    return -1;
+                    return 0;
                 }
-
+            }
+            catch (FileNotFoundException)
+            {
+                return -1;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return -1;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return -1;
             }
         }
         public DateTime GetModifyTime(string path)

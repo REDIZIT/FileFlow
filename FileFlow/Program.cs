@@ -65,9 +65,7 @@ namespace FileFlow
 
             if (e.ExceptionObject is Exception err)
             {
-                File.AppendAllText(path, err.Message + "\n\n");
-                File.AppendAllText(path, err.StackTrace + "\n\n");
-                File.AppendAllText(path, err.Source + "\n\n");
+                File.AppendAllText(path, err.ToString());
             }
             else
             {
