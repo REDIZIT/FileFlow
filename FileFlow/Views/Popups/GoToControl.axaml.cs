@@ -4,9 +4,11 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using FileFlow.Services;
 using FileFlow.Services.Hints;
+using FileFlow.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using Zenject;
 
 namespace FileFlow.Views.Popups
@@ -22,6 +24,7 @@ namespace FileFlow.Views.Popups
         [Inject] private ExplorerViewModel explorer;
         [Inject] private IFileSystemService fileSystem;
         [Inject] private IIconExtractorService iconExtractor;
+        [Inject] private DiContainer container;
 
         private bool isResettingTextBox;
 
@@ -45,8 +48,6 @@ namespace FileFlow.Views.Popups
 
         private void OnPathBarKeyDown(object sender, KeyEventArgs e)
         {
-            bool isAnyKeyPressed = false;
-
             if (hintsListBox.ItemCount > 0)
             {
                 if (e.Key == Key.Down)
@@ -59,7 +60,18 @@ namespace FileFlow.Views.Popups
                 }
                 else if (e.Key == Key.Tab && hintsListBox.SelectedIndex != -1)
                 {
-                    SetsearchBox(((IPathBarHint)hintsListBox.SelectedItem).GetFullPath());
+                    var selectedHint = (IPathBarHint)hintsListBox.SelectedItem;
+                    string path = selectedHint.GetFullPath();
+                    string parentPath = Path.GetDirectoryName(path);
+
+                    if (explorer.ActiveTab.FolderPath != parentPath)
+                    {
+                        explorer.Open(new(parentPath, container));
+                    }
+
+                    explorer.SelectElement(path);
+
+                    HideWithRefocus();
                 };
             }
 
@@ -68,15 +80,9 @@ namespace FileFlow.Views.Popups
             {
                 Open((IPathBarHint)hintsListBox.SelectedItem);
 
-                isAnyKeyPressed = true;
+                HideWithRefocus();
             }
             else if (e.Key == Key.Escape)
-            {
-                isAnyKeyPressed = true;
-            }
-
-
-            if (isAnyKeyPressed)
             {
                 HideWithRefocus();
             }
