@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media.Imaging;
 using System;
+using Zenject;
 
 namespace FileFlow.Services.Hints
 {
@@ -19,7 +20,7 @@ namespace FileFlow.Services.Hints
 
         public abstract string GetFullPath();
         public abstract string GetIconPath();
-        public void LoadIcon()
+        public virtual void LoadIcon()
         {
             if (Icon == null)
             {
@@ -80,66 +81,36 @@ namespace FileFlow.Services.Hints
     }
     public class ProjectFolderHint : BaseHint
     {
+        [Inject] private IIconExtractorService icons;
+
         private ProjectFolderData data;
 
         public ProjectFolderHint(ProjectFolderData data)
         {
             this.data = data;
             DisplayText = data.displayText;
-            TypeText = "Папка в проекте";
+
+            TypeText = data.isFile ? "Файл в проекте" : "Папка в проекте";
         }
         public override string GetFullPath()
         {
             return data.path;
         }
+
+        public override void LoadIcon()
+        {
+            if (data.isFile)
+            {
+                Icon = icons.GetFileIcon(data.path);
+            }
+            else
+            {
+                base.LoadIcon();
+            }
+        }
         public override string GetIconPath()
         {
             return "Assets/Icons/subfolder.png";
-        }
-
-        protected float GetTextMatches(string text, string input)
-        {
-            float matches = 0;
-
-            input = input.ToLower();
-            string[] inputWords = input.Split();
-            string displayTextLowered = data.displayText.ToLower();
-            int missedChars = 0;
-
-            foreach (string word in inputWords)
-            {
-                if (string.IsNullOrWhiteSpace(word)) continue;
-
-                int maxMatches = 0;
-                int currentMatch = 0;
-                int wordIndex = 0;
-                bool isStartsWith = true;
-                for (int i = 0; i < displayTextLowered.Length; i++)
-                {
-                    if (word[wordIndex] == displayTextLowered[i])
-                    {
-                        wordIndex++;
-                        currentMatch++;
-
-                        if (wordIndex >= word.Length)
-                        {
-                            maxMatches = Math.Max(maxMatches, currentMatch);
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        wordIndex = 0;
-                        isStartsWith = false;
-                        maxMatches = Math.Max(maxMatches, currentMatch);
-                        currentMatch = 0;
-                        missedChars++;
-                    }
-                }
-                // TODO: include overword as missing chars
-                matches += maxMatches * 2 + (isStartsWith ? 10 : 0)/* - data.depth*/ - missedChars / 5f;
-            }
-            return matches;
         }
     }
 }

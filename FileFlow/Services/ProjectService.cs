@@ -36,7 +36,7 @@ namespace FileFlow.Services
                 folderToIndex = project.Folder + "/" + project.FolderToIndex;
             }
 
-            string[] allFolders = Directory.GetDirectories(folderToIndex, "*.*", SearchOption.AllDirectories);
+            string[] allFolders = Directory.GetFileSystemEntries(folderToIndex, "*.*", SearchOption.AllDirectories);
             string[] displayPathes = new string[allFolders.Length];
             project.indexedFolders = new ProjectFolderData[allFolders.Length];
 
@@ -53,7 +53,8 @@ namespace FileFlow.Services
                 {
                     path = absolutePath,
                     displayText = displayPathes[i],
-                    depth = localPath.Count(c => c == '/')
+                    depth = localPath.Count(c => c == '/'),
+                    isFile = File.Exists(absolutePath)
                 };
             }
 

@@ -104,6 +104,11 @@ namespace FileFlow.Views
         {
             explorer.listBox.SelectedItem = element;
         }
+        public void SelectElement(string fullpath)
+        {
+            StorageElement el = ActiveTab.StorageElementsValues.FirstOrDefault(e => e.Path == fullpath);
+            SelectElement(el);
+        }
 
         private void OnMoveUpClicked()
         {

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Zenject;
 
 namespace FileFlow.Services
 {
@@ -13,11 +14,14 @@ namespace FileFlow.Services
         private List<IPathBarHint> staticHints = new List<IPathBarHint>();
         private Settings settings;
         private IIconExtractorService icon;
+        private DiContainer container;
 
-        public HintsService(Settings settings, IIconExtractorService icon)
+        public HintsService(DiContainer container)
         {
-            this.settings = settings;
-            this.icon = icon;
+            this.container = container;
+            settings = container.Resolve<Settings>();
+            icon = container.Resolve<IIconExtractorService>();
+
             staticHints = GetHints().ToList();
         }
 
@@ -43,6 +47,7 @@ namespace FileFlow.Services
 
             foreach (IPathBarHint hint in sortedHints)
             {
+                container.Inject(hint);
                 hint.LoadIcon();
             }
 
