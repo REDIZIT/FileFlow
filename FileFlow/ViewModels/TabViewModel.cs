@@ -281,6 +281,11 @@ namespace FileFlow.ViewModels
 
         private IEnumerable<StorageElement> EnumerateSortElements(IEnumerable<StorageElement> source, Sort type)
         {
+            if (source == null)
+            {
+                return Enumerable.Empty<StorageElement>();
+            }
+
             return type switch
             {
                 Sort.Name => source.OrderBy(e => e.Name),
