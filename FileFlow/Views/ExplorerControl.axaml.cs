@@ -265,6 +265,22 @@ namespace FileFlow.Views
                 }
             }
 
+            if (e.Key == Key.Enter)
+            {
+                var items = listBox.SelectedItems.Cast<StorageElement>().ToArray();
+                if (items.Count() == 1)
+                {
+                    Open(items.First());
+                }
+                else if (items.Count() > 1)
+                {
+                    foreach (StorageElement item in items)
+                    {
+                        OpenInNewTab(item);
+                    }
+                }
+            }
+
             if (e.Modifiers.HasAnyFlag(InputModifiers.Control))
             {
                 if (e.Key == Key.V)
