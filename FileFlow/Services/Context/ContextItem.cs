@@ -9,7 +9,7 @@ namespace FileFlow.ViewModels
     public abstract class ContextItem
     {
         public abstract string Text { get; }
-        public Bitmap Icon => IconExtractorService.GetAssetIcon(IconPath);
+        public virtual Bitmap Icon => IconExtractorService.GetAssetIcon(IconPath);
         public abstract string IconPath { get; }
 
         /// <summary>
