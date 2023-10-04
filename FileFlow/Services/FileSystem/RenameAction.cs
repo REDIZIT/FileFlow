@@ -4,7 +4,7 @@ namespace FileFlow.Services
 {
     public class RenameAction : Action
     {
-        [Inject] private IFileSystemService fileSystem;
+        [Inject] private FileSystemService fileSystem;
 
         private string sourceFilePath;
         private string targetFilePath;

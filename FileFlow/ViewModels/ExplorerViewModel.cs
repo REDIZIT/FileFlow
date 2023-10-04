@@ -54,8 +54,15 @@ namespace FileFlow.Views
         }
         public void CreateTab(StorageElement storageElement)
         {
-            Tabs.Add(container.Instantiate<TabViewModel>(new object[] { this, storageElement.Path }));
-            OnTabClicked(Tabs.Last());
+            if (storageElement.IsFolder)
+            {
+                Tabs.Add(container.Instantiate<TabViewModel>(new object[] { this, storageElement.Path }));
+                OnTabClicked(Tabs.Last());
+            }
+            else
+            {
+                Open(storageElement);
+            }
         }
         public void OnTabClicked(TabViewModel tab)
         {

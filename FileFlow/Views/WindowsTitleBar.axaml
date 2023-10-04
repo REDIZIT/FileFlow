@@ -42,7 +42,7 @@
       <Setter Property="Opacity" Value="1"/>
     </Style>
 
-    <Style Selector="Button:pressed">
+    <Style Selector="Button:pressed Border">
       <Setter Property="RenderTransform" Value="scale(0.9)"/>
     </Style>
 

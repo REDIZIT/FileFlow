@@ -45,7 +45,7 @@ namespace FileFlow.ViewModels
         private bool isLoaded;
         private StorageProdiver provider;
 
-        [Inject] private IFileSystemService fileSystem;
+        [Inject] private FileSystemService fileSystem;
         [Inject] private IIconExtractorService iconExtractor;
         [Inject] private ProjectService projectService;
         [Inject] private StorageProdiverFactory providerFactory;

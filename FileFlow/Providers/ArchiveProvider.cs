@@ -16,9 +16,9 @@ namespace FileFlow.Providers
         private string archiveAbsolutePath;
         private string archiveExtractedPath;
 
-        private IFileSystemService fileSystem;
+        private FileSystemService fileSystem;
 
-        public ArchiveProvider(string absPath, IFileSystemService fileSystem, IIconExtractorService iconExtractor, Settings settings)
+        public ArchiveProvider(string absPath, FileSystemService fileSystem, IIconExtractorService iconExtractor, Settings settings)
         {
             this.fileSystem = fileSystem;
 

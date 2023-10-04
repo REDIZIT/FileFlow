@@ -21,7 +21,7 @@ namespace FileFlow.Services
         {
             if (IsConstructed == false)
             {
-                throw new Exception($"You can't perform action before construct. Probably, use tried to perform action out of {nameof(IFileSystemService)}.");
+                throw new Exception($"You can't perform action before construct. Probably, use tried to perform action out of {nameof(FileSystemService)}.");
             }
 
             if (IsCompleted) return false;
@@ -37,7 +37,7 @@ namespace FileFlow.Services
         {
             if (IsConstructed == false)
             {
-                throw new Exception($"You can't undo action before construct. Probably, use tried to undo action out of {nameof(IFileSystemService)}.");
+                throw new Exception($"You can't undo action before construct. Probably, use tried to undo action out of {nameof(FileSystemService)}.");
             }
 
             if (IsCompleted == false) return false;

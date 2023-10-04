@@ -1,0 +1,38 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="48"
+             x:Class="FileFlow.Views.Controls.CopyActionControl"
+             Height="42">
+  <Grid ColumnDefinitions="Auto, *, Auto, Auto">
+    <Border Grid.Column="0" Width="52">
+      <Image Source="{Binding Element.Icon}" Height="22" Width="22"/>
+    </Border>
+    <Border Grid.Column="1">
+      <StackPanel Orientation="Vertical" Spacing="4" Margin="0, 5, 0, 0">
+        <Panel>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Копирование: " Foreground="#c888" FontSize="11"/>
+            <TextBlock Text="{Binding Element.Name}" FontSize="11"/>
+            <!--<TextBlock Text="{Binding Element.SizeString}" Foreground="#c888" Padding="12, 0, 0, 0" FontSize="11"/>-->
+          </StackPanel>
+          <!--<TextBlock Text="25 МБ/сек" Foreground="#c888" FontSize="10" HorizontalAlignment="Right"/>-->
+        </Panel>
+        <StackPanel Orientation="Vertical" Spacing="4">
+          <ProgressBar Value="20" MinHeight="3" MinWidth="0" Foreground="#666"/>
+          <ProgressBar Value="80" MinHeight="3" MinWidth="0" Foreground="#666" />
+        </StackPanel>
+      </StackPanel>
+    </Border>
+    <StackPanel Grid.Column="2" VerticalAlignment="Top" Spacing="3" Margin="12, 5, 0, 0">
+      <TextBlock Text="17 / 30" FontSize="10" HorizontalAlignment="Right"/>
+      <TextBlock Text="283 МБ / 73 МБ (75%)" FontSize="10" HorizontalAlignment="Right"/>
+    </StackPanel>
+    <Border Grid.Column="3" Width="52">
+      <Button Width="28" Height="28" Padding="0" CornerRadius="6" HorizontalAlignment="Center">
+        <Image Source="/Assets/Icons/close.png" Width="18"/>
+      </Button>
+    </Border>
+  </Grid>
+</UserControl>

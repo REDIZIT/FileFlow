@@ -18,7 +18,7 @@ namespace FileFlow.DI
             Container.Bind<ContextService>().To<ContextService>().AsSingle();
 
             Container.Bind<IIconExtractorService>().To<IconExtractorService>().AsSingle();
-            Container.Bind<IFileSystemService>().To<FileSystemService>().AsSingle();
+            Container.Bind<FileSystemService>().FromNew().AsSingle();
             Container.Bind<HintsService>().To<HintsService>().AsSingle();
 
             Container.BindFactory<string, StorageProdiver, StorageProdiverFactory>().FromFactory<StorageProdiverFactory>();

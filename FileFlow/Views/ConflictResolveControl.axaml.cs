@@ -22,7 +22,7 @@ namespace FileFlow.Views
         private MoveAction conflict;
 
         private IIconExtractorService iconExtractor;
-        private IFileSystemService fileSystem;
+        private FileSystemService fileSystem;
 
         public class Record : INotifyPropertyChanged
         {
@@ -76,7 +76,7 @@ namespace FileFlow.Views
             InitializeComponent();
         }
         [Inject]
-        public ConflictResolveControl(IIconExtractorService iconExtractor, IFileSystemService fileSystem)
+        public ConflictResolveControl(IIconExtractorService iconExtractor, FileSystemService fileSystem)
         {
             this.iconExtractor = iconExtractor;
             this.fileSystem = fileSystem;

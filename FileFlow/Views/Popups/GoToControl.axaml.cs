@@ -22,7 +22,7 @@ namespace FileFlow.Views.Popups
 
         [Inject] private HintsService hints;
         [Inject] private ExplorerViewModel explorer;
-        [Inject] private IFileSystemService fileSystem;
+        [Inject] private FileSystemService fileSystem;
         [Inject] private IIconExtractorService iconExtractor;
         [Inject] private DiContainer container;
 

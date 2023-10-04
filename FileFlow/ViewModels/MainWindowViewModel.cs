@@ -26,7 +26,7 @@ namespace FileFlow.ViewModels
         private FileSystemWatcher watcher;
         public ExplorerControl activeExplorer;
 
-        public IFileSystemService fileSystem;
+        public FileSystemService fileSystem;
         public IIconExtractorService iconExtractor;
 
         private Settings settings;
@@ -39,7 +39,7 @@ namespace FileFlow.ViewModels
             settings.onChanged += OnSettingsChange;
             OnSettingsChange();
 
-            fileSystem = container.Resolve<IFileSystemService>();
+            fileSystem = container.Resolve<FileSystemService>();
             iconExtractor = container.Resolve<IIconExtractorService>();
 
             SidebarModel = container.Instantiate<SidebarViewModel>();

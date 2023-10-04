@@ -18,7 +18,7 @@ namespace FileFlow.Views
         private Point leftCickPoint;
 
         private MainWindowViewModel model;
-        private IFileSystemService fileSystem;
+        private FileSystemService fileSystem;
 
         public MainWindow()
         {
@@ -31,7 +31,7 @@ namespace FileFlow.Views
 
             container.Bind<MainWindow>().FromInstance(this).AsSingle();
 
-            fileSystem = container.Resolve<IFileSystemService>();
+            fileSystem = container.Resolve<FileSystemService>();
 
             DataContext = model;
             Opened += (_, _) =>

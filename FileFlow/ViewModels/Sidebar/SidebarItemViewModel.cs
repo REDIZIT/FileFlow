@@ -35,7 +35,7 @@ namespace FileFlow.ViewModels
         }
         public StorageElement GetStorageElement()
         {
-            return new StorageElement(GetPath(), kernel.Resolve<IFileSystemService>(), kernel.Resolve<IIconExtractorService>());
+            return new StorageElement(GetPath(), kernel.Resolve<FileSystemService>(), kernel.Resolve<IIconExtractorService>());
         }
         protected abstract string GetPath();
     }

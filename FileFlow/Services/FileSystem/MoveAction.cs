@@ -34,7 +34,7 @@ namespace FileFlow.Services
 
         public string targetFolder;
 
-        protected IFileSystemService fileSystem;
+        protected FileSystemService fileSystem;
         protected ActionType type;
 
         private IEnumerable<string> sourceFiles;
@@ -49,7 +49,7 @@ namespace FileFlow.Services
         }
 
         [Inject]
-        private void Construct(IFileSystemService fileSystem)
+        private void Construct(FileSystemService fileSystem)
         {
             this.fileSystem = fileSystem;
 

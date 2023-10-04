@@ -17,7 +17,7 @@ namespace FileFlow.Providers
 
             if (split.Any(ArchiveProvider.IsArchive))
             {
-                return container.Instantiate<ArchiveProvider>(new object[] {absolutePath, container.Resolve<IFileSystemService>(), container.Resolve<IIconExtractorService>() });
+                return container.Instantiate<ArchiveProvider>(new object[] {absolutePath, container.Resolve<FileSystemService>(), container.Resolve<IIconExtractorService>() });
             }
 
             if (settings.Projects.TryGetProjectAt(absolutePath, out Project project))

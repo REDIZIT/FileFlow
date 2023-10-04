@@ -42,17 +42,17 @@ namespace FileFlow.ViewModels
 
         public bool IsFolder { get; set; }
 
-        private IFileSystemService fileSystem;
+        private FileSystemService fileSystem;
         private IIconExtractorService iconExtractor;
 
         public StorageElement(string path, DiContainer container)
         {
-            fileSystem = container.Resolve<IFileSystemService>();
+            fileSystem = container.Resolve<FileSystemService>();
             iconExtractor = container.Resolve<IIconExtractorService>();
 
             SetPath(path);
         }
-        public StorageElement(string path, IFileSystemService fileSystem, IIconExtractorService iconExtractor)
+        public StorageElement(string path, FileSystemService fileSystem, IIconExtractorService iconExtractor)
         {
             this.fileSystem = fileSystem;
             this.iconExtractor = iconExtractor;
@@ -92,7 +92,7 @@ namespace FileFlow.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private void UpdateSize(IFileSystemService fileSystem)
+        private void UpdateSize(FileSystemService fileSystem)
         {
             if (Directory.Exists(Path) == false && File.Exists(Path) == false) return;
 

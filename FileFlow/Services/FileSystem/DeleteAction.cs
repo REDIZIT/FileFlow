@@ -10,7 +10,7 @@ namespace FileFlow.Services
 {
     public class DeleteAction : Action
     {
-        [Inject] private IFileSystemService fileSystem;
+        [Inject] private FileSystemService fileSystem;
 
         private string[] deletedElements;
         private bool moveToBin;

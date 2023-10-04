@@ -8,6 +8,7 @@ using FileFlow.Misc;
 using FileFlow.Providers;
 using FileFlow.Services;
 using FileFlow.ViewModels;
+using FileFlow.Views.Controls;
 using FileFlow.Views.Popups;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace FileFlow.Views
 
         private MainWindow mainWindow;
 
-        [Inject] private IFileSystemService fileSystem;
+        [Inject] private FileSystemService fileSystem;
         [Inject] private IIconExtractorService iconExtractor;
         private Settings settings;
 
@@ -107,12 +108,18 @@ namespace FileFlow.Views
             AppendControl<CreateArchiveControl>(sub);
             previewControl = AppendControl<PreviewControl>(sub);
             openWithControl = AppendControl<OpenWithControl>(sub);
+
+            AppendControl<CopyActionControl>(sub, copyActionPlaceholder);
         }
-        private T AppendControl<T>(DiContainer container) where T : Control
+        private T AppendControl<T>(DiContainer container, Panel parent = null) where T : Control
         {
             T inst = container.Instantiate<T>();
             container.Bind<T>().FromInstance(inst).AsSingle();
-            mainPanel.Children.Add(inst);
+
+            parent ??= mainPanel;
+
+            parent.Children.Add(inst);
+
             return inst;
         }
 
@@ -218,7 +225,7 @@ namespace FileFlow.Views
             }
 #pragma warning restore CS0618 // Тип или член устарел
         }
-        private void OnExplorerKeyDown(object sender, KeyEventArgs e)
+        private async void OnExplorerKeyDown(object sender, KeyEventArgs e)
         {
             if (FocusManager.Instance.Current is TextBox) return;
 
@@ -268,11 +275,11 @@ namespace FileFlow.Views
             if (e.Key == Key.Enter)
             {
                 var items = listBox.SelectedItems.Cast<StorageElement>().ToArray();
-                if (items.Count() == 1)
+                if (items.Length == 1)
                 {
-                    Open(items.First());
+                    Open(items[0]);
                 }
-                else if (items.Count() > 1)
+                else if (items.Length > 1)
                 {
                     foreach (StorageElement item in items)
                     {
@@ -299,10 +306,10 @@ namespace FileFlow.Views
                             }
                             else if (effects.HasFlag(DragDropEffects.Copy))
                             {
-                                moveAction = new CopyAction(files, model.ActiveTab.FolderPath);
+                                moveAction = new AsyncCopyAction(files, model.ActiveTab.FolderPath);
                             }
 
-                            if (fileSystem.TryPerform(moveAction) == PerformResult.PerformFailed)
+                            if (await fileSystem.TryPerform(moveAction) == PerformResult.PerformFailed)
                             {
                                 ShowConflictResolve(moveAction);
                             }

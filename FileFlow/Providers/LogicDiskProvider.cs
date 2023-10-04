@@ -15,7 +15,7 @@ namespace FileFlow.Providers
     }
     public class LogicDiskProvider : StorageProdiver
     {
-        [Inject] private IFileSystemService fileSystem;
+        [Inject] private FileSystemService fileSystem;
 
         private string folder;
 

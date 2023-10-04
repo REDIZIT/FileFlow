@@ -9,7 +9,7 @@ namespace FileFlow.ViewModels
         public override string IconPath => "Assets/Icons/cmd.png";
         public override int Order => 0;
 
-        [Inject] private IFileSystemService fileSystem;
+        [Inject] private FileSystemService fileSystem;
 
         public override void Apply(ContextWorkspace workspace)
         {

@@ -24,7 +24,7 @@ namespace FileFlow.Views
         public event PropertyChangedEventHandler? PropertyChanged;
 
         [Inject] private IIconExtractorService iconExtractor;
-        [Inject] private IFileSystemService fileSystem;
+        [Inject] private FileSystemService fileSystem;
 
         private Args args;
         private TaskCompletionSource<string> _completionSource;

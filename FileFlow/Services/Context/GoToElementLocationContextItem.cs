@@ -12,7 +12,7 @@ namespace FileFlow.ViewModels
         public override int Order => 100;
 
         [Inject] private ExplorerViewModel explorerModel;
-        [Inject] private IFileSystemService fileSystem;
+        [Inject] private FileSystemService fileSystem;
         [Inject] private IIconExtractorService iconExtractor;
 
         public override bool CanBeApplied(ContextWorkspace workspace)

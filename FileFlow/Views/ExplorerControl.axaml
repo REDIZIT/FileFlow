@@ -6,6 +6,7 @@
              x:Class="FileFlow.Views.ExplorerControl"
              xmlns:local="clr-namespace:FileFlow.ViewModels"
              xmlns:views="clr-namespace:FileFlow.Views"
+             xmlns:controls="clr-namespace:FileFlow.Views.Controls"
              DragDrop.AllowDrop="True"
              Focusable="True">
 
@@ -192,115 +193,118 @@
       <Panel Grid.Row="1" Name="contextablePanel" Background="Transparent">
         <Panel Margin="12, 6, 12, 0">
           <TextBlock
-          Name="messageText"
-          IsVisible="False"
-          Padding="32"
-          Foreground="#999"
-          Text="This folder is empty"
-          HorizontalAlignment="Center"
-          FontSize="12"/>
-          <ListBox
-            Name="listBox"
-            IsVisible="True"
-            Items="{Binding ActiveTab.StorageElementsValues}"
-            SelectionMode="Multiple"
-            Background="Transparent">
+            Name="messageText"
+            IsVisible="False"
+            Padding="32"
+            Foreground="#999"
+            Text="This folder is empty"
+            HorizontalAlignment="Center"
+            FontSize="12"/>
+          <Grid RowDefinitions="*, Auto">
+            <ListBox
+              Name="listBox"
+              IsVisible="True"
+              Items="{Binding ActiveTab.StorageElementsValues}"
+              SelectionMode="Multiple"
+              Background="Transparent">
 
-            <ListBox.Styles>
+              <ListBox.Styles>
               
-              <Style Selector="ListBoxItem">
-                <Setter Property="CornerRadius" Value="6"/>
-                <Setter Property="Margin" Value="0, 1"/>
-                <Setter Property="Background" Value="#2f656565"/>
-              </Style>
+                <Style Selector="ListBoxItem">
+                  <Setter Property="CornerRadius" Value="6"/>
+                  <Setter Property="Margin" Value="0, 1"/>
+                  <Setter Property="Background" Value="#2f656565"/>
+                </Style>
               
-              <Style Selector="ListBoxItem > Border > Grid > Panel > Border">
-                <Setter Property="Opacity" Value="1"/>
-              </Style>
-              <Style Selector="ListBoxItem > Border > Grid > Panel > Border#SelectIndicator">
-                <Setter Property="Background" Value="Transparent"/>
-                <Setter Property="Opacity" Value="1"/>
-              </Style>
+                <Style Selector="ListBoxItem > Border > Grid > Panel > Border">
+                  <Setter Property="Opacity" Value="1"/>
+                </Style>
+                <Style Selector="ListBoxItem > Border > Grid > Panel > Border#SelectIndicator">
+                  <Setter Property="Background" Value="Transparent"/>
+                  <Setter Property="Opacity" Value="1"/>
+                </Style>
               
-              <Style Selector="ListBoxItem:selected > Border > Grid > Panel > Border">
-                <Setter Property="Opacity" Value="0"/>
-              </Style>
-              <Style Selector="ListBoxItem:selected > Border > Grid > Panel > Border#SelectIndicator">
-                <Setter Property="Background" Value="#ccc"/>
-                <Setter Property="Opacity" Value="1"/>
-              </Style>
+                <Style Selector="ListBoxItem:selected > Border > Grid > Panel > Border">
+                  <Setter Property="Opacity" Value="0"/>
+                </Style>
+                <Style Selector="ListBoxItem:selected > Border > Grid > Panel > Border#SelectIndicator">
+                  <Setter Property="Background" Value="#ccc"/>
+                  <Setter Property="Opacity" Value="1"/>
+                </Style>
 
-              <Style Selector="ListBoxItem.dropHover">
-                <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="Padding" Value="-1"/>
-                <Setter Property="BorderBrush" Value="#888"/>
-                <Setter Property="Background" Value="#a444"/>
-              </Style>
+                <Style Selector="ListBoxItem.dropHover">
+                  <Setter Property="BorderThickness" Value="1"/>
+                  <Setter Property="Padding" Value="-1"/>
+                  <Setter Property="BorderBrush" Value="#888"/>
+                  <Setter Property="Background" Value="#a444"/>
+                </Style>
 
-            </ListBox.Styles>
+              </ListBox.Styles>
 
-            <ListBox.Resources>
-              <!--Only selected-->
-              <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="#a555" />
-              <!--Selected and hovered-->
-              <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="#a666" />
-              <!--Pressed (may be not selected)-->
-              <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="#a555" />
+              <ListBox.Resources>
+                <!--Only selected-->
+                <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="#a555" />
+                <!--Selected and hovered-->
+                <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="#a666" />
+                <!--Pressed (may be not selected)-->
+                <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="#a555" />
 
-              <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="#a444"/>
-            </ListBox.Resources>
+                <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="#a444"/>
+              </ListBox.Resources>
 
-            <ListBox.ItemTemplate>
-              <DataTemplate>
-                <Border
-                  Padding="0, 8"
-                  Background="Transparent"
-                  PointerPressed="Click"
-                  PointerMoved="ListItemPointerMove"
-                  Tag="{Binding}"
-                  DragDrop.AllowDrop="True"
-                  IsHitTestVisible="True">
-                  <Grid>
-                    <Grid.ColumnDefinitions>
-                      <ColumnDefinition Width="8"/>
-                      <ColumnDefinition Width="4"/>
-                      <ColumnDefinition Width="6"/>
-                      <ColumnDefinition Width="16"/>
-                      <ColumnDefinition Width="8"/>
-                      <ColumnDefinition Width="400*" MinWidth="200"/>
-                      <ColumnDefinition Width="8"/>
-                      <ColumnDefinition Width="150*" MaxWidth="140"/>
-                      <ColumnDefinition Width="8"/>
-                      <ColumnDefinition Width="150*" MaxWidth="140"/>
-                    </Grid.ColumnDefinitions>
-                    <Panel Grid.Column="1" IsHitTestVisible="False">
-                      <Border Name="SelectIndicator" Height="13" CornerRadius="100"/>
-                      <Border IsVisible="{Binding IsAdded}" Height="5" Width="5" CornerRadius="100" Background="#0091FF"/>
-                      <Border IsVisible="{Binding IsModified}" Height="5" Width="5" CornerRadius="100" Background="#FF9100"/>
-                    </Panel>
-                    <Image 
-                      Grid.Column="3" Height="16" 
-                      Source="{Binding Icon}"
-                      Tag="{Binding}"
-                      PointerEnter="OnPreviewEnter"
-                      PointerLeave="OnPreviewLeave"
-                      IsHitTestVisible="True"/>
-                    <StackPanel Grid.Column="5" Orientation="Horizontal" IsHitTestVisible="False">
-                     <Border Background="#09e" Padding="5, 0, 5, 1" CornerRadius="6" Margin="0, 0, 6, 0" IsVisible="{Binding IsUnderCopyAction}">
-                        <TextBlock TextAlignment="Center" VerticalAlignment="Center" Text="To copy" FontSize="10" FontWeight="600" Foreground="#024"/>
-                      </Border>
-                      <Border Background="#fa0" Padding="5, 0, 5, 1" CornerRadius="6" Margin="0, 0, 6, 0" IsVisible="{Binding IsUnderCutAction}">
-                        <TextBlock TextAlignment="Center" VerticalAlignment="Center" Text="To cut" FontSize="10" FontWeight="600" Foreground="#024"/>
-                      </Border>
-                      <TextBlock Text="{Binding Name}" FontSize="11" VerticalAlignment="Center"/>
-                    </StackPanel>
-                    <TextBlock Grid.Column="7" Text="{Binding LastModifyTimeString}" FontSize="11" IsHitTestVisible="False"/>
-                    <TextBlock Grid.Column="9" Text="{Binding SizeString}" FontSize="11" IsHitTestVisible="False"/>
-                  </Grid>
-                </Border>
-              </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <Border
+                    Padding="0, 8"
+                    Background="Transparent"
+                    PointerPressed="Click"
+                    PointerMoved="ListItemPointerMove"
+                    Tag="{Binding}"
+                    DragDrop.AllowDrop="True"
+                    IsHitTestVisible="True">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="4"/>
+                        <ColumnDefinition Width="6"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="400*" MinWidth="200"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="150*" MaxWidth="140"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="150*" MaxWidth="140"/>
+                      </Grid.ColumnDefinitions>
+                      <Panel Grid.Column="1" IsHitTestVisible="False">
+                        <Border Name="SelectIndicator" Height="13" CornerRadius="100"/>
+                        <Border IsVisible="{Binding IsAdded}" Height="5" Width="5" CornerRadius="100" Background="#0091FF"/>
+                        <Border IsVisible="{Binding IsModified}" Height="5" Width="5" CornerRadius="100" Background="#FF9100"/>
+                      </Panel>
+                      <Image 
+                        Grid.Column="3" Height="16" 
+                        Source="{Binding Icon}"
+                        Tag="{Binding}"
+                        PointerEnter="OnPreviewEnter"
+                        PointerLeave="OnPreviewLeave"
+                        IsHitTestVisible="True"/>
+                      <StackPanel Grid.Column="5" Orientation="Horizontal" IsHitTestVisible="False">
+                       <Border Background="#09e" Padding="5, 0, 5, 1" CornerRadius="6" Margin="0, 0, 6, 0" IsVisible="{Binding IsUnderCopyAction}">
+                          <TextBlock TextAlignment="Center" VerticalAlignment="Center" Text="To copy" FontSize="10" FontWeight="600" Foreground="#024"/>
+                        </Border>
+                        <Border Background="#fa0" Padding="5, 0, 5, 1" CornerRadius="6" Margin="0, 0, 6, 0" IsVisible="{Binding IsUnderCutAction}">
+                          <TextBlock TextAlignment="Center" VerticalAlignment="Center" Text="To cut" FontSize="10" FontWeight="600" Foreground="#024"/>
+                        </Border>
+                        <TextBlock Text="{Binding Name}" FontSize="11" VerticalAlignment="Center"/>
+                      </StackPanel>
+                      <TextBlock Grid.Column="7" Text="{Binding LastModifyTimeString}" FontSize="11" IsHitTestVisible="False"/>
+                      <TextBlock Grid.Column="9" Text="{Binding SizeString}" FontSize="11" IsHitTestVisible="False"/>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+            
+          </Grid>
           <views:ContextControl Name="contextControl"/>
         </Panel>
 
@@ -314,12 +318,25 @@
           </Border>
         </Panel>
       </Panel>
-      
+
     </Grid>
     
     <ContentControl Name="fileCreationView"/>
     <ContentControl Name="conflictResolveControl"/>
     <ContentControl Name="goToPlaceholder"/>
+    
+    <Border
+        Grid.Row="1"
+        VerticalAlignment="Bottom"
+        BoxShadow="0 0 20 8 #f111"
+        CornerRadius="8"
+        Margin="42, 24"
+        BorderThickness="1"
+        BorderBrush="#4c4c4c"
+        Background="#2c2c2c"
+        IsVisible="False">
+      <Panel Name="copyActionPlaceholder"/>
+    </Border>
     
   </Panel>
 

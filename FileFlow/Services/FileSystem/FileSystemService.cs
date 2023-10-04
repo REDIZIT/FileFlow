@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Zenject;
 
 namespace FileFlow.Services
@@ -23,9 +25,15 @@ namespace FileFlow.Services
         ActionInvalid,
         Success
     }
-    public class FileSystemService : IFileSystemService
+    public class FileSystemService
     {
+        public Action CurrentAction { get; private set; }
+        public System.Action OnActionChange { get; set; }
+
         private History<Action> history = new(HistoryPointerType.CurrentFrame);
+
+        private Thread thread;
+        private PerformResult actionResult;
 
         private readonly IIconExtractorService iconExtractor;
         private readonly DiContainer container;
@@ -36,24 +44,32 @@ namespace FileFlow.Services
             this.container = container;
             iconExtractor = container.Resolve<IIconExtractorService>();
             settings = container.Resolve<Settings>();
+
+            thread = new(ExecutionLoop);
+            thread.Start();
         }
 
-        public PerformResult TryPerform(Action action)
+        public async Task<PerformResult> TryPerform(Action action)
         {
             if (action == null) return PerformResult.EmptyAction;
 
             container.Inject(action);
             if (action.IsValid())
             {
-                if (action.TryPerform())
+                CurrentAction = action;
+                OnActionChange?.Invoke();
+
+                return await Task.Run(async () =>
                 {
-                    history.Add(action);
-                    return PerformResult.Success;
-                }
-                else
-                {
-                    return PerformResult.PerformFailed;
-                }
+                    Trace.WriteLine("Run awaiter");
+                    while (CurrentAction != null)
+                    {
+                        await Task.Delay(100);
+                    }
+                    Trace.WriteLine("Exit awaiter");
+
+                    return actionResult;
+                });
             }
             else
             {
@@ -175,6 +191,13 @@ namespace FileFlow.Services
         }
         private void MoveOrCopy(string oldPath, string newPath, ActionType type, bool copy)
         {
+            new Thread(() =>
+            {
+                MoveOrCopyThreaded(oldPath, newPath, type, copy);
+            }).Start();
+        }
+        private void MoveOrCopyThreaded(string oldPath, string newPath, ActionType type, bool copy)
+        {
             if (oldPath == newPath) return;
 
             if (Directory.Exists(oldPath))
@@ -272,6 +295,28 @@ namespace FileFlow.Services
             else
             {
                 File.Delete(path);
+            }
+        }
+
+        private void ExecutionLoop()
+        {
+            while (true)
+            {
+                Thread.Sleep(20);
+                if (CurrentAction != null)
+                {
+                    if (CurrentAction.TryPerform())
+                    {
+                        history.Add(CurrentAction);
+                        actionResult = PerformResult.Success;
+                    }
+                    else
+                    {
+                        actionResult = PerformResult.PerformFailed;
+                    }
+                }
+                CurrentAction = null;
+                OnActionChange?.Invoke();
             }
         }
     }
