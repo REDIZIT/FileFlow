@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using FileFlow.ViewModels;
+using Newtonsoft.Json.Linq;
 using SharpCompress.Archives;
 using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
@@ -11,6 +12,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Zenject;
 
 namespace FileFlow.Views.Popups
 {
@@ -24,6 +26,8 @@ namespace FileFlow.Views.Popups
 
         private string archiveTargetFolder;
         private IEnumerable<StorageElement> elementsToPack;
+
+        [Inject] private ExplorerViewModel explorer;
 
         public CreateArchiveControl()
         {
@@ -42,6 +46,7 @@ namespace FileFlow.Views.Popups
             nameField.Focus();
 
             infoText.Text = "Выбрано " + elementsToPack.Count() + " элементов";
+            progressBar.Value = 0;
 
             Show();
         }
@@ -93,6 +98,11 @@ namespace FileFlow.Views.Popups
                 archive.onWriteProgress += SetProgress;
                 archive.SaveTo(archivePath, CompressionType.Deflate);
             }
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                explorer.SelectElement(archivePath);
+            });
         }
         private void SetProgressText(string message)
         {
