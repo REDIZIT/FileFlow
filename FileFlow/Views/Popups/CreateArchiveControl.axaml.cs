@@ -2,22 +2,15 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using FileFlow.ViewModels;
-using JetBrains.Annotations;
-using PostSharp.Extensibility;
 using SharpCompress.Archives;
-using SharpCompress.Archives.Tar;
 using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
-using SharpCompress.Factories;
-using SharpCompress.Writers;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace FileFlow.Views.Popups
 {
@@ -64,7 +57,9 @@ namespace FileFlow.Views.Popups
         }
         private async void OnCreateClicked()
         {
+            CanBeHidden = false;
             await Task.Run(BeginPacking);
+            CanBeHidden = true;
             Hide();
         }
         private void BeginPacking()

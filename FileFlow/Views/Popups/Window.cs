@@ -11,6 +11,7 @@ namespace FileFlow.Views.Popups
     public class Window : UserControl, INotifyPropertyChanged
     {
         public bool IsShowed { get; set; }
+        public bool CanBeHidden { get; set; } = true;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -27,6 +28,8 @@ namespace FileFlow.Views.Popups
         }
         public void Hide()
         {
+            if (CanBeHidden == false) return;
+
             IsHitTestVisible = false;
             IsShowed = false;
 
