@@ -109,7 +109,7 @@ namespace FileFlow.ViewModels
                     }
                 }
             }
-            else
+            else if (provider != null)
             {
                 provider.Run(storageElement.Path);
             }
