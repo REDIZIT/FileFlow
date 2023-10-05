@@ -43,7 +43,7 @@
       <TextBlock Text="Приложение по умолчанию" Opacity="0.5" Margin="6, 4, 0, 0"/>
 
       <ListBox
-        Name="defaultAppList" MaxHeight="24" Background="Transparent"
+        Name="defaultAppList" MaxHeight="48" Background="Transparent"
         VirtualizationMode="None" Items="{Binding DefaultItems}" Margin="0, 2, 0, 0" SelectionChanged="OnItemClicked">
 
         <ListBox.ItemTemplate>

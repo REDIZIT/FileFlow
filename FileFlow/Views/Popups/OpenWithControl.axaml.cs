@@ -13,7 +13,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using Zenject;
 
 namespace FileFlow.Views.Popups
@@ -48,10 +47,16 @@ namespace FileFlow.Views.Popups
             Show();
 
             Items.Clear();
-            Items.AddRange(EnumeratePrograms());
-
             DefaultItems.Clear();
-            DefaultItems.Add(GetDefaultApp(Path.GetExtension(element.Path)));
+
+            if (element.IsFolder == false)
+            {
+                Items.AddRange(EnumeratePrograms());
+
+                DefaultItems.Add(GetDefaultApp(Path.GetExtension(element.Path)));
+            }
+            
+            DefaultItems.Add(GetExplorerApp());
         }
 
         private void OnItemClicked(object sender, SelectionChangedEventArgs args)
@@ -87,12 +92,21 @@ namespace FileFlow.Views.Popups
         {
             bool changeDefaultApp = rememberToggle.IsChecked.Value;
 
-            if (changeDefaultApp)
+            if (item is ExplorerOpenWithItem)
             {
-                ChangeDefaultApp(Path.GetExtension(element.Path), item.ExePath);
+                string arg = "/select, \"" + element.Path.Replace('/', '\\') + "\"";
+                Process.Start("explorer.exe", arg);
             }
+            else
+            {
+                if (changeDefaultApp)
+                {
+                    ChangeDefaultApp(Path.GetExtension(element.Path), item.ExePath);
+                }
 
-            settings.DefaultApplications.RunWith(element.Path, item.ExePath);
+                settings.DefaultApplications.RunWith(element.Path, item.ExePath);
+            }
+            
 
             Hide();
         }
@@ -135,6 +149,17 @@ namespace FileFlow.Views.Popups
             }
 
             return null;
+        }
+        private OpenWithItem GetExplorerApp()
+        {
+            string exePath = "C:/Windows/explorer.exe";
+            return new ExplorerOpenWithItem()
+            {
+                ExePath = exePath,
+                Name = "Проводник",
+                Icon = iconExtractor.GetFileIcon(exePath),
+                InternalName = "explorer.exe",
+            };
         }
 
         private IEnumerable<OpenWithItem> EnumeratePrograms()
@@ -226,5 +251,8 @@ namespace FileFlow.Views.Popups
         public string ExePath { get; set; }
         public string FormatPath { get; set; }
         public string InternalName { get; set; }
+    }
+    public class ExplorerOpenWithItem : OpenWithItem
+    {
     }
 }

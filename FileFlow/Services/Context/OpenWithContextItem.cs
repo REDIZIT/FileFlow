@@ -15,12 +15,13 @@ namespace FileFlow.ViewModels
 
         public override void Apply(ContextWorkspace workspace)
         {
-            openWithWindow.Show(workspace.mainSelected);
+            StorageElement el = workspace.mainSelected != null ? workspace.mainSelected : workspace.parent;
+            openWithWindow.Show(el);
         }
 
         public override bool CanBeApplied(ContextWorkspace workspace)
         {
-            return workspace.mainSelected != null && workspace.mainSelected.IsFolder == false;
+            return true;
         }
     }
 }
