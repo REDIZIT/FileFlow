@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Zenject;
 using static FileFlow.Views.FileCreationView;
 
@@ -257,7 +258,7 @@ namespace FileFlow.ViewModels
             }
             else
             {
-                StorageElementsValues = new(sorted.OrderByDescending(e => e.IsFolder));
+                StorageElementsValues = new(sorted.OrderBy(x => x.Path, new NaturalComparer()).OrderByDescending(e => e.IsFolder));
             }
 
             this.RaisePropertyChanged(nameof(StorageElementsValues));
@@ -345,6 +346,25 @@ namespace FileFlow.ViewModels
                     }
                 }
             });
+        }
+
+        /// <summary>
+        /// Natural string comparer
+        /// https://qna.habr.com/q/603907
+        /// </summary>
+        private class NaturalComparer : IComparer<string>
+        {
+            [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
+            private static extern int StrCmpLogicalW(string psz1, string psz2);
+
+            public static int Compare(string x, string y)
+            {
+                return StrCmpLogicalW(x, y);
+            }
+            int IComparer<string>.Compare(string x, string y)
+            {
+                return StrCmpLogicalW(x, y);
+            }
         }
     }
 }
