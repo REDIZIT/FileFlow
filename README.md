@@ -98,6 +98,9 @@ FileFlow также отслеживает изменения подпапок. 
 Путь до файла настроек: 
 `<user>/AppData/Roaming/FileFlow/settings.json`
 
+Путь до папки корзины:
+`<user>/AppData/Roaming/FileFlow/RecycleBin`
+
 
 ## Полезные горячие клавиши
 ` F5 ` - обновить текущую папку и очистить маркеры

@@ -246,7 +246,7 @@ namespace FileFlow.Views
                 {
                     filesPathes.Add(item.Path);
                 }
-                DeleteAction action = new(filesPathes, e.KeyModifiers.HasFlag(KeyModifiers.Shift) == false);
+                DeleteLazyAction action = new(filesPathes, e.KeyModifiers.HasFlag(KeyModifiers.Shift) == false);
                 fileSystem.TryPerform(action);
             }
 

@@ -21,6 +21,7 @@ namespace FileFlow
             folder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/FileFlow";
             string filepath = folder + "/" + FILE_NAME;
 
+
             Settings settings = new()
             {
                 service = this,
@@ -33,7 +34,8 @@ namespace FileFlow
                 },
                 Pathes = new()
                 {
-                    ArchivesExtractionFolder = Environment.CurrentDirectory.CleanUp() + "/Temp/Archives"
+                    ArchivesExtractionFolder = Environment.CurrentDirectory.CleanUp() + "/Temp/Archives",
+                    RecycleBinFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).CleanUp() + "/FileFlow/RecycleBin",
                 }
             };
 
