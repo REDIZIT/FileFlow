@@ -41,6 +41,7 @@ namespace FileFlow.Views
         private Point leftClickPoint;
         private bool isResettingTextBox;
         private DateTime lastShiftClickedDate;
+        private bool shiftUpped;
 
         private IEnumerable<StorageElement> prevSelectedElements;
 
@@ -81,6 +82,8 @@ namespace FileFlow.Views
             contextablePanel.AddHandler(PointerReleasedEvent, OnContextablePanelPressed, RoutingStrategies.Tunnel);
             AddHandler(KeyDownEvent, OnExplorerKeyDown, RoutingStrategies.Tunnel);
             AddHandler(KeyDownEvent, OnExplorerKeyDown, RoutingStrategies.Direct);
+            AddHandler(KeyUpEvent, OnExplorerKeyUp, RoutingStrategies.Tunnel);
+            AddHandler(KeyUpEvent, OnExplorerKeyUp, RoutingStrategies.Direct);
 
             AddHandler(DragDrop.DragEnterEvent, DragEnter);
             AddHandler(DragDrop.DragLeaveEvent, DragExit);
@@ -171,6 +174,20 @@ namespace FileFlow.Views
                 e.Handled = true;
             }
         }
+        private void OnListboxSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateElementsCounter();
+        }
+
+        private void UpdateElementsCounter()
+        {
+            ElementsCounterText.Text = "Всего " + model.ActiveTab.StorageElements.Count + " элементов";
+            if (listBox.SelectedItems.Count > 0)
+            {
+                ElementsCounterText.Text += " (выбрано " + listBox.SelectedItems.Count + ")";
+            }
+        }
+
         private void Click(object sender, PointerPressedEventArgs e)
         {
             PointerPoint point = e.GetCurrentPoint(this);
@@ -225,6 +242,13 @@ namespace FileFlow.Views
             }
 #pragma warning restore CS0618 // Тип или член устарел
         }
+        private void OnExplorerKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.LeftShift)
+            {
+                shiftUpped = true;
+            }
+        }
         private async void OnExplorerKeyDown(object sender, KeyEventArgs e)
         {
             if (FocusManager.Instance.Current is TextBox) return;
@@ -254,10 +278,11 @@ namespace FileFlow.Views
             {
                 double msPassed = (DateTime.Now - lastShiftClickedDate).TotalMilliseconds;
 
-                if (msPassed <= 400)
+                if (shiftUpped && msPassed <= 300)
                 {
                     goToControl.Show();
                 }
+                shiftUpped = false;
 
                 lastShiftClickedDate = DateTime.Now;
             }
@@ -364,6 +389,8 @@ namespace FileFlow.Views
             messageText.Text = status.ToMessageString();
 
             sortingList.SelectedIndex = (int)settings.SortData.GetSort(model.ActiveTab.FolderPath);
+
+            UpdateElementsCounter();
         }
         private void OnPathBarKeyDown(object sender, KeyEventArgs e)
         {

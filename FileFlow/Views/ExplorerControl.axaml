@@ -185,13 +185,11 @@
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
-
-          
         </StackPanel>
       </Border>
 
       <Panel Grid.Row="1" Name="contextablePanel" Background="Transparent">
-        <Panel Margin="12, 6, 12, 0">
+        <Panel Margin="12, 6, 12, 28">
           <TextBlock
             Name="messageText"
             IsVisible="False"
@@ -206,7 +204,8 @@
               IsVisible="True"
               Items="{Binding ActiveTab.StorageElementsValues}"
               SelectionMode="Multiple"
-              Background="Transparent">
+              Background="Transparent"
+              SelectionChanged="OnListboxSelectionChanged">
 
               <ListBox.Styles>
               
@@ -316,6 +315,10 @@
                        VerticalAlignment="Center" HorizontalAlignment="Center"
                        FontSize="11" Foreground="#888"/>
           </Border>
+        </Panel>
+
+        <Panel Background="#2c2c2c" Height="24" VerticalAlignment="Bottom">
+          <TextBlock Name="ElementsCounterText" Text="Всего 17 элементов (6 выбрано)" VerticalAlignment="Center" Margin="12, 0" Foreground="#888"/>
         </Panel>
       </Panel>
 
