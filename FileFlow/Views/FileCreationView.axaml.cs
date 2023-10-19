@@ -28,6 +28,8 @@ namespace FileFlow.Views
 
         private Args args;
         private TaskCompletionSource<string> _completionSource;
+        private string prevFilename = null;
+        private string prevFilenameTemp = null;
 
         public record Args(string ParentFolder, StorageElement SelectedElement, Action Action, bool IsFile);
 
@@ -54,6 +56,7 @@ namespace FileFlow.Views
             _completionSource = new();
 
             this.args = args;
+            prevFilenameTemp = prevFilename;
             newFileBox.Text = string.Empty;
 
             IsHitTestVisible = true;
@@ -150,6 +153,9 @@ namespace FileFlow.Views
         {
             string path = args.ParentFolder + "/" + newFileBox.Text;
 
+            prevFilename = newFileBox.Text;
+            prevFilenameTemp = prevFilename;
+
             if (args.Action == Action.Create)
             {
                 if (args.IsFile) fileSystem.CreateFile(path);
@@ -173,6 +179,19 @@ namespace FileFlow.Views
             else if (e.Key == Key.Enter && IsValid)
             {
                 CreateButton_Click(null, null);
+            }
+            else if (e.Key == Key.Up || e.Key == Key.Down)
+            {
+                string swap = newFileBox.Text;
+                if (string.IsNullOrWhiteSpace(prevFilenameTemp))
+                {
+                    prevFilenameTemp = newFileBox.Text;
+                }
+                else if (newFileBox.Text != prevFilenameTemp)
+                {
+                    newFileBox.Text = prevFilenameTemp;
+                    prevFilenameTemp = swap;
+                }
             }
         }
         private void OnPropertyChanged(string name)
